@@ -10555,8 +10555,7 @@ public class GenerarSolicitudAction implements Serializable {
 													for (String codigoNegocio : listaNegocios) {
 														for (Integer obj : array) {
 															if (obj != null	&& obj.intValue() != 0) {
-																validaNegocio = scoringService.obtenerHabilitacionUsuarioNegocio(
-																				usuarioLogueado.getIdPersonal(),
+																validaNegocio = scoringService.obtenerHabilitacionUsuarioNegocio(usuarioLogueado.getIdPersonal(),
 																				codigoNegocio,
 																				tipoCuenta,
 																				obj.intValue());
@@ -10574,8 +10573,7 @@ public class GenerarSolicitudAction implements Serializable {
 													}
 												}
 											} else if ((sol[10].toString()).equals("2I") || (sol[10].toString()).equals("2N") || (sol[10].toString()).equals("2R")) {
-												List<String> listaNegocios = scoringService.obtenerNegociosAsociadoToSolicitudLineaCredito(Long.parseLong(sol[0].toString()),
-																																		   conceptosNegociosSessions);
+												List<String> listaNegocios = scoringService.obtenerNegociosAsociadoToSolicitudLineaCredito(Long.parseLong(sol[0].toString()),conceptosNegociosSessions);
 												if (listaNegocios != null && listaNegocios.size() > 0) {
 													for (Integer obj : array) {
 														if (obj != null	&& obj.intValue() != 0) {
