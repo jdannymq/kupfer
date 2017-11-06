@@ -1,0 +1,114 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <rich:panel>
+        <f:facet name="header">Detalle de Usuario</f:facet>
+
+        <s:decorate id="idPersonal" template="layout/display.xhtml">
+            <ui:define name="label">Id personal</ui:define>
+            <h:outputText value="#{usuariosegurHome.instance.idPersonal}">
+               
+            </h:outputText>
+        </s:decorate>
+        <s:decorate id="rut" template="layout/display.xhtml">
+            <ui:define name="label">Rut</ui:define>
+            <h:outputText value="#{usuariosegurHome.instance.rut}"/>
+        </s:decorate>
+                
+        <s:decorate id="nombre" template="layout/display.xhtml">
+            <ui:define name="label">Nombre</ui:define>
+            <h:outputText value="#{usuariosegurHome.instance.nombre}"/>
+        </s:decorate>
+        
+        <s:decorate id="password" template="layout/display.xhtml">
+            <ui:define name="label">Password</ui:define>
+            <h:outputText value="#{usuariosegurHome.instance.password}"/>
+        </s:decorate>
+
+        <s:decorate id="alias" template="layout/display.xhtml">
+            <ui:define name="label">Alias</ui:define>
+            <h:outputText value="#{usuariosegurHome.instance.alias}"/>
+        </s:decorate>
+
+        <s:decorate id="cargo" template="layout/display.xhtml">
+            <ui:define name="label">Cargo</ui:define>
+            <h:outputText value="#{usuariosegurHome.instance.cargo}"/>
+        </s:decorate>
+
+        <s:decorate id="ceco" template="layout/display.xhtml">
+            <ui:define name="label">Ceco</ui:define>
+            <h:outputText value="#{usuariosegurHome.instance.ceco}"/>
+        </s:decorate>
+
+        <s:decorate id="celular" template="layout/display.xhtml">
+            <ui:define name="label">Celular</ui:define>
+            <h:outputText value="#{usuariosegurHome.instance.celular}"/>
+        </s:decorate>
+
+        <s:decorate id="centro" template="layout/display.xhtml">
+            <ui:define name="label">Centro</ui:define>
+            <h:outputText value="#{usuariosegurHome.instance.centro}"/>
+        </s:decorate>
+
+        <s:decorate id="correo" template="layout/display.xhtml">
+            <ui:define name="label">Correo</ui:define>
+            <h:outputText value="#{usuariosegurHome.instance.correo}"/>
+        </s:decorate>
+
+        <s:decorate id="descSuc" template="layout/display.xhtml">
+            <ui:define name="label">Desc suc</ui:define>
+            <h:outputText value="#{usuariosegurHome.instance.descSuc}"/>
+        </s:decorate>
+
+        <s:decorate id="marca" template="layout/display.xhtml">
+            <ui:define name="label">Marca</ui:define>
+            <h:outputText value="#{usuariosegurHome.instance.marca}"/>
+        </s:decorate>
+
+        <s:decorate id="negocio" template="layout/display.xhtml">
+            <ui:define name="label">Negocio</ui:define>
+            <h:outputText value="#{usuariosegurHome.instance.negocio}"/>
+        </s:decorate>
+        <s:decorate id="sucursal" template="layout/display.xhtml">
+            <ui:define name="label">Sucursal</ui:define>
+            <h:outputText value="#{usuariosegurHome.instance.sucursal}"/>
+        </s:decorate>
+
+        <s:decorate id="obligatorio" template="layout/display.xhtml">
+            <ui:define name="label">Obligatorio</ui:define>
+            <h:outputText value="#{usuariosegurHome.instance.obligatorio}"/>
+        </s:decorate>
+
+        <s:decorate id="eliminado" template="layout/display.xhtml">
+            <ui:define name="label">Eliminado</ui:define>
+            <h:outputText value="#{usuariosegurHome.instance.eliminado}"/>
+        </s:decorate>
+
+        <div style="clear:both"/>
+
+    </rich:panel>
+
+    <div class="actionButtons">
+
+        <s:button view="/UsuariosegurEdit.xhtml"
+                    id="edit"
+                 value="Editar"/>
+
+        <s:button view="/#{empty usuariosegurFrom ? 'UsuariosegurList' : usuariosegurFrom}.xhtml"
+                    id="done"
+                 value="Volver"/>
+
+    </div>
+
+</ui:define>
+
+</ui:composition>

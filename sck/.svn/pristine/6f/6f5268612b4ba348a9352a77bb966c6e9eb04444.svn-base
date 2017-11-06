@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="lcredEstadoSearch" styleClass="edit">
+
+        <rich:simpleTogglePanel label="Filtro de Estado" switchType="ajax">
+        	<h:panelGrid columns="3">
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Codigo Estado</ui:define>
+                <h:inputText id="codEstado" value="#{lcredEstadoList.lcredEstado.codEstado}"/>
+            </s:decorate>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Descripción</ui:define>
+                <h:inputText id="desEstado" value="#{lcredEstadoList.lcredEstado.desEstado}"/>
+            </s:decorate>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Cierra proceso</ui:define>
+                <h:inputText id="cierraProceso" value="#{lcredEstadoList.lcredEstado.cierraProceso}"/>
+            </s:decorate>
+           </h:panelGrid> 
+        </rich:simpleTogglePanel>
+
+        <div class="actionButtons">
+            <h:commandButton id="search" value="Buscar" action="/LcredEstadoList.xhtml"/>
+            <s:button id="reset" value="Limpiar" includePageParams="false"/>
+        </div>
+
+    </h:form>
+
+    <rich:panel>
+        <f:facet name="header">Resultado (#{empty lcredEstadoList.resultList ? 0 : (lcredEstadoList.paginated ? lcredEstadoList.resultCount : lcredEstadoList.resultList.size)})</f:facet>
+    <div class="results" id="lcredEstadoList">
+
+    <h:outputText value="No existen estados ingresado en la base de datos."
+               rendered="#{empty lcredEstadoList.resultList}"/>
+
+    <rich:dataTable id="lcredEstadoList"
+                var="_lcredEstado"
+              value="#{lcredEstadoList.resultList}"
+           rendered="#{not empty lcredEstadoList.resultList}">
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{lcredEstadoList}"/>
+                    <ui:param name="propertyLabel" value="Codigo Estado"/>
+                    <ui:param name="propertyPath" value="lcredEstado.codEstado"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_lcredEstado.codEstado}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{lcredEstadoList}"/>
+                    <ui:param name="propertyLabel" value="Descripción Estado"/>
+                    <ui:param name="propertyPath" value="lcredEstado.desEstado"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_lcredEstado.desEstado}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{lcredEstadoList}"/>
+                    <ui:param name="propertyLabel" value="Cierra Proceso"/>
+                    <ui:param name="propertyPath" value="lcredEstado.cierraProceso"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_lcredEstado.cierraProceso}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{lcredEstadoList}"/>
+                    <ui:param name="propertyLabel" value="Grupo Barra Analista"/>
+                    <ui:param name="propertyPath" value="lcredEstado.grupoBarraAnalista"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_lcredEstado.grupoBarraAnalista}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{lcredEstadoList}"/>
+                    <ui:param name="propertyLabel" value="Grupo Barra Ejecutivo"/>
+                    <ui:param name="propertyPath" value="lcredEstado.grupoBarraEjecutivo"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_lcredEstado.grupoBarraEjecutivo}"/>
+        </h:column>
+        <rich:column styleClass="action">
+            <f:facet name="header">Acción</f:facet>
+            <s:link view="/#{empty from ? 'LcredEstado' : from}.xhtml"
+                   value="#{empty from ? 'Ver' : 'Seleccionar'}"
+             propagation="#{empty from ? 'none' : 'default'}"
+                      id="lcredEstadoViewId">
+                <f:param name="lcredEstadoCodEstado"
+                        value="#{_lcredEstado.codEstado}"/>
+            </s:link>
+            #{' '}
+            <s:link view="/LcredEstadoEdit.xhtml"
+                   value="Editar"
+             propagation="none"
+                      id="lcredEstadoEdit"
+                rendered="#{empty from}">
+                <f:param name="lcredEstadoCodEstado"
+                        value="#{_lcredEstado.codEstado}"/>
+            </s:link>
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+
+    <div class="tableControl">
+
+        <s:link view="/LcredEstadoList.xhtml"
+            rendered="#{lcredEstadoList.previousExists}"
+               value="#{messages.left}#{messages.left} Primera Página"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link view="/LcredEstadoList.xhtml"
+            rendered="#{lcredEstadoList.previousExists}"
+               value="#{messages.left} Página Anterior"
+                  id="previousPage">
+            <f:param name="firstResult"
+                    value="#{lcredEstadoList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link view="/LcredEstadoList.xhtml"
+            rendered="#{lcredEstadoList.nextExists}"
+               value="Siguiente Págima #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult"
+                    value="#{lcredEstadoList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link view="/LcredEstadoList.xhtml"
+            rendered="#{lcredEstadoList.nextExists}"
+               value="Ultima Página #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult"
+                    value="#{lcredEstadoList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+
+    <s:div styleClass="actionButtons" rendered="#{empty from}">
+        <s:button view="/LcredEstadoEdit.xhtml"
+                    id="create"
+           propagation="none"
+                 value="Crear Estado">
+            <f:param name="lcredEstadoCodEstado"/>
+        </s:button>
+    </s:div>
+
+</ui:define>
+
+</ui:composition>

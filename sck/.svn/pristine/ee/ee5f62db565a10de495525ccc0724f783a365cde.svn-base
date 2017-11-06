@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="lcredCargos" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{lcredCargosHome.managed ? 'Editar' : 'Agregar'} Cargo</f:facet>
+			<table>
+				<tr valign="top">
+					<td>
+				        <rich:panel style="height:180px;" >
+         					<f:facet name="header">Descripción de Cargo</f:facet>
+         					
+         					<table cellpadding="0" cellspacing="0" border="0" width="500px;">
+         						<tr> 
+         							<td width="500px;">
+	 						            <s:decorate id="codCargoField" template="/layout/edit.xhtml">
+							                <ui:define name="label">Codigo Cargo</ui:define>
+							                <h:inputText id="codCargo"
+							                       disabled="#{lcredCargosHome.managed}"
+							                       required="true"
+							                           size="3"
+							                      maxlength="3"
+							                          value="#{lcredCargosHome.instance.codCargo}"
+							                          onkeypress="return isNumberKey(event);">
+							                    <a:support event="onblur" reRender="codCargoField" bypassUpdates="true" ajaxSingle="true"/>
+							                </h:inputText>
+							            </s:decorate>        							
+         							 </td>
+         						</tr>
+        						<tr> 
+         							<td>
+							            <s:decorate id="desCargoField" template="/layout/edit.xhtml">
+							                <ui:define name="label">Descripción Cargo</ui:define>
+							                <h:inputText id="desCargo"
+							                           size="50"
+							                      maxlength="50"
+							                          value="#{lcredCargosHome.instance.desCargo}"
+							                          >
+							                    <a:support event="onblur" reRender="desCargoField" bypassUpdates="true" ajaxSingle="true"/>
+							                </h:inputText>
+							            </s:decorate>									
+									</td>
+								</tr> 
+        						<tr> 
+         							<td>
+							            <s:decorate id="nivelCargoField" template="layout/edit.xhtml">
+							                <ui:define name="label">Nivel cargo</ui:define>
+							                <h:inputText id="nivelCargo"
+							                          value="#{lcredCargosHome.instance.nivelCargo}"
+							                          size="3"
+							                          maxlength="3"
+							                          onkeypress="return isNumberKey(event);"
+							                          required="true">
+							                          <a:support event="onblur" reRender="nivelCargoField" bypassUpdates="true" ajaxSingle="true"/>
+							                </h:inputText>
+							            </s:decorate>
+ 									</td>
+								</tr>         						
+        						<tr> 
+         							<td>
+							            <s:decorate id="nivelSiguienteField" template="layout/edit.xhtml">
+							                <ui:define name="label">Nivel siguiente</ui:define>
+							                <h:inputText id="nivelSiguiente"
+							                          value="#{lcredCargosHome.instance.nivelSiguiente}"
+							                          size="3"
+							                          maxlength="3"
+							                          onkeypress="return isNumberKey(event);"
+							                          required="true">
+							                          <a:support event="onblur" reRender="nivelSiguienteField" bypassUpdates="true" ajaxSingle="true"/>
+							                </h:inputText>
+							            </s:decorate>     
+ 									</td>
+								</tr>   
+
+				
+         					</table>	
+         				</rich:panel>
+					 </td>
+					 <td>&nbsp;</td>
+					 <td> 
+				        <rich:panel style="height:180px;">
+         					<f:facet name="header">Seleccionar Conceptos</f:facet>
+         					<table cellpadding="0" cellspacing="0" border="0" width="600px;">
+         						<tr> 
+         							<td width="130px;"><strong>Zona</strong> <span class="required">*</span></td>
+         							<td width="130px;"><strong>Sucursal</strong> <span class="required">*</span></td>
+         							<td width="130px;"><strong>Negocio</strong> <span class="required">*</span></td>
+         							<td width="130px;"><strong>Concepto</strong> <span class="required">*</span></td>
+         						</tr>
+         						<tr> 
+         							<td width="130px;">
+         								<h:selectOneMenu value="#{lcredCargosHome.zona}" style="width:130px;">
+				                			<s:selectItems value="#{lcredCargosHome.listaEstado}" 
+				                			                 var="_zona"  
+				                			               label="#{_zona}" 
+				                			               itemValue="#{_zona}" 
+				                			               noSelectionLabel="Seleccione Estado..." 
+				                			               hideNoSelectionLabel="true" />
+				                		</h:selectOneMenu>
+         							</td>
+         							<td width="130px;">
+         								<h:selectOneMenu value="#{lcredCargosHome.sucursal}"  style="width:130px;" >
+				                			<s:selectItems value="#{lcredCargosHome.listaEstado}" 
+				                			                 var="_sucursal"  
+				                			               label="#{_sucursal}" 
+				                			               itemValue="#{_sucursal}" 
+				                			               noSelectionLabel="Seleccione Estado..." 
+				                			               hideNoSelectionLabel="true" />
+				                		</h:selectOneMenu>         							
+         							</td>
+         							<td width="130px;">
+         								<h:selectOneMenu value="#{lcredCargosHome.negocio}"  style="width:130px;">
+				                			<s:selectItems value="#{lcredCargosHome.listaEstado}" 
+				                			                 var="_negocio"  
+				                			               label="#{_negocio}" 
+				                			               itemValue="#{_negocio}" 
+				                			               noSelectionLabel="Seleccione Estado..." 
+				                			               hideNoSelectionLabel="true" />
+				                		</h:selectOneMenu>         							
+         							</td>
+         							<td width="130px;">
+         								<h:selectOneMenu value="#{lcredCargosHome.concepto}"  style="width:130px;">
+				                			<s:selectItems value="#{lcredCargosHome.listaEstado}" 
+				                			                 var="_concepto"  
+				                			               label="#{_concepto}" 
+				                			               itemValue="#{_concepto}" 
+				                			               noSelectionLabel="Seleccione Estado..." 
+				                			               hideNoSelectionLabel="true" /> 
+				                		</h:selectOneMenu>         							
+         							</td>
+         						</tr> 
+         						<tr>
+         							<td height="50px;">&nbsp;</td>
+         						</tr>        						
+         						<tr>
+         							<td>
+							           <div style="clear:both">
+							                <span class="required">* campos requeridos</span>
+							            </div>         							
+         							</td>
+         						</tr> 
+         					</table>
+         				</rich:panel>
+					</td>
+				</tr>
+
+			</table>
+
+	        <div class="actionButtons">
+	
+	            <h:commandButton id="save"
+	                          value="Guardar"
+	                         action="#{lcredCargosHome.persist}"
+	                       disabled="#{!lcredCargosHome.wired}"
+	                       rendered="#{!lcredCargosHome.managed}"/>
+	
+	            <h:commandButton id="update"
+	                          value="Modificar"
+	                         action="#{lcredCargosHome.update}"
+	                       rendered="#{lcredCargosHome.managed}"/>
+	
+	            <h:commandButton id="delete"
+	                          value="Eliminar"
+	                         action="#{lcredCargosHome.remove}"
+	                      immediate="true"
+	                       rendered="#{lcredCargosHome.managed}"/>
+	
+	            <s:button id="cancelEdit"
+	                   value="Cancelar"
+	             propagation="end"
+	                    view="/LcredCargos.xhtml"
+	                rendered="#{lcredCargosHome.managed}"/>
+	
+	            <s:button id="cancelAdd"
+	                   value="Cancelar"
+	             propagation="end"
+	                    view="/#{empty lcredCargosFrom ? 'LcredCargosList' : lcredCargosFrom}.xhtml"
+	                rendered="#{!lcredCargosHome.managed}"/>
+	
+	        </div>
+
+        </rich:panel>
+
+    </h:form>
+
+</ui:define>
+
+</ui:composition>

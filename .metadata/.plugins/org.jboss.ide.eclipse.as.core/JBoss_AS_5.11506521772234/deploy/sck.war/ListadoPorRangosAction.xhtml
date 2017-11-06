@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/layout/template.xhtml"
+    xmlns:a="http://richfaces.org/a4j"
+     xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+    xmlns:p="http://primefaces.prime.com.tr/ui">
+    
+  <ui:define name="body">
+ <h:form id="frmSeleccion">
+
+    <rich:panel id="panelGeneralAux">
+        <f:facet name="header">Parametros a consultar</f:facet>
+		<table cellpadding="0" cellspacing="0" border="0" style="font-size:10px;" width="100%">
+			<tr>
+				<td> Nº Solicitud </td>
+				<td> Rut  </td>
+				<td> Fecha Inicial </td>
+				<td> Fecha Final </td>
+				<td> Estados</td>
+				<td> Sucursal</td>
+				<td> Sociedad </td>
+				<td>  </td>
+			</tr>
+			<tr>
+				<td>
+                     <h:inputText id="idSolicitud"
+                               value="#{listadoPorRangosAction.idSolicitud}" 
+	                  		style="text-align: right;"
+	                   		onkeypress="return isNumberKey(event);"
+	                   		size="10"
+	                   		required="false">
+		            </h:inputText>     			
+				</td>				
+				<td>
+						<h:inputText id="rutCliente" 
+						 value="#{listadoPorRangosAction.rutAux}"
+			             size="10"
+			             maxlength="10" 
+			             required="false"
+			             onkeypress="return isRutValidCharacter(event);"/>				
+				</td>
+		
+				<td>
+						<rich:calendar id="fechadesde"
+			                       required="false"
+			                       disabled="false"
+			                          value="#{listadoPorRangosAction.fechaInical}" 
+			                          datePattern="yyyy-MM-dd"
+			                          buttonIcon="/img/calendario_icono.gif"/>	
+				
+				</td>
+				<td> 
+						<rich:calendar id="fechahasta"
+			                       required="false"
+			                       disabled="false"
+			                          value="#{listadoPorRangosAction.fechaFinal}" 
+			                          datePattern="yyyy-MM-dd" 
+			                          buttonIcon="/img/calendario_icono.gif"/>	
+				
+				
+				</td>
+				<td> 
+					<h:selectOneMenu id="idCboEstado"
+                		          value="#{listadoPorRangosAction.estado}"
+                		       required="false"
+                		          style="width :150px;" >
+                  	    <s:selectItems value="#{listadoPorRangosAction.listaEstados}" 
+                  	                     var="_estado" 
+                  	    hideNoSelectionLabel="true" 
+                  	        noSelectionLabel="Seleccionar..."
+               			               label="#{_estado.codEstado} - #{_estado.desEstado}"           			               
+               			               />
+               			    <s:convertEntity/>           
+       			   	<a:support event="onchange" 
+                         reRender="idCboEstado"
+             			      ajaxSingle="true" 
+             			      action="#{listadoPorRangosAction.sacarEstado()}" />											               			               
+					</h:selectOneMenu>						
+				
+				
+				</td>
+				<td> 
+					<h:selectOneMenu id="idCboSucursal"
+                		          value="#{listadoPorRangosAction.sucursal}"
+                		       required="false"
+                		          style="width :150px;" >
+                  	    <s:selectItems value="#{listadoPorRangosAction.listaSucursals}" 
+                  	                     var="_sucu" 
+                  	    hideNoSelectionLabel="true" 
+                  	        noSelectionLabel="Seleccionar..."
+               			               label="#{_sucu.descripcion}"           			               
+               			               />
+               			    <s:convertEntity/>           
+       			   	<a:support event="onchange" 
+                         reRender="idCboSucursal"
+             			      ajaxSingle="true" 
+             			      action="#{listadoPorRangosAction.sacarSucursal()}" />											               			               
+					</h:selectOneMenu>						
+				
+				
+				</td>
+				<td> 
+					<h:selectOneMenu id="idCboSociedad"
+                		          value="#{listadoPorRangosAction.sociedad}"
+                		       required="false"
+                		          style="width :150px;" >
+                  	    <s:selectItems value="#{listadoPorRangosAction.listaSociedades}" 
+                  	                     var="_soc" 
+                  	    hideNoSelectionLabel="true" 
+                  	        noSelectionLabel="Seleccionar..."
+               			               label="#{_soc.razonSocial}"           			               
+               			               />
+               			    <s:convertEntity/>           
+       			   	<a:support event="onchange" 
+                         reRender="idCboSociedad"
+             			      ajaxSingle="true" 
+             			      action="#{listadoPorRangosAction.sacarSociedad()}" />											               			               
+					</h:selectOneMenu>						
+				</td>
+				<td>
+						<a:commandButton action="#{listadoPorRangosAction.consultarSolicitudes()}" 
+						                  value="Consultar" 
+						             ajaxSingle="true"
+						                reRender="rutCliente,panelMensaje,panelGeneral,listaTodasSolicitudes,linkExcelRangos"
+              				                title="Consultar..."
+              				                process="fechadesde,fechahasta,idSolicitud,rutCliente"
+						                />							
+						<a:commandButton action="#{listadoPorRangosAction.limpiarParametos()}" 
+						                  value="Limpiar" 
+						             ajaxSingle="true"
+						                reRender="fechadesde,fechahasta,idCboEstado,idCboSucursal,idCboSociedad,panelMensaje,solicitudTodasList,panelGeneral,idSolicitud,rutCliente,linkExcelRangos"
+              				                title="Limpiar..."
+						                />	
+						                
+							<a:outputPanel id="linkExcelRangos">
+									<strong> 
+										<s:link propagation="join" value=""	target="_blank"
+											rendered="#{not empty listadoPorRangosAction.listaTodasSolicitudesDto}"
+											view="/InformeTodasSolicitudesRangosExcel.xhtml">
+											<img src="./img/excel_icon.gif" width="16" height="16" />
+										</s:link>
+									</strong>
+								</a:outputPanel>
+				</td>
+			</tr>	
+			<tr>
+				<td colspan="7">
+								    <a:outputPanel id="panelMensaje" >
+							    		<h:messages  globalOnly="true" styleClass="message"
+								            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
+							        </a:outputPanel>							
+				</td>						
+			</tr>			
+					
+		</table>
+    </rich:panel>     
+ 
+ 
+    <rich:panel id="panelGeneral">
+        <f:facet name="header">Listado de Solucitudes Encontradas</f:facet>
+   			<table cellpadding="0" cellspacing="0" border="0" style="font-size:10px;" width="100%">
+   				<tr >
+   					<td width="100%;" >
+						<a:outputPanel id="listaTodasSolicitudes">  
+							<h:outputText value="No existen solicitudes." rendered="#{empty listadoPorRangosAction.listaTodasSolicitudesDto}" />
+							<div style="width: 100%; overflow: auto;">
+								<rich:datascroller id="sc4" for="solicitudTodasList" />
+								<rich:extendedDataTable id="solicitudTodasList" var="_sol" rows="15" height="450px;" reRender="sc4" 
+													tableState="#{listadoPorRangosAction.tsListaTodasSolicitudes}"
+									enableContextMenu="true"
+									value="#{listadoPorRangosAction.listaTodasSolicitudesDto}"
+									rendered="#{not empty listadoPorRangosAction.listaTodasSolicitudesDto}"
+									style="font-size:7px; ">
+									<rich:column style="font-size:9px;" label="Num. Solicitud"
+										filterBy="#{_sol.idSolictud}" sortBy="#{_sol.idSolictud}">
+										<f:facet name="header">N°</f:facet>
+										
+										<s:link view="/RespuestaSolicitud.xhtml"
+											value="#{_sol.idSolictud}" id="respuestaInicialId"
+											includePageParams="false" propagation="join"
+											rendered="#{_sol.controlador == 1}"
+											action="#{respuestaSolicitudAction.ingresarPaginaPrincipal()}" 
+											onclick="abrirModal();">
+											<f:param name="idSolicitud" value="#{_sol.idSolictud}" />
+											<f:param name="tipoSolicitud" value="#{_sol.tipoSolicitud}" />
+											<f:param name="pagina" value="Listado" />
+											<f:param name="tab" value="pendiente" />
+										</s:link>
+										<s:link view="/VerSolicitudTodas.xhtml" value="#{_sol.idSolictud}"
+											id="respuestavVerId" includePageParams="false"
+											propagation="join"
+											rendered="#{_sol.controlador == 2}"
+											action="#{visualizarSolicitudTodasAction.ingresarPaginaPrincipal()}"
+											onclick="abrirModal();">
+											<f:param name="idSolicitud" value="#{_sol.idSolictud}" />
+											<f:param name="tipoSolicitud" value="#{_sol.tipoSolicitud}" />
+											<f:param name="pagina" value="Listado" />
+											<f:param name="tab" value="todas" />
+										</s:link>
+										
+										<s:link view="/GenerarSolicitudReparos.xhtml" value="#{_sol.idSolictud}"
+											id="reparosSolicitudesId" includePageParams="false"
+											propagation="join"
+											rendered="#{_sol.controlador == 3}"
+											action="#{generarSolicitudReparosAction.ingresarPaginaPrincipal()}"
+											onclick="abrirModal();">
+											<f:param name="idSolicitud" value="#{_sol.idSolictud}" />
+											<f:param name="tipoSolicitud" value="#{_sol.tipoSolicitud}" />
+											<f:param name="pagina" value="Listado" />
+											<f:param name="tab" value="pendiente" />
+										</s:link>				
+		
+
+									</rich:column>
+									<rich:column width="75px;" filterBy="#{_sol.fechaEmision}"
+										label="fecha Sol." sortBy="#{_sol.fechaEmision}"
+										style="text-align: center; font-size:9px;">
+										<f:facet name="header">Fecha Sol. </f:facet>
+										<h:outputText value="#{_sol.fechaEmision}">
+											<s:convertDateTime pattern="dd-MM-yy HH:mm" />
+										</h:outputText>
+									</rich:column>
+									<rich:column styleClass="action" style="font-size:9px;"
+										label="Accion">
+										<f:facet name="header">Acción</f:facet>
+										<a:commandLink
+											action="#{listadoPorRangosAction.sacarLogSolicitud(_sol)}"
+											value="Log"
+											oncomplete="#{rich:component('mpConsultarLogs')}.show()"
+											reRender="mpConsultarLogs">
+											<f:param name="logIdSolicitud" value="#{_sol.idSolictud}" />
+										</a:commandLink>
+									            #{' '}
+									    <a:commandLink
+											action="#{listadoPorRangosAction.sacarLogHitos(_sol)}"
+											value="Hitos"
+											oncomplete="#{rich:component('mpConsultarHitos')}.show()"
+											reRender="mpConsultarHitos">
+											<f:param name="logIdSolicitud" value="#{_sol.idSolictud}" />
+										</a:commandLink>
+									</rich:column>							
+									<rich:column style="font-size:9px;" filterBy="#{_sol.rut}"
+										label="Rut Cliente" sortBy="#{_sol.rut}">
+										<f:facet name="header">Rut Cliente</f:facet>
+										<h:outputText value="#{_sol.rut}" />
+									</rich:column>
+									<rich:column style="font-size:9px;" label="Razón Social"
+										filterBy="#{_sol.razonSocial}" sortBy="#{_sol.razonSocial}">
+										<f:facet name="header">Razón Social</f:facet>
+										<h:outputText value="#{_sol.razonSocial}" />
+									</rich:column>
+									
+									<rich:column filterExpression="#{fn:containsIgnoreCase(_sol.emisor, listadoPorRangosAction.usuarioFilter)}"
+										sortBy="#{_sol.emisor}" label="Emisor">
+										<f:facet name="header">Emisor</f:facet>
+										<f:facet name="filter">
+											<h:selectOneMenu value="#{listadoPorRangosAction.usuarioFilter}" style="width:90px;">
+												<s:selectItems value="#{listadoPorRangosAction.listaUsuarios}" hideNoSelectionLabel="false"
+													noSelectionLabel="Seleccione" var="_u" itemValue="#{_u}" label="#{_u}" ></s:selectItems>
+												<a:support event="onchange" ajaxSingle="true" reRender="solicitudTodasList"></a:support>
+											</h:selectOneMenu>
+										</f:facet>
+										<h:outputText value="#{_sol.emisor}" />
+									</rich:column>								
+									
+									<ui:remove>
+										<rich:column style="font-size:9px;" label="Emisor"
+											filterBy="#{_sol.emisor}" sortBy="#{_sol.emisor}">
+											<f:facet name="header">Emisor</f:facet>
+											<h:outputText value="#{_sol.emisor}" />
+										</rich:column>
+										<rich:column style="font-size:9px;" label="Tipo Solicitud"
+											filterBy="#{_sol.despTipoSolictud}"
+											sortBy="#{_sol.despTipoSolictud}">
+											<f:facet name="header">Tipo Solicitud</f:facet>
+											<h:outputText value="#{_sol.despTipoSolictud}" />
+										</rich:column>
+									</ui:remove>
+									<rich:column filterExpression="#{fn:containsIgnoreCase(_sol.despTipoSolictud, listadoPorRangosAction.tipoFilter)}"
+										sortBy="#{_sol.despTipoSolictud}" label="Emisor">
+										<f:facet name="header">Tipo Solicitud</f:facet>
+										<f:facet name="filter">
+											<h:selectOneMenu value="#{listadoPorRangosAction.tipoFilter}" style="width:90px;">
+												<s:selectItems value="#{listadoPorRangosAction.listaTiposSolicitudes}" hideNoSelectionLabel="false"
+													noSelectionLabel="Seleccione" var="_u" itemValue="#{_u}" label="#{_u}" ></s:selectItems>
+												<a:support event="onchange" ajaxSingle="true" reRender="solicitudTodasList"></a:support>
+											</h:selectOneMenu>
+										</f:facet>
+										<h:outputText value="#{_sol.despTipoSolictud}" />
+									</rich:column>									
+									<rich:column style="text-align: center;font-size:9px;"
+										label="Negocio" filterBy="#{_sol.monto}" sortBy="#{_sol.monto}">
+										<f:facet name="header">Negocio</f:facet>
+										<h:outputText value="#{_sol.monto}">
+											<f:convertNumber type="currency" currencySymbol="$ " />
+										</h:outputText>
+									</rich:column>
+									<rich:column style="text-align: center; font-size:9px;"
+										label="Seguro" filterBy="#{_sol.montoAsegurado}"
+										sortBy="#{_sol.montoAsegurado}">
+										<f:facet name="header">Seguro</f:facet>
+										<h:outputText value="#{_sol.montoAsegurado}">
+											<f:convertNumber type="currency" currencySymbol="$ " />
+										</h:outputText>
+									</rich:column>
+									<rich:column style="text-align: center; font-size:9px;"
+										label="Riesgo Küpfer" filterBy="#{_sol.montoRiegoKupfer}"
+										sortBy="#{_sol.montoRiegoKupfer}">
+										<f:facet name="header">Riesgo Küpfer</f:facet>
+										<h:outputText value="#{_sol.montoRiegoKupfer}">
+											<f:convertNumber type="currency" currencySymbol="$ " />
+										</h:outputText>
+									</rich:column>
+									
+									<rich:column filterExpression="#{fn:containsIgnoreCase(_sol.emisor, listadoPorRangosAction.usuarioFilter)}"
+										sortBy="#{_sol.condicionPago}" label="F.Pago">
+										<f:facet name="header">F.Pago</f:facet>
+										<f:facet name="filter">
+											<h:selectOneMenu value="#{listadoPorRangosAction.fpagos}" style="width:90px;">
+												<s:selectItems value="#{listadoPorRangosAction.listaFormaPago}" hideNoSelectionLabel="false"
+													noSelectionLabel="Seleccione" var="_u" itemValue="#{_u}" label="#{_u}" ></s:selectItems>
+												<a:support event="onchange" ajaxSingle="true" reRender="solicitudTodasList"></a:support>
+											</h:selectOneMenu>
+										</f:facet>
+										<h:outputText value="#{_sol.condicionPago}" />
+									</rich:column>										
+									
+									<ui:remove>
+										<rich:column style="font-size:9px;" label="F.Pago"
+											filterBy="#{_sol.condicionPago}" sortBy="#{_sol.condicionPago}">
+											<f:facet name="header">F.Pago</f:facet>
+											<h:outputText value="#{_sol.condicionPago}" />
+										</rich:column>
+									</ui:remove>
+									<rich:column style="font-size:9px;" filterBy="#{_sol.sucursal}"
+										label="Sucursal" sortBy="#{_sol.sucursal}">
+										<f:facet name="header">Sucursal</f:facet>
+										<h:outputText value="#{_sol.sucursal}" />
+									</rich:column>
+									<rich:column style="font-size:9px;" filterBy="#{_sol.estado}"
+										label="Estado" sortBy="#{_sol.estado}">
+										<f:facet name="header">Estado</f:facet>
+										<h:outputText value="#{_sol.estado}" />
+									</rich:column>
+									<rich:column style="font-size:9px;" filterBy="#{_sol.canal}"
+										label="Canal" sortBy="#{_sol.canal}">
+										<f:facet name="header">Canal</f:facet>
+										<h:outputText value="#{_sol.canal}" />
+									</rich:column>
+									<rich:column style="text-align: center; font-size:9px;"
+										label="F. Resolucion" filterBy="#{_sol.fechaSalida}"
+										sortBy="#{_solfechaSalida}">
+										<f:facet name="header">F. Resolución</f:facet>
+										<h:outputText value="#{_sol.fechaSalida}">
+											<s:convertDateTime pattern="dd-MM-yy" />
+										</h:outputText>
+									</rich:column>
+									<rich:column style="font-size:9px;" filterBy="#{_sol.proceso}"
+										label="Proceso" sortBy="#{_sol.proceso}">
+										<f:facet name="header">Proceso</f:facet>
+										<h:outputText value="#{_sol.proceso}" />
+									</rich:column>
+									<rich:column style="font-size:9px;" label="Usuario Proceso"
+										filterBy="#{_sol.usuarioProceso}"
+										sortby="#{_sol.usuarioProceso}">
+										<f:facet name="header">Usuario Proceso</f:facet>
+										<s:fragment rendered="#{_sol.habilitaLista == false}">
+											<h:outputText value="#{_sol.usuarioProceso}" />
+										</s:fragment>
+										<s:fragment rendered="#{_sol.habilitaLista == true}">
+											<a:commandButton value="Usuarios" 
+										                    action="#{listadoPorRangosAction.sacarListaUsuarioDerivado(_sol)}"
+										                ajaxSingle="true"
+										                  reRender="mpSolicitudUsuariosDerivado" 
+										                  oncomplete="#{rich:component('mpSolicitudUsuariosDerivado')}.show()"
+										                  />	
+										</s:fragment>								
+									</rich:column>
+									
+									<rich:column style="font-size:9px;" filterBy="#{_sol.sociedad}"
+										label="Sociedad" sortBy="#{_sol.sociedad}">
+										<f:facet name="header">Sociedad</f:facet>
+										<h:outputText value="#{_sol.sociedad}" />
+									</rich:column>
+									
+									
+								</rich:extendedDataTable>
+							</div>
+						</a:outputPanel>
+   					</td>
+				</tr>
+   			</table>
+		<div style="clear:both"/>
+    </rich:panel>
+    </h:form>
+     <a:status onstart="abrirModal();" onstop="cerrarModal();"></a:status>
+     <ui:include src="/layout/modalSckVerTodas/modalSolicitudUsuariosDerivadoLista.xhtml" />
+     <ui:include src="/layout/modalSckVerTodas/modalConsultarHitosLista.xhtml" />
+     <ui:include src="/layout/modalSckVerTodas/modalConsultarLogsLista.xhtml" />	
+</ui:define>
+
+
+
+</ui:composition>

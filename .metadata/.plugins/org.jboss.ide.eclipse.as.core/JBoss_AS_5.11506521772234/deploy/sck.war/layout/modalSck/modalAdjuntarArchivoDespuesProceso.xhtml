@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	<rich:modalPanel id="mpAdjuntarArchivoDespuesProceso" autosized="true" width="350"  height="400">
+    	 <f:facet name="header">
+            <h:outputText value="Adjuntar Archivo despúes del proceso" style="padding-right:15px;" />
+        </f:facet>
+    	<f:facet name="controls">
+            <h:panelGroup>
+               	<h:graphicImage value="img/close.png" styleClass="hidelink" id="mpAdjuntarArchivoDespuesProcesohidelink" />
+                <rich:componentControl for="mpAdjuntarArchivoDespuesProceso" attachTo="mpAdjuntarArchivoDespuesProcesohidelink"
+                   	operation="hide" event="onclick" />
+            </h:panelGroup>
+        </f:facet>
+        <h:form id="frm_AdjuntarArchivoCC" enctype="multipart/form-data">
+		     <h:panelGrid>
+	        	<s:decorate template="/layout/edit.xhtml">
+					<ui:define name="label">Archivo</ui:define>
+								<rich:fileUpload id="newPDF_uploadAdjuntoRespuesta"
+							         uploadData="#{respuestaSolicitudAction.uploadFileRespuesta}"
+							         maxFilesQuantity="100" ajaxSingle="true" immediateUpload="false"
+							         acceptedTypes="*" autoclear="false" allowFlash="auto" listHeight="390" listWidth="340"
+							         addControlLabel="Agregar..." cancelEntryControlLabel="Cancelar"
+							         clearAllControlLabel="Limpiar" clearControlLabel="Limpiar" 
+							         stopEntryControlLabel="Parar Proceso" uploadControlLabel="Subir" doneLabel="Hecho" required="false">
+							         <a:support ajaxSingle="true" reRender="newPDF_uploadAdjuntoRespuesta" event="onclear" />
+								</rich:fileUpload>
+	 			</s:decorate>
+        	</h:panelGrid>
+        	<a:commandButton action="#{respuestaSolicitudAction.guardarArchivoRespuesta()}" value="Guardar Archivo" reRender="panelGeneral,mpAdjuntarArchivoDespuesProceso"
+        		oncomplete="if (#{empty facesContext.maximumSeverity}) {#{rich:component('mpAdjuntarArchivoDespuesProceso')}.hide()}"
+        		process="newPDF_uploadAdjuntoRespuesta" /> 
+        		
+        		
+			<a:outputPanel id="mensajeArchivosCC">
+			    <h:messages  globalOnly="true" styleClass="message"
+		    	errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
+			</a:outputPanel>
+			
+        		
+        		
+        </h:form>
+    </rich:modalPanel>
+	
+</ui:composition>

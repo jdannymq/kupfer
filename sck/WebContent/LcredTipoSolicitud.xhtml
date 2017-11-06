@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <rich:panel>
+        <f:facet name="header">Detalle de Tipo de Solicitud</f:facet>
+
+        <s:decorate id="codTipoSolicitud" template="layout/display.xhtml">
+            <ui:define name="label">Codigo Tipo Solicitud</ui:define>
+            <h:inputText value="#{lcredTipoSolicitudHome.instance.codTipoSolicitud}" 
+                        size="3"
+                        maxlength="3"
+                        disabled="true" />
+        </s:decorate>
+
+        <s:decorate id="desTipoSolicitud" template="layout/display.xhtml">
+            <ui:define name="label">Descripción Tipo Solicitud</ui:define>
+            <h:inputText value="#{lcredTipoSolicitudHome.instance.desTipoSolicitud}" 
+                        size="30"
+                        maxlength="30"            
+            			disabled="true"/>
+        </s:decorate>
+
+        <s:decorate id="indBorrado" template="layout/display.xhtml">
+            <ui:define name="label">Ind borrado</ui:define>
+            <h:inputText value="#{lcredTipoSolicitudHome.instance.indBorrado}" disabled="true"/>
+        </s:decorate>
+
+        <s:decorate id="claveProceso" template="layout/display.xhtml">
+            <ui:define name="label">Clave Proceso</ui:define>
+            <h:inputText value="#{lcredTipoSolicitudHome.instance.claveProceso}"
+                        size="3"
+                        maxlength="3"            
+             			disabled="true"/>
+        </s:decorate>
+
+        <div style="clear:both"/>
+
+    </rich:panel>
+
+    <div class="actionButtons">
+
+        <s:button view="/LcredTipoSolicitudEdit.xhtml"
+                    id="edit"
+                 value="Editar"/>
+
+        <s:button view="/#{empty lcredTipoSolicitudFrom ? 'LcredTipoSolicitudList' : lcredTipoSolicitudFrom}.xhtml"
+                    id="done"
+                 value="Volver"/>
+
+    </div>
+
+</ui:define>
+
+</ui:composition>

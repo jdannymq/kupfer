@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:p="http://primefaces.prime.com.tr/ui"
+    template="layout/template.xhtml">
+	
+	<ui:define name="body">
+	<div class="divTitular"><h1>Condición por Tipo de Solicitud</h1></div>
+	
+			<h:form id="frm_condicion_por_tipo_Solicitud">
+				<s:button view="/GenerarSolicitud.xhtml" propagation="none" value="Volver" ></s:button>
+				
+				<h:messages id="messagesEsp" globalOnly="false" styleClass="message"
+		            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
+		            rendered="#{showGlobalMessages != 'false'}" />
+		            
+				<a:commandButton value="Agregar Condición de Tiempo" ajaxSingle="true" action="#{condicionTipoSolicitudRangoAction.initGuardarCondicionTipoSolicitudRango()}" 
+					reRender="frm_condicionMedicionCanalRango_model" oncomplete="#{rich:component('mpCondicionMedicionCanalRango')}.show();" />
+				
+				<rich:panel id="rpCondicionPorTipoSolicitud">
+					<f:facet name="label">Condiciones</f:facet>
+						<rich:extendedDataTable id="dtCondicionPorTipoSolicitud" value="#{mantenedorMaestroAction_condicionTipoSolicitudRango}" var="_condicionTipoSol" noDataLabel="No se encuentran condiciones para las solicitudes" >
+							<f:facet name="header">Codigo</f:facet>
+							<rich:column sortBy="#{_condicionTipoSol.systemId}" label="codigo"  width="30%;" style="text-align: center;">
+								<f:facet name="header">Codigo</f:facet>
+								<h:outputText value="#{_condicionTipoSol.systemId}" ></h:outputText>
+							</rich:column>
+							<rich:column sortBy="#{_condicionTipoSol.tipoSolicitud.desTipoSolicitud}" label="Tipo de Solicitud"  width="30%;" style="text-align: center;">
+								<f:facet name="header">Tipo Solicitud</f:facet>
+								<h:outputText value="#{_condicionTipoSol.tipoSolicitud.desTipoSolicitud}" ></h:outputText>
+							</rich:column>
+							<rich:column filterBy="#{_condicionTipoSol.minutosTotales}" sortBy="#{_condicionTipoSol.minutosTotales}" label="Minutos" width="30%;" style="text-align: center;">
+								<f:facet name="header">Minutos Totales</f:facet>
+								<h:outputText value="#{_condicionTipoSol.minutosTotales}" />
+							</rich:column>	
+							<rich:column filterBy="#{_condicionTipoSol.medicionCanalRango.medicion.descripcion}" sortBy="#{_condicionTipoSol.medicionCanalRango.medicion.descripcion}" label="Descripción" width="30%;" style="text-align: center;">
+								<f:facet name="header">Medición Canal Rango </f:facet>
+								<h:outputText value="#{_condicionTipoSol.medicionCanalRango.medicion.descripcion}" /> <h:outputLabel value="-"/>
+								<br/>
+								<h:outputText value="#{_condicionTipoSol.medicionCanalRango.tiempoMontoType.nombre}" /> <h:outputLabel value="-"/>
+								<br/>
+								<h:outputText value="#{_condicionTipoSol.medicionCanalRango.canal.descripcion}" />
+							</rich:column>
+							<rich:column filterBy="#{_condicionTipoSol.medicionCanalRango.valorInicial}" sortBy="#{_condicionTipoSol.medicionCanalRango.valorInicial}" label="Valor Inicial" width="30%;" style="text-align: center;">
+								<f:facet name="header">Valor Inicial</f:facet>
+								<h:outputText value="#{_condicionTipoSol.medicionCanalRango.valorInicial}" />
+							</rich:column>							
+							<rich:column filterBy="#{_condicionTipoSol.medicionCanalRango.valorFinal}" sortBy="#{_condicionTipoSol.medicionCanalRango.valorFinal}" label="Valor Final" width="30%;" style="text-align: center;">
+								<f:facet name="header">Valor Final</f:facet>
+								<h:outputText value="#{_condicionTipoSol.medicionCanalRango.valorFinal}" />
+							</rich:column>	
+							<rich:column sortBy="#{_condicionTipoSol.disabled}" label="Activo" width="30%;" style="text-align: center;">
+								<f:facet name="header">Activo</f:facet>
+								<h:outputText value="#{_condicionTipoSol.disabled ? 'No':'Si'}" />
+							</rich:column>
+							<rich:column  width="30%;" style="text-align: center;">
+							<f:facet name="header">Acción</f:facet>
+								<a:commandLink value="Editar" ajaxSingle="true" action="#{condicionTipoSolicitudRangoAction.editCondicionTipoSolicitudRango(_condicionTipoSol)}" 
+									oncomplete="#{rich:component('mpCondicionMedicionCanalRango')}.show();" reRender="frm_condicionMedicionCanalRango_model" />
+								#{'/'}
+								<a:commandLink value="Desactivar" rendered="#{!_condicionTipoSol.disabled}" ajaxSingle="true" action="#{condicionTipoSolicitudRangoAction.cambiarActivoCondicionMedicionCanalRango(true,_condicionTipoSol)}" 
+									reRender="rpCondicionPorTipoSolicitud" />
+								<a:commandLink value="Activar" rendered="#{_condicionTipoSol.disabled}" ajaxSingle="true" action="#{condicionTipoSolicitudRangoAction.cambiarActivoCondicionMedicionCanalRango(false,_condicionTipoSol)}" 
+									reRender="rpCondicionPorTipoSolicitud" />
+							</rich:column>								
+						</rich:extendedDataTable>
+				</rich:panel>
+			</h:form>
+		 <a:status onstart="abrirModal();" onstop="cerrarModal();"></a:status>	
+		<ui:include src="/layout/modalSck/modalCondicionMedicionCanalRango.xhtml" />  
+	</ui:define>
+</ui:composition>
+

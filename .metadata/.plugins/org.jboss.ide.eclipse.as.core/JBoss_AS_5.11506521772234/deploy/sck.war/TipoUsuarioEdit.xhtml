@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="tipoUsuario" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{tipoUsuarioHome.managed ? 'Editar' : 'Agregar'} Tipo Usuario</f:facet>
+
+
+            <s:decorate id="idTipoField" template="layout/edit.xhtml">
+                <ui:define name="label">Id Tipo</ui:define>
+                <h:inputText id="idTipo"
+                       required="false"
+                       disabled="true"
+                          value="#{tipoUsuarioHome.instance.idTipo}">
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="descripcionField" template="layout/edit.xhtml">
+                <ui:define name="label">Descripció	n</ui:define>
+                <h:inputTextarea id="descripcion"
+                               cols="80"
+                               rows="3"
+                           required="true"
+                              value="#{tipoUsuarioHome.instance.descripcion}">
+                              <a:support event="onblur" reRender="descripcionField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputTextarea>              
+            </s:decorate>
+            <s:decorate id="abreviadoField" template="layout/edit.xhtml">
+                <ui:define name="label">Abreviado</ui:define>
+                <h:inputText id="abreviado"
+       						maxlength="3"
+       						size="3"
+                           required="true"
+                              value="#{tipoUsuarioHome.instance.abreviado}">
+                		 <a:support event="onblur" reRender="abreviadoField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>              
+            </s:decorate>
+             <s:decorate id="comboTipoField" template="/layout/edit.xhtml">
+                <ui:define name="label">Estado</ui:define>
+					<h:selectOneMenu id="idComboTipo"
+                		          value="#{tipoUsuarioHome.estadoAux}"
+                		       required="false"
+                		          style="width :200px;">
+                  	    <s:selectItems value="#{tipoUsuarioHome.listaEstados}" 
+                  	                     var="tipo" 
+                  	    hideNoSelectionLabel="true" 
+                  	        noSelectionLabel="Seleccionar Estado..."
+               			               label="#{tipo}"/>
+					</h:selectOneMenu>	
+            </s:decorate>            
+            <div style="clear:both">
+                <span class="required">*</span>
+                campos requeridos.
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Guardar"
+                         action="#{tipoUsuarioHome.persist}"
+                       disabled="#{!tipoUsuarioHome.wired}"
+                       rendered="#{!tipoUsuarioHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="Modificar"
+                         action="#{tipoUsuarioHome.update}"
+                       rendered="#{tipoUsuarioHome.managed}"/>
+			<ui:remove>
+            <h:commandButton id="delete"
+                          value="Delete"
+                         action="#{tipoUsuarioHome.remove}"
+                      immediate="true"
+                       rendered="#{tipoUsuarioHome.managed}"/>
+			</ui:remove>
+            <s:button id="cancelEdit"
+                   value="Cancelar"
+             propagation="end"
+                    view="/TipoUsuario.xhtml"
+                rendered="#{tipoUsuarioHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="Cancelar"
+             propagation="end"
+                    view="/#{empty tipoUsuarioFrom ? 'TipoUsuarioList' : tipoUsuarioFrom}.xhtml"
+                rendered="#{!tipoUsuarioHome.managed}"/>
+
+        </div>
+    </h:form>
+
+</ui:define>
+
+</ui:composition>

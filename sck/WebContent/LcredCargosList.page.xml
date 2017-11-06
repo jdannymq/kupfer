@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+      login-required="true">
+      
+      <restrict>#{identity.menu.listCargo == true}</restrict>
+
+   <param name="firstResult" value="#{lcredCargosList.firstResult}"/>
+   <param name="sort" value="#{lcredCargosList.orderColumn}"/>
+   <param name="dir" value="#{lcredCargosList.orderDirection}"/>
+   <param name="logic" value="#{lcredCargosList.restrictionLogicOperator}"/>
+
+   <param name="from"/>
+   <param name="codCargo" value="#{lcredCargosList.lcredCargos.codCargo}"/>
+   <param name="desCargo" value="#{lcredCargosList.lcredCargos.desCargo}"/>
+
+</page>

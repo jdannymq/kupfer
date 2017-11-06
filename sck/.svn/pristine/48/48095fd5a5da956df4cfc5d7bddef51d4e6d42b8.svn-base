@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	
+	<rich:modalPanel id="mpAgregarCotizacionRespuesta" width="1200" height="550">
+		<f:facet name="header">
+			<h:outputText value="Productos o Pedidos"	style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:form>
+					<a:commandLink	ajaxSingle="true">
+						<h:graphicImage value="img/close.png" styleClass="hidelink"	id="mpAgregarCotizacionRespuestalink" />
+					</a:commandLink>
+					<rich:componentControl for="mpAgregarCotizacionRespuesta"
+						attachTo="mpAgregarCotizacionRespuestalink" operation="hide"
+						event="onclick" 
+						/>
+				</h:form>
+			</h:panelGroup>
+		</f:facet>
+		
+		<rich:panel>
+			<h:form id = "frm_pedidoCotizacion_respuesta">
+				<a:outputPanel id="panelAGrupado">
+				  <div style="height:370px; overflow: auto;">
+					<rich:dataTable id="pedCot1" value="#{respuestaSolicitudDerivadaAction.listaCotPedDTOs}" var="_cc" columns="12">
+                    <f:facet name="header">
+                        <rich:columnGroup>
+                            <rich:column rowspan="2">
+                                <h:outputText value="Pedido o Cotización" />
+                            </rich:column>
+                            <rich:column rowspan="2">
+                                <h:outputText value="Negocio" />
+                            </rich:column>
+                            <rich:column rowspan="2">
+                                 <h:outputText value="Concepto" />
+                            </rich:column>
+                            <rich:column colspan="3">
+                                <h:outputText value="Productos" />
+                            </rich:column>
+                            <rich:column rowspan="2">
+                                <h:outputText value="Monto + Iva" />
+                            </rich:column>
+                            <rich:column rowspan="2" style="width:50px;">
+                                <h:outputText value="Margen Concepto %" />
+                            </rich:column>
+
+                            <rich:column rowspan="2" style="width:70px;">
+                                <h:outputText value="Monto Negocio + Iva" />
+                            </rich:column> 
+                            <rich:column rowspan="2" style="width:50px;" >
+                                <h:outputText value="Margen Negocio %" />
+                            </rich:column > 
+                            <rich:column rowspan="2" style="width:90px;">
+                                <h:outputText value="Total Pedido o Cotización" />
+                            </rich:column>
+                            <rich:column rowspan="2" style="width:50px;">
+                                <h:outputText value="Margen Pedido %" />
+                            </rich:column>                                                                                    
+                            <rich:column breakBefore="true">
+                                <h:outputText value="Producto" />
+                            </rich:column>
+                            <rich:column>
+                                <h:outputText value="Monto $" />
+                            </rich:column>
+                            <rich:column style="width:50px;">
+                                <h:outputText value="Margen Producto %" />
+                            </rich:column>
+                        </rich:columnGroup>
+                    </f:facet>					
+
+                     <rich:column colspan="10">
+                           <h:outputText value="#{_cc.numeroCotizacion} " />
+                     </rich:column> 
+                     <rich:column style="text-align:right">
+                           <h:outputText value="#{_cc.montoTotal}">
+                           		 <f:convertNumber type="currency" currencySymbol="$ "/>
+                           </h:outputText>
+                     </rich:column>                     	
+                     <rich:column  style="text-align:center">
+                           <h:outputText value="#{_cc.margenGlobal}">
+                           		 <f:convertNumber   pattern="###0.00"  />
+                           </h:outputText>
+                     </rich:column>	 
+					 <rich:subTable id="pedCot2" value="#{_cc.listaCabeceraCotPeds}" var="_cp">
+                   		  <rich:column>
+                                <h:outputText value="#{' '}" />
+                          </rich:column>					 
+	                     <rich:column colspan="7">
+	                           <h:outputText value="#{_cp.negocio.desNegocio}" />
+	                     </rich:column>
+	                     <rich:column style="text-align:right">
+	                           <h:outputText value="#{_cp.montoGeneral}">
+	                           		 <f:convertNumber type="currency" currencySymbol="$ "/>
+	                           </h:outputText>
+	                     </rich:column>	 
+	                     <rich:column style="text-align:center">
+	                           <h:outputText value="#{_cp.porcentaje}">
+	                           		 <f:convertNumber   pattern="###0.00"  />
+	                           </h:outputText>
+	                     </rich:column>	                     	
+                   		  <rich:column>
+                                <h:outputText value="#{' '}" />
+                          </rich:column>	                     	
+                   		  <rich:column>
+                                <h:outputText value="#{' '}" />
+                          </rich:column>	                     	
+                        	   <rich:subTable value="#{_cp.listaDetalle}" var="_cpDetalle" >
+                           		  <rich:column>
+                                        <h:outputText value="#{' '}" />
+                                  </rich:column>
+                           		  <rich:column>
+                                        <h:outputText value="#{' '}" />
+                                  </rich:column>
+                                  <rich:column>
+                                        <h:outputText value="#{_cpDetalle.negocio.descripcion}" />
+                                  </rich:column>
+		                          <rich:column colspan="3">
+		                                <rich:spacer />
+		                          </rich:column>                                  
+	                             <rich:column styleClass="currency-text" >
+	                                   <h:outputText value="#{_cpDetalle.monto}"><f:convertNumber type="currency" currencySymbol="$ "/> </h:outputText>
+	                             </rich:column> 
+	                             <rich:column style="text-align:center">
+	                                   <h:outputText value="#{_cpDetalle.porcePorConcepto}"><f:convertNumber pattern="###0.00" /></h:outputText>
+	                             </rich:column>                                     
+                            	 <rich:column>
+                                        <h:outputText value="#{' '}" />
+                                  </rich:column>
+                           		  <rich:column>
+                                        <h:outputText value="#{' '}" />
+                                  </rich:column>                                                                    
+                           		  <rich:column>
+                                        <h:outputText value="#{' '}" />
+                                  </rich:column>  
+                           		  <rich:column>
+                                        <h:outputText value="#{' '}" />
+                                  </rich:column>
+								     <rich:subTable value="#{_cpDetalle.listaDetalleCp}" var="_cpSubDetalleCp" >
+		                           		  <rich:column>
+		                                        <h:outputText value="#{' '}" />
+		                                  </rich:column>
+		                           		  <rich:column>
+		                                        <h:outputText value="#{' '}" />
+		                                  </rich:column>
+		                           		  <rich:column>
+		                                        <h:outputText value="#{' '}" />
+		                                  </rich:column>                                  								     
+										 <rich:column>
+											   <h:outputText value="#{_cpSubDetalleCp.nombre}" />
+										 </rich:column>
+										 <rich:column styleClass="currency-text">
+											   <h:outputText value="#{_cpSubDetalleCp.monto}"><f:convertNumber type="currency" currencySymbol="$ "/></h:outputText>
+										 </rich:column>
+										 <rich:column style="text-align:center">
+											   <h:outputText value="#{_cpSubDetalleCp.margen}"> <f:convertNumber   pattern="###0.00"  /></h:outputText>
+										 </rich:column>
+		                           		  <rich:column>
+		                                        <h:outputText value="#{' '}" />
+		                                  </rich:column>
+		                           		  <rich:column>
+		                                        <h:outputText value="#{' '}" />
+		                                  </rich:column>
+		                           		  <rich:column>
+		                                        <h:outputText value="#{' '}" />
+		                                  </rich:column> 
+		                           		  <rich:column>
+		                                        <h:outputText value="#{' '}" />
+		                                  </rich:column>                                    										 
+		                           		  <rich:column>
+		                                        <h:outputText value="#{' '}" />
+		                                  </rich:column> 
+		                           		  <rich:column>
+		                                        <h:outputText value="#{' '}" />
+		                                  </rich:column> 
+								     </rich:subTable>
+                            	
+                            </rich:subTable>
+                     </rich:subTable>
+                   </rich:dataTable>
+			      </div>				
+				</a:outputPanel>
+			</h:form>
+
+		</rich:panel>
+		<rich:panel>
+		  <a:outputPanel id="montos">
+			<table cellpadding="0" cellspacing="0" border="0" width="100%" >
+				<tr>
+					<td  align="left" colspan="2" >
+    					<strong style="font-size:10px">
+				
+    					</strong>					
+					</td>
+				</tr>
+				
+				<tr>
+					<td width="80%" align="right">Margen Total :</td>
+					<td align="left"><h:inputText  value="#{respuestaSolicitudDerivadaAction.porcentajeGlobal}" size="20" disabled="true" style="width:60%;text-align:right;">
+										<f:convertNumber   pattern="###0.00"  />
+									</h:inputText>
+									%
+					</td>
+				</tr>
+				<tr>
+					<td width="80%" align="right">Monto Neto :</td>
+					<td align="left"><h:inputText  value="#{respuestaSolicitudDerivadaAction.montoTotalNeto}" size="20" disabled="true" style="width:60%;text-align:right;">
+										<f:convertNumber type="currency" currencySymbol="$ "/>
+									</h:inputText>
+					</td>
+				</tr>
+				<tr>
+					<td width="80%" align="right">Monto Total :</td>
+					<td align="left"><h:inputText  value="#{respuestaSolicitudDerivadaAction.montoTotal}" size="20" disabled="true" style="width:60%;text-align:right;"
+												   >
+										<f:convertNumber type="currency" currencySymbol="$ "/>
+									</h:inputText>
+					</td>
+				</tr>				
+			</table>
+		  </a:outputPanel>	
+		</rich:panel>
+	
+	</rich:modalPanel>
+	
+</ui:composition>

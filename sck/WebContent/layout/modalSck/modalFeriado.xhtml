@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+
+	<style type="text/css">
+.top {
+	vertical-align: top;
+}
+</style>
+
+	<rich:modalPanel id="mpFeriado" autosized="true" width="350" >
+		<f:facet name="header">
+			<h:outputText value="Agregar Feriado" style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+
+			<h:panelGroup>
+				<h:graphicImage value="img/close.png" styleClass="hidelink"
+					id="mpFeriadohidelink" />
+				<rich:componentControl for="mpFeriado" attachTo="mpFeriadohidelink"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+
+		</f:facet>
+		<h:form id="frm_Tiempo">
+			<h:messages id="messagesEsp" globalOnly="true" styleClass="message"
+				errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
+				rendered="#{showGlobalMessages != 'false'}" />
+			<h:panelGrid columns="2">
+				<s:decorate template="/layout/edit.xhtml">
+					<ui:define name="label">Año</ui:define>
+					<h:inputText value="#{feriadosAction.feriadoTarget.anno}"
+					size="4"
+					maxlength="4" />
+				</s:decorate>
+				<s:decorate template="/layout/edit.xhtml">
+					<ui:define name="label">Fecha</ui:define>
+					<rich:calendar value="#{feriadosAction.feriadoTarget.fecha}" datePattern="dd-MM-yyyy" required="true" requiredMessage="Debe Ingresar el nombre del feriado" />
+				</s:decorate>
+			</h:panelGrid>
+			<div>
+				<a:commandButton value="Guardar"
+					action="#{feriadosAction.guardarFeriado()}"
+					reRender="frm_Tiempo,dtFeriados"
+					oncomplete="if(#{empty facesContext.maximumSeverity}) {#{rich:component('mpFeriado')}.hide(); alert('Guardado correctamente');}"
+					/>
+
+			</div>
+
+		</h:form>
+
+
+	</rich:modalPanel>
+
+</ui:composition>

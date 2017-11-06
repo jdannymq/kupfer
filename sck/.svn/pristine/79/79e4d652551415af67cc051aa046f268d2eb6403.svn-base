@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	
+	<rich:modalPanel id="mpRevisarConceptoMontoRespuesta" autosized="true" width="800" height="300">
+		<f:facet name="header">
+			<h:outputText value="Conceptos y Montos Cotizados"	style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:form>
+					<a:commandLink	ajaxSingle="true">
+						<h:graphicImage value="img/close.png" styleClass="hidelink"	id="mpRevisarConceptoMontoRespuestalink" />
+					</a:commandLink>
+					<rich:componentControl for="mpRevisarConceptoMontoRespuesta"
+						attachTo="mpRevisarConceptoMontoRespuestalink" operation="hide"
+						event="onclick" />
+				</h:form>
+			</h:panelGroup>
+		</f:facet>
+		<rich:panel>
+			<h:form id = "frm_revisarConceptoMonto">
+		    	<div class="results" id="grillaRevisarConceptoMonto" style="height:300px; overflow: auto;">
+			   		<h:outputText value="No existe ningun concepto en la cotización para la generación de la solictud." 
+			   		           rendered="#{empty generarSolicitudAction.listaConceptosMontos}"/>
+				    <rich:dataTable id="idConceptosMontos"
+				                var="_cm"
+				              value="#{generarSolicitudAction.listaConceptosMontos}"
+				           rendered="#{not empty generarSolicitudAction.listaConceptosMontos}">
+				        <rich:column width="50px;" style="text-align: center;">
+				            <f:facet name="header">Negocio</f:facet>
+							<h:outputText value="#{_cm.negocio}"/>
+				        </rich:column>
+				        <rich:column width="50px;" style="text-align: center;">
+				            <f:facet name="header">Concepto</f:facet>
+				            <h:outputText value="#{_cm.concepto}"/>
+				        </rich:column>
+				        <rich:column width="100px;" style="text-align: left;">
+				            <f:facet name="header">Descripción</f:facet>
+				            <h:outputText value="#{_cm.descripcion}"/>
+				        </rich:column>				        				        
+				        <rich:column width="100px;" style="text-align: center;">
+				            <f:facet name="header">Monto Cotizado</f:facet>
+				            <h:outputText value="#{_cm.monto}">
+		            			<f:convertNumber currencySymbol="$" groupingUsed="#{true}"
+	  									maxFractionDigits="0" type="currency"/> 				            
+				            </h:outputText>
+				        </rich:column>
+				        <rich:column width="50px;" style="text-align: center;">
+				            <f:facet name="header">Incluido</f:facet>
+				            <h:outputText value="#{_cm.marca}" />
+				        </rich:column>				        
+				    </rich:dataTable>
+			    </div>
+			    <br/>
+			    <br/>
+			    <br/>
+			    <div class="results" id="montofinalEspacio">
+		        	<s:decorate template="/layout/display.xhtml" >
+						<ui:define name="label"></ui:define>
+					</s:decorate>
+				</div>
+			    <div class="results" id="montofinal">
+		        	<s:decorate template="/layout/display.xhtml" >
+						<ui:define name="label">Total Cotizado</ui:define>
+						<h:inputText id="idTotalMontoCotizado" 
+									value="#{generarSolicitudAction.montoGeneralConceptoMonto}" 
+						         disabled="true"
+							       maxlength="45"
+							       size="20"
+							       style="text-align:right;">
+							      <f:convertNumber currencySymbol="$" groupingUsed="#{true}"
+		  									maxFractionDigits="0" type="currency"/> 
+						</h:inputText>	        	
+					</s:decorate>
+				</div>
+			</h:form>
+		</rich:panel>
+	</rich:modalPanel>
+	
+</ui:composition>

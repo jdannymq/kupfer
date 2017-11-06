@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	
+	<rich:modalPanel id="mpIngresoObservaciones" autosized="true" width="800">
+		<f:facet name="header">
+			<h:outputText value="Ingreso de Observaciones"	style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:form>
+					<a:commandLink	ajaxSingle="true" action="#{respuestaSolicitudDerivadaAction.limpiarObservaciones()}">
+						<h:graphicImage value="img/close.png" styleClass="hidelink"	id="mpIngresoObservacioneslink" />
+					</a:commandLink>
+					<rich:componentControl for="mpIngresoObservaciones"
+						attachTo="mpIngresoObservacioneslink" operation="hide"
+						event="onclick" />
+				</h:form>
+			</h:panelGroup>
+		</f:facet>
+		<h:form id = "frm_consultaObservaciones">
+		<rich:panel>
+			<f:facet name="header"><h:outputText value="Información de Solicitud"	style="padding-right:15px;" /></f:facet>	
+				<table cellpadding="0" cellspacing="0" width="100%">
+					<tr>
+						<td> Solicitud </td>
+						<td> Código</td>
+						<td> Descripción</td>						
+					</tr>
+					<tr>
+						<td>
+							<h:inputText id="idSolicitud" 
+										value="#{respuestaSolicitudDerivadaAction.solicitud.id.numSolicitud}" 
+							          required="false"  
+								       maxlength="10"
+								       size="10" 
+								       disabled="true">
+							</h:inputText>	
+						</td>
+						<td>
+							<h:inputText id="idTipoCodSolicitud" 
+										value="#{respuestaSolicitudDerivadaAction.tipoSolicitudAux.codTipoSolicitud}" 
+							          required="false"  
+								       maxlength="120"
+								       size="10" 
+								       disabled="true" >
+							</h:inputText>							
+						</td>
+						<td>
+							<h:inputText id="idTipodesSolicitud" 
+										value="#{respuestaSolicitudDerivadaAction.tipoSolicitudAux.desTipoSolicitud}" 
+							          required="false"  
+								       maxlength="120"
+								       size="50" 
+								       disabled="true" >
+							</h:inputText>							
+						</td>							
+					</tr>	
+				</table>						
+		</rich:panel>
+
+
+		<rich:panel>
+				<f:facet name="header"><h:outputText value="Observaciones"	style="padding-right:15px;" /></f:facet>
+				<table cellpadding="0" cellspacing="0" width="100%">
+					<tr>
+						<td>
+							<h:inputTextarea id="idObservacion" 
+										value="#{respuestaSolicitudDerivadaAction.observacionesModel}" 
+							          required="false"  
+								       rows="3"
+								       cols="50"
+								       disabled="false">
+							</h:inputTextarea>							
+						 </td>
+						 <td> 
+		    				 <a:commandButton value="Guardar" 
+		    				 	reRender="grillaObservacion,panelMensaje,idObservacion"
+                           	 	ajaxSingle="true" 
+                            	action="#{respuestaSolicitudDerivadaAction.gnuardarObservaciones()}" 
+                            	process="idObservacion"
+                			  />						 
+						 </td>	
+					</tr>
+					<tr>
+						<td>
+				     		<a:outputPanel id="panelMensaje" >
+					    		<h:messages  globalOnly="true" styleClass="message"
+						            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
+					        </a:outputPanel>   
+						 </td>	
+					</tr>					
+					
+					
+				</table>
+		</rich:panel>
+
+		<rich:panel>
+				<f:facet name="header"><h:outputText value="Lista de Observaciones"	style="padding-right:15px;" /></f:facet>
+		    	<a:outputPanel id="grillaObservacion">
+		    	<div class="results" id="grillaObservaciones" style="height:250px; overflow: auto;">
+			   		<h:outputText value="No existe ninguna observacion en esta solicitud." 
+			   		           rendered="#{empty respuestaSolicitudDerivadaAction.listaObservaciones}"/>
+				    <rich:dataTable id="idListaObservacioes"
+				                var="_sh"
+				              value="#{respuestaSolicitudDerivadaAction.listaObservaciones}"
+				           rendered="#{not empty respuestaSolicitudDerivadaAction.listaObservaciones}">
+				        <rich:column style="width:50px;">
+				            <f:facet name="header">Item</f:facet>
+				            <h:outputText value="#{_sh.id.correlativo}"/>
+				        </rich:column>
+				        
+				        <rich:column style="width:50px;">
+				            <f:facet name="header">Tipo</f:facet>
+				            <h:outputText value="#{_sh.id.tipoSol}"/>
+				        </rich:column>
+				        <rich:column style="width:80px;">
+				            <f:facet name="header">Fecha</f:facet>
+				            <h:outputText value="#{_sh.id.fecha}">
+				            	<s:convertDateTime pattern="dd-MM-yyyy" />
+				            </h:outputText>
+				        </rich:column>
+				        <rich:column style="width:50px;">
+				            <f:facet name="header">Hora</f:facet>
+				        	<h:outputText value="#{_sh.id.hora}">
+				            	<s:convertDateTime pattern="HH:mm" />
+				            </h:outputText>
+				        </rich:column>
+				        <rich:column style="width:120px;">
+				            <f:facet name="header">Usuario</f:facet>
+				        	<h:outputText value="#{_sh.id.usuario}" />
+				        </rich:column>				        
+				        <h:column style="width:200px;">
+				            <f:facet name="header">Observaciones</f:facet>
+				            	<span style="word-wrap: break-word; max-width:200px; width:200px;">
+				               		 #{_sh.id.observacion}
+				               </span>
+				        </h:column>
+
+
+				    </rich:dataTable>
+			    </div>
+			   </a:outputPanel> 
+		</rich:panel>
+
+
+   	</h:form>
+
+	</rich:modalPanel>
+	
+</ui:composition>

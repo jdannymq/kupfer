@@ -1,0 +1,4 @@
+#
+#Fri Aug 24 13:02:49 CLT 2012
+jndiPattern=\#{ejbName}/local
+embeddedEjb=false

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:p="http://primefaces.prime.com.tr/ui"
+    template="layout/template.xhtml">
+	
+	<ui:define name="body">
+	<div class="divTitular"><h1>Jornadas</h1></div>
+	
+			<h:form id="frm_jornadas">
+				<s:button view="/GenerarSolicitud.xhtml" propagation="none" value="Volver" ></s:button>
+				
+				<h:messages id="messagesEsp" globalOnly="false" styleClass="message"
+		            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
+		            rendered="#{showGlobalMessages != 'false'}" />
+		            
+				<a:commandButton value="Agregar Jornada" ajaxSingle="true" action="#{jornadaAction.initGuardarJornada()}" 
+					reRender="frm_jornada_modal" oncomplete="#{rich:component('mpJornada')}.show();" />
+				
+				<rich:panel id="rpJornada">
+					<f:facet name="label">Turnos</f:facet>
+						<rich:extendedDataTable id="dtJornada" value="#{mantenedorMaestroAction_jornada}" var="_jornada" noDataLabel="No se encuentran jornadas" >
+							
+							<f:facet name="header">Item</f:facet>
+							<rich:column sortBy="#{_jornada.systemId}" label="Codigo"  width="30%;" style="text-align: center;">
+								<f:facet name="header">Codigo</f:facet>
+								<h:outputText value="#{_jornada.systemId}" />
+							</rich:column>
+							<rich:column filterBy="#{_jornada.horaInicial}" sortBy="#{_jornada.horaInicial}" label="Hora Inicial" width="30%;" style="text-align: center;">
+								<f:facet name="header">Hora Inicial</f:facet>
+								<h:outputText value="#{_jornada.horaInicial}" >
+									<s:convertDateTime pattern="HH:mm"></s:convertDateTime>
+								</h:outputText>
+							</rich:column>
+							<rich:column filterBy="#{_jornada.horaFinal}" sortBy="#{_jornada.horaFinal}" label="Hora Final" width="30%;" style="text-align: center;">
+								<f:facet name="header">Hora Final</f:facet>
+								<h:outputText value="#{_jornada.horaFinal}" >
+									<s:convertDateTime pattern="HH:mm"></s:convertDateTime>
+								</h:outputText>
+							</rich:column>
+							<rich:column sortBy="#{_jornada.disabled}" label="Activo" width="30%;" style="text-align: center;">
+								<f:facet name="header">Activo</f:facet>
+								<h:outputText value="#{_jornada.disabled ? 'No':'Si'}" />
+							</rich:column>
+							<rich:column  width="30%;" style="text-align: center;">
+							<f:facet name="header">Acción</f:facet>
+								<a:commandLink value="Editar" ajaxSingle="true" action="#{jornadaAction.editJornada(_jornada)}" 
+									oncomplete="#{rich:component('mpJornada')}.show();" reRender="frm_jornada_modal" />
+								#{'/'}
+								<a:commandLink value="Desactivar" rendered="#{!_jornada.disabled}" ajaxSingle="true" action="#{jornadaAction.cambiarActivoJornada(true,_feriados)}" 
+									reRender="rpJornada" />
+								<a:commandLink value="Activar" rendered="#{__jornada.disabled}" ajaxSingle="true" action="#{jornadaAction.cambiarActivoJornada(false,_feriados)}" 
+									reRender="rpJornada" />
+							</rich:column>								
+						</rich:extendedDataTable>
+				</rich:panel>
+			</h:form>
+		 <a:status onstart="abrirModal();" onstop="cerrarModal();"></a:status>	
+		<ui:include src="/layout/modalSck/modalJornada.xhtml" />  
+	</ui:define>
+</ui:composition>
+

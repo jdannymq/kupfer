@@ -1,0 +1,553 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<p:document xmlns:p="http://jboss.com/products/seam/pdf"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:h="http://java.sun.com/jsf/html" title="PDF Perfil de Riesgo"
+	orientation="portrait" margins="15.0 15.0 5.0 5.0">
+	<p:font name="courier" style="NORMAL" size="6">
+		<p:html>
+		<table border="0" width="100%" cellpadding="0">
+			<tr>
+				<td width="30%">
+					<table border="0" style="font-size: 6px;" width="95%" height="100%">
+						<tr>
+							<td>Kupfer Hnos.</td>
+						</tr>
+						<tr>
+							<td>Depto de Crédito y Riesgo</td>
+						</tr>
+					</table>
+				</td>
+				<td width="70%">
+					<table border="0" width="100%">
+						<tr>
+							<td style="text-align: center; font-size: 8px;">Fecha
+								Impresion:</td>
+							<td><h:outputText style="font-size: 8px;"
+									value="#{respuestaSolicitudAction.fechaHoy}">
+									<f:convertDateTime pattern="dd-MM-yyyy"></f:convertDateTime>
+								</h:outputText></td>
+							<td style="text-align: center; font-size: 8px;">Fecha
+								Solicitud:</td>
+							<td><h:outputText style="font-size: 8px;"
+									value="#{respuestaSolicitudAction.solicitud.id.fecSolicitud}">
+									<f:convertDateTime pattern="dd-MM-yyyy"></f:convertDateTime>
+								</h:outputText></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+
+
+
+		<br />
+		</p:html>
+
+		<p:table columns="1" widthPercentage="100">
+			<p:cell horizontalAlignment="center" backgroundColor="#EEEEEE">
+				<p:paragraph>
+					<p:font size="9">
+						<p:text value="SOLICITUD DE PRORROGA KUPFER HNOS."></p:text>
+					</p:font>
+
+				</p:paragraph>
+			</p:cell>
+		</p:table>
+
+		<p:table columns="1" widthPercentage="100">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" />
+			</f:facet>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:font size="7">
+						<p:text
+							value="Solicitud Nro: #{respuestaSolicitudAction.solicitud.id.numSolicitud}"></p:text>
+						<p:text value=" "></p:text>
+						<p:text value="Estado Solicitud: #{respuestaSolicitudAction.cliente.estadoSolicitud.toUpperCase(globalLocale)}"></p:text>
+					</p:font>
+
+				</p:paragraph>
+			</p:cell>
+		</p:table>
+
+		<p:html>
+		<br />
+		</p:html>
+		<p:table columns="1" widthPercentage="100">
+			<p:cell horizontalAlignment="center" backgroundColor="#EEEEEE">
+				<p:paragraph>
+					<p:font size="9">
+						<p:text value="Datos CLiente"></p:text>
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+		</p:table>
+			<p:table columns="4" widthPercentage="100"  widths="1 3 1 3"  >
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0"></p:cell>
+			</f:facet>
+			<p:cell >Rut Cliente:</p:cell>
+			<p:cell>#{respuestaSolicitudAction.cliente.rut}</p:cell>
+			<p:cell>Tipo Cliente:</p:cell>
+			<p:cell>#{respuestaSolicitudAction.cliente.tipoCliente}</p:cell>
+
+			<p:cell>Nombre:</p:cell>
+			<p:cell>#{respuestaSolicitudAction.cliente.razonSocial}</p:cell>
+			<p:cell>Fono Fax:</p:cell>
+			<p:cell>#{respuestaSolicitudAction.cliente.fono} - #{respuestaSolicitudAction.cliente.fax}</p:cell>
+
+			<p:cell>Giro:</p:cell>
+			<p:cell>#{respuestaSolicitudAction.cliente.giro}</p:cell>
+			<p:cell>Sucursal:</p:cell>
+			<p:cell>#{respuestaSolicitudAction.cliente.sucursalCliente}</p:cell>		
+		
+			<p:cell>Dirección:</p:cell>
+			<p:cell>#{respuestaSolicitudAction.cliente.direccion}</p:cell>
+			<p:cell>Solicitante:</p:cell>
+			<p:cell>#{respuestaSolicitudAction.lcredUsuarioNivelEnc.id.nombreUsuario}</p:cell>	
+
+			<p:cell>Ciudad:</p:cell>
+			<p:cell>#{respuestaSolicitudAction.cliente.ciudad}</p:cell>
+			<p:cell></p:cell>
+			<p:cell></p:cell>	
+
+			<p:cell>Canal Venta:</p:cell>
+			<p:cell>#{respuestaSolicitudAction.cliente.canalVenta}</p:cell>
+			<p:cell></p:cell>
+			<p:cell></p:cell>	
+
+		</p:table>	
+		
+		<p:html>
+		<br />
+		</p:html>
+		<p:table columns="1" widthPercentage="100">
+			<p:cell horizontalAlignment="center" backgroundColor="#EEEEEE">
+				<p:paragraph>
+					<p:font size="9">
+						<p:text value="Antecedentes del cliente en SAP"></p:text>
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+		</p:table>
+		<p:table columns="6" widthPercentage="100"  widths="2 2 2 2 2 2"  >
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" > </p:cell>
+				
+			</f:facet>
+			
+			<p:cell ></p:cell>
+			<p:cell> </p:cell>
+			<p:cell></p:cell>
+			<p:cell></p:cell>
+			<p:cell></p:cell>
+			<p:cell></p:cell>	
+			
+			<p:cell >L.Crédito KH:</p:cell>
+			<p:cell > <p:html>
+						<h:outputText
+							value="#{respuestaSolicitudAction.cliente.lineaCreditoKH}" style="text-align: left; font-size: 6px;">
+							<f:convertNumber maxFractionDigits="0" locale="cl" />
+						</h:outputText>
+					</p:html>
+			</p:cell>
+			<p:cell>Condición de Pago</p:cell>
+			<p:cell> 
+					<p:html>
+						<h:outputText
+							value="#{respuestaSolicitudAction.cliente.condicionPago}" style="text-align: left; font-size: 6px;">
+						</h:outputText>
+					</p:html>			
+			</p:cell>
+			<p:cell>Monto Seguro UF</p:cell>
+			<p:cell>
+					<p:html>
+						<h:outputText
+							value="#{respuestaSolicitudAction.cliente.montoSeguroUf}" style="text-align: left; font-size: 6px;">
+							<f:convertNumber maxFractionDigits="0" locale="cl" />
+						</h:outputText>	
+					</p:html>		
+			</p:cell>
+		
+		
+			<p:cell >L.Crédito KH Utilizado</p:cell>
+			<p:cell> <p:html>
+						<h:outputText
+							value="#{respuestaSolicitudAction.cliente.lineaCreditoKHUtilizado}" style="text-align: left; font-size: 6px;">
+							<f:convertNumber maxFractionDigits="0" locale="cl" />
+						</h:outputText>
+					</p:html>
+			</p:cell>
+			<p:cell>Clasificación Riesgo</p:cell>
+			<p:cell>
+					<p:html>
+						<h:outputText
+							value="#{respuestaSolicitudAction.cliente.clasificacionRiesgo}" style="text-align: left; font-size: 6px;">
+						</h:outputText>
+					</p:html>	
+					
+			</p:cell>
+			<p:cell>Ventas Prom 12 Meses</p:cell>
+			<p:cell>
+					<p:html>
+						<h:outputText
+							value="#{respuestaSolicitudAction.cliente.ventasProm12Meses}" style="text-align: left; font-size: 6px;">
+							<f:convertNumber maxFractionDigits="0" locale="cl" />
+						</h:outputText>	
+					</p:html>		
+			</p:cell>
+
+			<p:cell >Estado L.Crédito KH</p:cell>
+			<p:cell> <p:html>
+						<h:outputText
+							value="#{respuestaSolicitudAction.cliente.estadoLineaCreditoKH}" style="text-align: left; font-size: 6px;">
+						</h:outputText>
+					</p:html>
+			</p:cell>
+			<p:cell>Tipo Seguro</p:cell>
+			<p:cell> <p:html>
+						<h:outputText
+							value="#{respuestaSolicitudAction.cliente.seguro}" style="text-align: left; font-size: 6px;">
+						</h:outputText>
+					</p:html>
+			</p:cell>
+			<p:cell>Fact.Prom 12 Meses</p:cell>
+			<p:cell>
+					<p:html>
+						<h:outputText
+							value="#{respuestaSolicitudAction.cliente.factProm12Meses}" style="text-align: left; font-size: 6px;">
+						</h:outputText>
+					</p:html>			
+			</p:cell>				
+
+
+			<p:cell >Número RV</p:cell>
+			<p:cell> <p:html>
+						<h:outputText
+							value="#{respuestaSolicitudAction.cliente.numeroRV}" style="text-align: left; font-size: 6px;">
+						</h:outputText>
+					</p:html>
+			</p:cell>
+			<p:cell>Monto Seguro $</p:cell>
+			<p:cell> <p:html>
+						<h:outputText
+							value="#{respuestaSolicitudAction.cliente.montoSeguro}" style="text-align: left; font-size: 6px;">
+							<f:convertNumber maxFractionDigits="0" locale="cl" />
+						</h:outputText>
+					</p:html>
+			</p:cell>
+			<p:cell>Cant. Meses Ventas</p:cell>
+			<p:cell>
+					<p:html>
+						<h:outputText
+							value="#{respuestaSolicitudAction.cliente.cantMesesVentas}" style="text-align: left; font-size: 6px;">
+							<f:convertNumber maxFractionDigits="0" locale="cl" />
+						</h:outputText>
+					</p:html>
+			</p:cell>				
+
+
+
+			<p:cell></p:cell>
+			<p:cell></p:cell>
+			<p:cell></p:cell>
+			<p:cell></p:cell>
+			<p:cell>Ventas Total 12 Meses</p:cell>
+			<p:cell>
+					<p:html>
+						<h:outputText
+							value="#{respuestaSolicitudAction.cliente.ventasTotal12Meses}" style="text-align: left; font-size: 6px;">
+							<f:convertNumber maxFractionDigits="0" locale="cl" />
+						</h:outputText>
+					</p:html>
+			</p:cell>				
+
+
+
+			<p:cell></p:cell>
+			<p:cell></p:cell>
+			<p:cell></p:cell>
+			<p:cell></p:cell>
+			<p:cell>Creación en SAP</p:cell>
+			<p:cell>
+					<p:html>
+						<h:outputText
+							value="#{respuestaSolicitudAction.cliente.creacionSap}" style="text-align: left; font-size: 6px;">
+							<f:convertDateTime pattern="dd-MM-yyyy" />
+						</h:outputText>
+					</p:html>
+			</p:cell>	
+		</p:table>
+
+		<p:html>
+
+		<br />
+
+        <table border="0" style="vertical-align: top; padding-top: 0px;" cellpadding="0" cellspacing="0">
+			<tr valign="top">
+				<td width="20%">
+					<table border="1" style="font-size: 6px;" width="95%">
+						<tr>
+							<th colspan="4"  style="text-align: center; font-size: 8px;">Comportamiento comercial con KH</th>
+						</tr>
+						<tr>
+							<td></td>
+							<td align="center">Monto Total</td>
+							<td align="center">Número</td>
+							<td align="center">Días de Mora</td>
+						</tr>
+						<tr>
+							<td>Morosidad</td>
+							<td align="center">
+										<h:outputText
+											value="#{respuestaSolicitudAction.comportamiento.montoTotalMoro}">
+											<f:convertNumber maxFractionDigits="0" locale="cl" />
+										</h:outputText>								
+								
+							</td>
+							<td align="center">#{respuestaSolicitudAction.comportamiento.numeroMoro}</td>
+							<td align="center">#{respuestaSolicitudAction.comportamiento.diasMoras}</td>
+						</tr>
+						<tr>
+							<td>Protesto</td>
+							<td align="center">
+									<h:outputText
+										value="#{respuestaSolicitudAction.comportamiento.montoTotalProt}">
+										<f:convertNumber maxFractionDigits="0" locale="cl" />
+									</h:outputText>								
+							</td>
+							<td align="center">#{respuestaSolicitudAction.comportamiento.numeroProt}</td>
+							<td align="center">#{respuestaSolicitudAction.comportamiento.dmPort}</td>
+						</tr>
+					</table>
+			</td>
+			<td width="80%">
+				<table border="1" width="100%" cellpadding="0" cellspacing="0">
+					<tr>
+						<td style="text-align: center; font-size: 8px;">Exposición de
+							Riesgo Küpfer</td>
+					</tr>
+					<tr>
+						<td>
+
+							<table border="0" style="font-size: 6px;" width="100%" >
+								<tr>
+									<td >Peak Crédito</td>
+									<td width="20px;" align="center">
+										<h:outputText
+											value="#{respuestaSolicitudAction.expoRiesgoKh.peakCredito}">
+											<f:convertNumber maxFractionDigits="0" locale="cl" />
+										</h:outputText></td>
+									<td>Pedidos Proceso</td>
+									<td width="20px;" align="center"><h:outputText
+											value="#{respuestaSolicitudAction.expoRiesgoKh.montoPedidoProceso}">
+											<f:convertNumber maxFractionDigits="0" locale="cl" />
+										</h:outputText></td>
+								</tr>
+								<tr>
+									<td>Seguro</td>
+									<td  width="20px;" align="center">
+										<h:outputText
+											value="#{respuestaSolicitudAction.expoRiesgoKh.montoAsegurado}">
+											<f:convertNumber maxFractionDigits="0" locale="cl" />
+										</h:outputText></td>
+									<td>P.Credito + P.enProceso</td>
+									<td  width="20px;" align="center"><h:outputText
+											value="#{respuestaSolicitudAction.expoRiesgoKh.montoPeakCreditoPedidoProceso}">
+											<f:convertNumber maxFractionDigits="0" locale="cl" />
+										</h:outputText></td>
+								</tr>
+								<tr>
+									<td>Riesgo Kupfer</td>
+									<td  width="20px;" align="center"><h:outputText
+											value="#{respuestaSolicitudAction.expoRiesgoKh.montoRiesgoKupfer}">
+											<f:convertNumber maxFractionDigits="0" locale="cl" />
+										</h:outputText></td>
+									<td>R.K + P. en Proceso</td>
+									<td  width="20px;" align="center"><h:outputText
+											value="#{respuestaSolicitudAction.expoRiesgoKh.montoRiesgoKupferPedidoProceso}">
+											<f:convertNumber maxFractionDigits="0" locale="cl" />
+										</h:outputText></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</td>
+			</tr>
+		</table>
+
+		<br />
+		</p:html>
+
+		<p:table widthPercentage="100">
+			<p:cell backgroundColor="#EEEEEE" colspan="4" horizontalAlignment="center">
+				<p:paragraph>
+					<p:font size="9">Solicitud Prorroga</p:font>
+				</p:paragraph>
+			</p:cell>
+		</p:table>
+		
+		<p:table columns="4" widthPercentage="100" widths="2 2 2 2">
+			<p:cell  horizontalAlignment="center" backgroundColor="#EEEEEE">
+				<p:paragraph>
+					<p:font size="6">Nro Cheque</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell  horizontalAlignment="center" backgroundColor="#EEEEEE">
+				<p:paragraph>
+					<p:font size="6">Monto</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell  horizontalAlignment="center" backgroundColor="#EEEEEE">
+				<p:paragraph>
+					<p:font size="6">Vencimiento Actual</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell  horizontalAlignment="center" backgroundColor="#EEEEEE">
+				<p:paragraph>
+					<p:font size="6">Vencimiento Solicitado</p:font>
+				</p:paragraph>
+			</p:cell>
+		</p:table>
+		<p:table columns="4" widthPercentage="100" widths="2 2 2 2" >
+			<f:facet name="defaultCell"><p:cell borderWidth="1" /></f:facet>
+				<ui:repeat value="#{respuestaSolicitudAction.listaDoctoProrrogaAgregados}" var="_dpa">
+					<p:cell>
+						<p:paragraph>					
+							<p:font size="7">#{_dpa.numeroDocto}</p:font>
+						</p:paragraph>
+					</p:cell>				
+					<p:cell>
+						<p:paragraph>
+							<p:font size="7"> 
+									<p:html>
+										<h:outputText style="font-size: 7px;" value="#{_dpa.monto}">
+											<f:convertNumber currencySymbol="$" groupingUsed="#{true}"
+															maxFractionDigits="0" type="currency"/> 								
+											
+										</h:outputText>	
+									</p:html>
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="center">
+						<p:paragraph>
+							<p:font size="7"> 
+								   <p:html>
+										<h:outputText style="font-size: 8px;" value="#{_dpa.fechaVencActual}">
+											<f:convertDateTime pattern="dd-MM-yyyy"></f:convertDateTime>
+										</h:outputText>	
+								   </p:html>
+							</p:font>
+						</p:paragraph>	
+					</p:cell>
+					<p:cell horizontalAlignment="center">
+						<p:paragraph>
+							<p:font size="7">
+									<p:html>
+										<h:outputText style="font-size: 8px;" value="#{_dpa.fechaVencNuevo}">
+											<f:convertDateTime pattern="dd-MM-yyyy"></f:convertDateTime>
+										</h:outputText>	
+									</p:html>
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+				</ui:repeat>		
+			</p:table>		
+		<p:html>
+		<br />
+		</p:html>
+
+		<p:table widthPercentage="100">
+			<p:cell backgroundColor="#EEEEEE"
+				horizontalAlignment="center">
+				<p:paragraph>
+					<p:font size="9">
+						<p:text value="Observaciones Aprobador"></p:text>
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell>
+				<p:paragraph>
+					<p:font size="6">
+						<p:text value="#{respuestaSolicitudAction.solicitudOtra.observacionesFinal}"></p:text>
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+		</p:table>
+		<p:html>
+			<br />
+			<br />
+			<br />	
+			<br />
+			<br />
+			<br />
+			<br />	
+			<br />
+		</p:html>
+		
+		<p:table columns="9" widthPercentage="100">
+				<p:cell>
+					<p:paragraph>
+						<p:font size="6">Jefe Sucursal/Zonal</p:font>
+					</p:paragraph>
+				</p:cell>
+				<p:cell>
+					<p:paragraph>
+						<p:font size="6">P. Manager/J. Negocio</p:font>
+					</p:paragraph>
+				</p:cell>
+				<p:cell>
+					<p:paragraph>
+						<p:font size="6">Ejecutivo/Pilar Crédito</p:font>
+					</p:paragraph>
+				</p:cell>
+				<p:cell>
+					<p:paragraph>
+						<p:font size="6">Jefe Crédito</p:font>
+					</p:paragraph>
+				</p:cell>
+				<p:cell>
+					<p:paragraph>
+						<p:font size="6">Sub-gerente Canal/Negocio</p:font>
+					</p:paragraph>
+				</p:cell>
+				<p:cell>
+					<p:paragraph>
+						<p:font size="6">Gerente Negocio/Canal </p:font>
+					</p:paragraph>
+				</p:cell>
+				<p:cell>
+					<p:paragraph>
+						<p:font size="6">Sub-gerente Finazas</p:font>
+					</p:paragraph>
+				</p:cell>
+				<p:cell>
+					<p:paragraph>
+						<p:font size="6">Gerente Finanzas</p:font>
+					</p:paragraph>
+				</p:cell>
+				<p:cell>
+					<p:paragraph>
+						<p:font size="6">Gerente General</p:font>
+					</p:paragraph>
+				</p:cell>
+				<p:cell fixedHeight="30"></p:cell>
+				<p:cell fixedHeight="30"></p:cell>
+				<p:cell fixedHeight="30"></p:cell>
+				<p:cell fixedHeight="30"></p:cell>
+				<p:cell fixedHeight="30"></p:cell>
+				<p:cell fixedHeight="30"></p:cell>
+				<p:cell fixedHeight="30"></p:cell>
+				<p:cell fixedHeight="30"></p:cell>
+				<p:cell fixedHeight="30"></p:cell>
+	
+			</p:table>
+	</p:font>
+</p:document>
+

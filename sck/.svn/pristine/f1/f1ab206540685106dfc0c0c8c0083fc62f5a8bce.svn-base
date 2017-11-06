@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+    <ui:define name="body">
+    
+    	<style type="text/css">
+    		html,body {
+    			height: 100%;
+    			width: 100%;
+    			min-height: 100%; 
+    		}
+    		.login {
+    			height:90%;
+    			width:100%;
+    			padding: 0px !important;
+    		}
+    		.footer {
+    		 display: none;
+    		}
+    	</style>
+   
+    
+    
+    	<s:fragment rendered="#{identity.loggedIn == true}" >
+		<table cellpadding="0" cellspacing="0" width="100%"  >
+	    	<tr>
+	    		<td align="center">
+	    			<div style="background-image:url('img/sck_final_inicio_1024X500_gris-claro.png'); background-size:100% 95%; background-position:center top; height:100%; width:100%;  background-repeat:no-repeat;  text-align: center;" >
+   				    	<table cellpadding="0" cellspacing="0" border="0" width="100%" >
+					    	<tr>
+					    		<td colspan="2" align="center" height="100%;">&nbsp;</td>
+					    	</tr>
+				    	</table>
+	    			</div>
+	    		</td>
+	    	</tr>
+	     </table>	
+    	</s:fragment>
+    	
+    	<s:fragment rendered="#{identity.loggedIn == false}" >
+		<div style="background-image:url('img/sck_final_inicio_1024X500_gris-claro.png'); background-size:100% 95%; background-position:center top; height:100%; width:100%;  background-repeat:no-repeat;  text-align: center;" >
+	    	<table cellpadding="0" cellspacing="0" border="0" width="100%" >
+		    	<tr>
+		    		<td colspan="2" align="center" height="290px;">&nbsp;</td>
+		    	</tr>
+		    	<tr>
+		    		<td align="center" width="520px;">
+
+		    		</td>		    	
+		    		<td align="center">
+		    			<s:link id="menuLoginIdHome" view="/login.xhtml" title="" rendered="#{not identity.loggedIn}" propagation="none">
+		    				<img src="img/SCK_LoginButton_normal.png" />
+		    			</s:link>
+		    		</td>
+		    	</tr>
+		     </table>	
+   		</div>
+   		
+   		<ui:remove>
+   		<div>
+			<table style="text-align:center; width:auto;">
+				<tr>
+				     <td> <img  style="width:125%; " src="img/sck_final_inicio_1024X500.png"  /></td>
+				</tr>
+		    	<tr>
+		    		<td align="center" width="500px;">
+
+		    		</td>		    	
+		    		<td align="center">
+		    			<s:link id="menuLoginIdHome" view="/login.xhtml" title="" rendered="#{not identity.loggedIn}" propagation="none">
+		    				<img src="img/SCK_LoginButton_normal.png" />
+		    			</s:link>
+		    		</td>
+		    	</tr>
+			
+			</table>
+		</div>
+		</ui:remove>
+    	</s:fragment>    
+    </ui:define>
+</ui:composition>

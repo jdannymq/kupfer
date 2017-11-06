@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	
+	
+	<rich:modalPanel id="mpConsultarAproRecha" autosized="true" width="600">
+		<f:facet name="header">
+			<h:outputText value="Consulta a lo Aprobadores de Solicitud"	style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:form>
+					<a:commandLink	ajaxSingle="true" action="#{globalHitosLogdService.limpiarAprobaRechaza()}">
+						<h:graphicImage value="img/close.png" styleClass="hidelink"	id="mpConsultarAproRechalink" />
+					</a:commandLink>
+					<rich:componentControl for="mpConsultarAproRecha"
+						attachTo="mpConsultarAproRechalink" operation="hide"
+						event="onclick" />
+				</h:form>
+			</h:panelGroup>
+		</f:facet>
+		<h:form id = "frm_consultaAprobador_vertodas">
+		<rich:panel>
+			<f:facet name="header"><h:outputText value="Información de Solicitud"	style="padding-right:15px;" /></f:facet>		
+        	 	<h:panelGrid columns="3" border="0">
+		        	<s:decorate template="/layout/edit.xhtml">
+						<ui:define name="label">N°</ui:define>
+						<h:inputText id="idNumSolicitud" 
+									value="#{visualizarSolicitudTodasAction.solicitud.id.numSolicitud}" 
+						          required="false"  
+							       maxlength="10"
+							       size="10" 
+							       disabled="true">
+						</h:inputText>	       
+		 			</s:decorate>        	 	
+		        	<s:decorate template="/layout/edit.xhtml">
+						<ui:define name="label">Nombre</ui:define>
+						<h:inputText id="idNombreSolicitud" 
+									value="#{visualizarSolicitudTodasAction.solicitud.nomCliente}" 
+						          required="false"  
+							       maxlength="120"
+							       size="50" 
+							       disabled="true" >
+						</h:inputText>	        	
+					</s:decorate>        	 	
+		        	<s:decorate template="/layout/edit.xhtml">
+						<ui:define name="label">Estado</ui:define>
+						<h:inputText id="idEstadoSolicitud" 
+									value="#{visualizarSolicitudTodasAction.estadoLogHitos.desEstado}" 
+						          required="false"  
+							       maxlength="120"
+							       size="50" 
+							       disabled="true" >
+						</h:inputText>	        	
+					</s:decorate>   
+        	 	</h:panelGrid>
+		</rich:panel>
+
+		<rich:panel>
+				<f:facet name="header"><h:outputText value="Usuarios Asignados"	style="padding-right:15px;" /></f:facet>
+				<a:outputPanel id="grillaUsuariosDerivadas">
+		    	<div class="results" id="grillaUsuarioAsigandos" style="height:130px; overflow: auto;">
+			   		<h:outputText value="No existe ningun usuario asigando ha esta solicitud en esta solicitud." 
+			   		           rendered="#{empty visualizarSolicitudTodasAction.listUsuariosDerivados}"/>
+				    <rich:dataTable id="idlistaUsuarioAsignados"
+				                var="_bbb"
+				              value="#{visualizarSolicitudTodasAction.listUsuariosDerivados}"
+				           rendered="#{not empty visualizarSolicitudTodasAction.listUsuariosDerivados}">
+				        <rich:column>
+				            <f:facet name="header">Usuario</f:facet>
+				            <h:outputText value="#{_bbb.usuario.nombre}"/>
+				        </rich:column>
+				        <rich:column>
+				            <f:facet name="header">Fecha - Hora</f:facet>
+				            <h:outputText value="#{_bbb.fechaHora}">
+				            	<s:convertDateTime pattern="dd-MM-yyyy HH:mm" />
+				            </h:outputText>
+				        </rich:column>
+				        <rich:column width="50px;">
+				            <f:facet name="header">Obligatorios</f:facet>
+				            <h:outputText value="Obligatorio" rendered="#{_bbb.confirmacionObligatoria == true}" />
+				            <h:outputText value="No Obligatorio" rendered="#{_bbb.confirmacionObligatoria == false}" />
+				        </rich:column>
+				        
+				        
+				        <rich:column style="text-align:center;">
+				            <f:facet name="header">Situación Actual</f:facet>
+							 <table cellpadding="0" cellspacing="0" width="100%" align="center">
+							 	<tr valign="top">
+							 		<td align="center" width="50px;"> 
+										<s:fragment rendered="#{_bbb.estado.codEstado == 'B' or  _bbb.estado.codEstado == 'SA' }">
+											<!-- en espera  -->	
+											<img src="./img/esperaIcon_tcolor.png" title="En Espera..."/>								
+										</s:fragment>
+										
+										<s:fragment rendered="#{_bbb.estado.codEstado == 'AP' or _bbb.estado.codEstado == 'AE' }">
+											<!-- condirmada  -->
+											<img src="./img/true.png" title="Aprobada"  />
+										</s:fragment>
+										<s:fragment rendered="#{_bbb.estado.codEstado == 'RP' or _bbb.estado.codEstado == 'RE'}">
+											<!-- No Confirmada  -->
+											<img src="./img/false.png" title="Rechazada"/>
+										</s:fragment>
+							 		</td>
+							 		<td width="10px;" align="left"> 
+							 			<rich:separator width="2" height="14" style="color:#2B00FF;" />
+							 		</td>								 		
+							 		<td align="left">
+							        	<s:fragment rendered="#{_bbb.estado.codEstado == 'SA'}">
+								            <s:fragment rendered="#{_bbb.estado.codEstado == 'SA'}">
+								            	<h:outputText value="Pendiente de aprobación o rechazo de la solicitud"/>
+								            </s:fragment>	
+								            <s:fragment rendered="#{_bbb.estado.codEstado != 'SA'}">
+								            	<h:outputText value="#{_bbb.estado.desEstado}"/>
+								            </s:fragment>	
+							        	</s:fragment> 
+							        	<s:fragment rendered="#{_bbb.estado.codEstado == 'B'}">
+								            <s:fragment rendered="#{_bbb.estado.codEstado == 'B'}">
+								            	<h:outputText value="Pendiente de analisis de la solicitud"/>
+								            </s:fragment>	
+								            <s:fragment rendered="#{_bbb.estado.codEstado != 'B'}">
+								            	<h:outputText value="#{_bbb.estado.desEstado}"/>
+								            </s:fragment>					        	
+							        	</s:fragment> 
+							        	<s:fragment rendered="#{_bbb.estado.codEstado != 'B' and _bbb.estado.codEstado != 'SA'}">
+							        		<s:fragment rendered="#{_bbb.codEstadoDerivada == 'B'}">
+							        			<h:outputText value="Analisada"/>
+							        		</s:fragment>
+							        		<s:fragment rendered="#{_bbb.codEstadoDerivada != 'B' or _bbb.codEstadoDerivada == null }">
+							        			<h:outputText value="#{_bbb.estado.desEstado}"/>
+							        		</s:fragment>
+							        	</s:fragment> 								 		
+							 		</td>
+							 	</tr>
+							 </table>
+				        </rich:column>
+				        
+				        
+				    </rich:dataTable>
+			    </div>
+				</a:outputPanel>
+		</rich:panel>
+
+		<rich:panel>
+				<f:facet name="header"><h:outputText value="Observaciones Finales"	style="padding-right:15px;" /></f:facet>
+				<a:outputPanel id="descripcionObservacionesFinales">
+					<table cellpadding="0" cellspacing="0" width="100%">
+						<tr>
+							<td>
+									<h:inputTextarea id="idObervaciones" value="#{visualizarSolicitudTodasAction.observacionesFinalesModal}" 
+										rows="3" 
+										style="width:99%;"
+										disabled="true"/> 							
+							</td>
+						</tr>
+					</table>
+					
+				</a:outputPanel>
+		</rich:panel>		
+
+		<s:fragment rendered="#{visualizarSolicitudTodasAction.solicitud.estado == 'R'}">
+			<rich:panel>
+					<f:facet name="header"><h:outputText value="Motivos de Rechazo"	style="padding-right:15px;" /></f:facet>
+					<a:outputPanel id="grillaMotivoRechazosSolicitud">
+			    	<div class="results" id="grillaUsuarioAsigandos" style="height:100px; overflow: auto;">
+				   		<h:outputText value="NO existe motivo de rechazo de la solicitud." 
+				   		           rendered="#{empty visualizarSolicitudTodasAction.listaRechazosSolicitudesNuevas}"/>
+					    <rich:dataTable id="idlistaMotivoRechazosSolicitud"
+					                var="_smr"
+					              value="#{visualizarSolicitudTodasAction.listaRechazosSolicitudesNuevas}"
+					           rendered="#{not empty visualizarSolicitudTodasAction.listaRechazosSolicitudesNuevas}">
+					        <rich:column>
+					            <f:facet name="header">Codigo</f:facet>
+					            <h:outputText value="#{_smr.rechazo.codRechazo}"/>
+					        </rich:column>
+					        <rich:column>
+					            <f:facet name="header">Descripción</f:facet>
+					            <h:outputText value="#{_smr.rechazo.desRechazo}" />
+					        </rich:column>
+					    </rich:dataTable>
+				    </div>
+					</a:outputPanel>
+			</rich:panel>
+		</s:fragment>
+
+   	</h:form>
+
+	</rich:modalPanel>
+	
+</ui:composition>

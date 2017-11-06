@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="tipoFormaPago" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{tipoFormaPagoHome.managed ? 'Editar' : 'Agregar'} Tipo Forma Pago</f:facet>
+
+             <s:decorate id="descripcionField" template="layout/edit.xhtml">
+                <ui:define name="label">Descripción</ui:define>
+                <h:inputTextarea id="descripcion"
+                               cols="80"
+                               rows="3"
+                           required="true"
+                              value="#{tipoFormaPagoHome.instance.descripcion}"/>
+            </s:decorate>
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                campos requeridos
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Guardar"
+                         action="#{tipoFormaPagoHome.persist}"
+                       disabled="#{!tipoFormaPagoHome.wired}"
+                       rendered="#{!tipoFormaPagoHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="Modificar"
+                         action="#{tipoFormaPagoHome.update}"
+                       rendered="#{tipoFormaPagoHome.managed}"/>
+			<ui:remove>
+            <h:commandButton id="delete"
+                          value="Eliminar"
+                         action="#{tipoFormaPagoHome.remove}"
+                      immediate="true"
+                       rendered="#{tipoFormaPagoHome.managed}"/>
+			</ui:remove>
+            <s:button id="cancelEdit"
+                   value="Cancelar"
+             propagation="end"
+                    view="/TipoFormaPago.xhtml"
+                rendered="#{tipoFormaPagoHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="Cancelar"
+             propagation="end"
+                    view="/#{empty tipoFormaPagoFrom ? 'TipoFormaPagoList' : tipoFormaPagoFrom}.xhtml"
+                rendered="#{!tipoFormaPagoHome.managed}"/>
+
+        </div>
+    </h:form>
+
+</ui:define>
+
+</ui:composition>

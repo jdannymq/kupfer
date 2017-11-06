@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    template="/layout/template.xhtml">
+
+<ui:define name="body">
+	<h:form>
+    <rich:panel>
+        <f:facet name="header">Página Para Asignar Tipo de Usuario</f:facet>
+			<table cellpadding="0" cellspacing="0" border="0" width="100%">
+				<tr>
+					<td colspan="3" align="left"> Lista de Usuarios </td>
+				</tr>
+				<tr>
+					<td align="left" width="400px;">
+					<h:selectOneMenu id="idComboTipoUsuarios"
+                		          value="#{usuarioSociedadAction.usuario}"
+                		       required="false"
+                		          style="width :300px;">
+                  	    <s:selectItems value="#{usuarioSociedadAction.listaUsuarios}" 
+                  	                     var="_usu" 
+                  	    hideNoSelectionLabel="true" 
+                  	        noSelectionLabel="Seleccionar Usuario..."
+               			               label="#{_usu.nombre.toUpperCase(globalLocale)}"/>
+               			    <s:convertEntity/>
+       			   	<a:support event="onchange" 
+                         reRender="idComboTipoUsuarios"
+             			      ajaxSingle="true" 
+             			      action="#{usuarioSociedadAction.obtenerUsuario()}" />		 
+               			    
+               			    
+					</h:selectOneMenu>							
+					</td>
+					<td align="left">
+						<a:commandButton action="#{usuarioSociedadAction.sacarUsuarioSociedadAsignados()}" 
+						                  value="Consultar" 
+						             ajaxSingle="true"
+						                reRender="idUsuarios,mensaje,grillas"
+						                status="ajaxStatus"
+						                title="Consultar La Información..."
+						                />						
+						<a:commandButton action="#{usuarioSociedadAction.limpiar()}" 
+						                  value="Limpiar" 
+						                  title="Limpiar la Página..."
+						             ajaxSingle="true"
+						                reRender="idUsuarios,mensaje,grillas,idComboTipoUsuarios"
+						                status="ajaxStatusLimpiar"/>						
+					 </td>
+					<td align="left">&nbsp;</td>
+				</tr>
+				<tr>
+					<td align="left" colspan="3" height="20px;"> &nbsp;</td>
+				</tr>
+				<tr>
+					<td align="left" colspan="2" > 
+						<a:outputPanel id="mensaje">
+						 <span class="required" >
+							 <h:outputLabel  value="#{usuarioSociedadAction.mensaje}"  rendered="#{usuarioSociedadAction.mensaje != null}"/></span>
+						</a:outputPanel>
+					</td>
+				</tr>
+				<tr>
+					<td align="center" colspan="3" >
+					<a:outputPanel id="idUsuarios">
+						<rich:panel >
+							<f:facet name="header">Seleccionar</f:facet>
+						        <rich:listShuttle id="idListaUsuarios" sourceValue="#{usuarioSociedadAction.listaUsuariosegur}"
+							            targetValue="#{usuarioSociedadAction.listaUsuariosegurSeleccionado}" var="usuarioSegur" listsHeight="150"
+							            sourceListWidth="500" targetListWidth="500" sourceCaptionLabel="Listas Usuario Disponible"
+							            targetCaptionLabel="Listas Usuario Asignar Sociedad" orderControlsVisible="false" fastOrderControlsVisible="false" > 
+						            <ui:include src="/layout/facetSelectionLists.xhtml" />
+						            <s:convertEntity/>
+						            <rich:column>
+						                <h:outputText value="#{usuarioSegur.nombre.toUpperCase(globalLocale)}"></h:outputText>
+						            </rich:column>
+								</rich:listShuttle>		
+						        <rich:listShuttle id="idListaSociedad" sourceValue="#{usuarioSociedadAction.listaSociedades}"
+							            targetValue="#{usuarioSociedadAction.listaSociedadesSeleccionada}" var="sociedad" listsHeight="150"
+							            sourceListWidth="500" targetListWidth="500" sourceCaptionLabel="Listas Sociedades Disponible"
+							            targetCaptionLabel="Listas Sociedades Asignar" orderControlsVisible="false" fastOrderControlsVisible="false" > 
+						            <ui:include src="/layout/facetSelectionLists.xhtml" />
+						            <s:convertEntity/>
+						            <rich:column>
+						                <h:outputText value="#{sociedad.razonSocial.toUpperCase(globalLocale)}"></h:outputText>
+						            </rich:column>
+								</rich:listShuttle>									
+								
+										
+						</rich:panel>
+						
+							<a:commandButton action="#{usuarioSociedadAction.asignarTipoUsuario()}" 
+						                  value="Asignar Sociedad a Ususario" 
+						             ajaxSingle="true"
+						                reRender="idUsuarios,mensaje,grillas"
+						                status="ajaxStatusAgregar"
+						                title="Asignar Tipo de Usuario..."
+						                process="idListaUsuarios,idListaSociedad"/>	
+					   </a:outputPanel>
+					 </td>
+				</tr>				
+				<tr>
+					<td align="left" colspan="3" height="20px;"> &nbsp;	</td>
+				</tr>				
+				<tr>
+					<td align="left" colspan="3">
+						<a:outputPanel id="grillas" style="width:100%;">
+						   <rich:panel id="grillaUsuarioTipo">
+						    <f:facet name="header">Resultado (#{usuarioSociedadAction.listaUsuarioSociedades.size()})</f:facet>
+						    <div class="results" id="usuarioTipoList">
+									<table cellpadding="0" cellspacing="0" border="0" width="100%">
+										<tr valign="top" >
+											<td align="center"><strong> Grilla de Usuario y Sociedades Asignadas </strong></td>
+										</tr>
+										<tr valign="top">
+											<td style="border:1px solid #000000;padding:3px;"> 
+											<div class="results" style="height:100px; overflow: auto;"  >
+											   <h:outputText value="No se asignado ningun  sociedad al usuario."
+											               rendered="#{usuarioSociedadAction.listaUsuarioSociedades.size() == 0}"/>
+											
+												    <rich:dataTable id="usuarioNuevoList"
+												                var="_pr"
+												              value="#{usuarioSociedadAction.listaUsuarioSociedades}"
+												           rendered="#{not empty usuarioSociedadAction.listaUsuarioSociedades}">
+												
+												        <rich:column style="text-align: center;">
+												            <f:facet name="header">Usuario</f:facet>
+												            <h:outputText value="#{_pr.usuario.nombre}"/>
+												        </rich:column>
+												        <rich:column>
+												            <f:facet name="header">Sociedad</f:facet>
+												            <h:outputText value="#{_pr.sociedad.razonSocial}"/>
+												        </rich:column>       
+												        <rich:column>
+												            <f:facet name="header">Centro Costo</f:facet>
+												            <h:outputText value="#{_pr.sociedad.codigoSociedad}"/>
+												        </rich:column>
+												        <rich:column style="text-align: center;">
+												            <f:facet name="header">Acción</f:facet>
+															<a:commandButton action="#{usuarioSociedadAction.eliminarUsuarioSociedad(_pr)}" 
+															                  value="Eliminar" 
+															             ajaxSingle="true"
+															                reRender="idComboTipoUsuarios,idUsuarios,mensaje,grillas"
+															                status="ajaxStatusEliminar"
+															                title="Eliminar Usuario Sociedad..."
+															                />													            
+												        </rich:column> 
+												    </rich:dataTable>
+											   </div>    
+											</td>
+										</tr>
+									</table>
+						    </div>
+						   </rich:panel>						
+						</a:outputPanel>
+					</td>
+				</tr>	
+			</table>
+        <div style="clear:both"/>
+    </rich:panel>
+		<a:outputPanel id="cargarCodigoGrupo" ajaxRendered="false">
+			 <a:region renderRegionOnly="true">
+		    	<a:status id="ajaxStatus"
+			   	     onstart="#{rich:component('waitPanelcargarUsuarioTipo')}.show('',{top:'350px', left:'570px',height:'60px', width:'235px'})"
+			          onstop="#{rich:component('waitPanelcargarUsuarioTipo')}.hide()" />	 
+			 </a:region>
+		</a:outputPanel>   
+	 	<a:outputPanel id="agregarTipoUsuario" ajaxRendered="false">
+			 <a:region renderRegionOnly="true">
+		    	<a:status id="ajaxStatusAgregar"
+			   	     onstart="#{rich:component('waitPanelAgregarTipoUsuario')}.show('',{top:'350px', left:'570px',height:'60px', width:'235px'})"
+			          onstop="#{rich:component('waitPanelAgregarTipoUsuario')}.hide()" />	 
+			 </a:region>
+		</a:outputPanel>   
+	    <a:outputPanel id="limpiarUsuarioTipo" ajaxRendered="false">
+			 <a:region renderRegionOnly="true">
+		    	<a:status id="ajaxStatusLimpiar"
+			   	     onstart="#{rich:component('waitPanelLimpiarUsuarioTipo')}.show('',{top:'350px', left:'570px',height:'60px', width:'235px'})"
+			          onstop="#{rich:component('waitPanelLimpiarUsuarioTipo')}.hide()" />	 
+			 </a:region>
+		</a:outputPanel>  
+	 	<a:outputPanel id="eliminarrTipoUsuario" ajaxRendered="false">
+			 <a:region renderRegionOnly="true">
+		    	<a:status id="ajaxStatusEliminar"
+			   	     onstart="#{rich:component('waitPanelEliminarTipoUsuario')}.show('',{top:'350px', left:'570px',height:'60px', width:'235px'})"
+			          onstop="#{rich:component('waitPanelEliminarTipoUsuario')}.hide()" />	 
+			 </a:region>
+		</a:outputPanel> 
+	</h:form>
+
+	<rich:modalPanel id="waitPanelAgregarTipoUsuario" style="text-align:center;" styleClass="reporte_tablas" >
+     	<h:outputText value="Agregado Soccidad a Usuarios..." style="font-size:16px;"/>
+     	<h:graphicImage value="/img/connect_active_nuevo.gif" />
+    </rich:modalPanel>	
+	<rich:modalPanel id="waitPanelcargarUsuarioTipo" style="text-align:center;" styleClass="reporte_tablas" >
+     	<h:outputText value="Cargado Información..." style="font-size:16px;"/>
+     	<h:graphicImage value="/img/connect_active_nuevo.gif" />
+    </rich:modalPanel>	
+	<rich:modalPanel id="waitPanelLimpiarUsuarioTipo" style="text-align:center;" styleClass="reporte_tablas" >
+     	<h:outputText value="Limpiando Página..." style="font-size:16px;"/>
+     	<h:graphicImage value="/img/connect_active_nuevo.gif" />
+    </rich:modalPanel>		
+	<rich:modalPanel id="waitPanelEliminarTipoUsuario" style="text-align:center;" styleClass="reporte_tablas" >
+     	<h:outputText value="Eliminado Usuario Sociedad..." style="font-size:16px;"/>
+     	<h:graphicImage value="/img/connect_active_nuevo.gif" />
+    </rich:modalPanel>		
+</ui:define>
+
+</ui:composition>

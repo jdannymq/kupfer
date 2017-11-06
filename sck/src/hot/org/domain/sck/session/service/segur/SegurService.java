@@ -1,0 +1,80 @@
+package org.domain.sck.session.service.segur;
+
+import javax.persistence.EntityManager;
+
+
+import org.domain.sck.dto.UsuarioSegurDTO;
+import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.Logger;
+import org.jboss.seam.annotations.Name;
+import org.jboss.seam.log.Log;
+
+
+@Name("segurService")
+@AutoCreate
+public class SegurService {
+
+	@Logger Log log;
+	
+	@In(value="#{emSegur}")
+	EntityManager emSegur;
+
+    
+	
+	/*
+	 * Parametros de entrada: user del usuario . 
+	 * Return : objeto UsuarioSegurDTO.
+	 * */		
+	public UsuarioSegurDTO sacarDatosSessionUsuario(String user){
+    	UsuarioSegurDTO datos = null;
+    	try{
+		  	Object[]  array = (Object[])emSegur.createNativeQuery(" SELECT cast([Alias] as varchar) as alias," +
+		  														  " cast([Correo] as varchar) as correo," +
+		  														  " cast([centro] as varchar) as centro, " +
+		  														  " cast([nombre] as varchar) as nombre ," +
+		  														  " id_personal as codigoPersonal ," +
+		  														  " cast([cargo] as varchar) as cargo ," +
+		  														  " cast([Rut] as varchar) as rut ," +
+		  														  " cast([anexo] as varchar) as anexo," +
+		  														  " cast([celular] as varchar) as celular , " +
+		  														  " cast([marca] as varchar) as marca, " +
+		  														  " cast([sucursal] as varchar) as sucursal," +
+		  														  " cast([negocio] as varchar) as negocio" +
+		  														  "" +
+		  														  " FROM [SEGUR].[dbo].[USUARIO] " +
+		  														  " WHERE alias=:username")
+		  			          .setParameter("username", user)
+		  			          .setMaxResults(1)
+		  			          .getSingleResult();
+		  	if(array != null && array.length > 2){
+		  		datos = new UsuarioSegurDTO();
+		  		datos.setAlias(array[0].toString());
+		  		datos.setCorreo(array[1].toString());
+		  		datos.setCodigosucursal(array[2].toString());
+		  		datos.setNombre(array[3].toString());
+		  		datos.setIdPersonal(Long.parseLong(array[4].toString()));
+		  		if(array[5] != null){
+		  			datos.setCargo(array[5].toString());
+		  		}
+		  		datos.setRut(array[6].toString());
+		  		datos.setAnexo(array[7].toString());
+		  		datos.setCelular(array[8].toString());
+		  		datos.setMarca(array[9].toString());
+		  		datos.setSucursal(array[10].toString());
+		  		datos.setNegocios(array[11].toString());
+
+		  		
+		  		
+		  		log.debug("nombre : #0", datos.getNombre());
+		  	}
+    	}catch (Exception e) {
+    		log.error("Error, no existe usuarion en la base de datos segur #0 ", e.getMessage());
+    		log.error("usuario no encontrado  : #0", user);
+		}
+    	return datos;
+    }
+
+
+
+}

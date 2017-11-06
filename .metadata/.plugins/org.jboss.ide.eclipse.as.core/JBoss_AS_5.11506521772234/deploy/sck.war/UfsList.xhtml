@@ -1,0 +1,161 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+
+    <rich:panel>
+        <f:facet name="header">Resultados de Busqueda (#{empty ufsList.resultList ? 0 : (ufsList.paginated ? ufsList.resultCount : ufsList.resultList.size)})</f:facet>
+    <div class="results" id="ufsList">
+
+    <h:outputText value="No existen resultados."
+               rendered="#{empty ufsList.resultList}"/>
+
+    <rich:dataTable id="ufsList"
+                var="_ufs"
+              value="#{ufsList.resultList}"
+           rendered="#{not empty ufsList.resultList}">
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{ufsList}"/>
+                    <ui:param name="propertyLabel" value="Id ufs"/>
+                    <ui:param name="propertyPath" value="ufs.idUfs"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_ufs.idUfs}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{ufsList}"/>
+                    <ui:param name="propertyLabel" value="Dolar"/>
+                    <ui:param name="propertyPath" value="ufs.dolar"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_ufs.dolar}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{ufsList}"/>
+                    <ui:param name="propertyLabel" value="Euro"/>
+                    <ui:param name="propertyPath" value="ufs.euro"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_ufs.euro}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{ufsList}"/>
+                    <ui:param name="propertyLabel" value="Fecha"/>
+                    <ui:param name="propertyPath" value="ufs.fecha"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_ufs.fecha}">
+                <s:convertDateTime type="both" dateStyle="short"/>
+            </h:outputText>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{ufsList}"/>
+                    <ui:param name="propertyLabel" value="Utm"/>
+                    <ui:param name="propertyPath" value="ufs.utm"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_ufs.utm}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{ufsList}"/>
+                    <ui:param name="propertyLabel" value="Monto Uf"/>
+                    <ui:param name="propertyPath" value="ufs.valor"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_ufs.valor}"/>
+        </h:column>
+        <rich:column styleClass="action">
+            <f:facet name="header">Acción</f:facet>
+            <s:link view="/#{empty from ? 'Ufs' : from}.xhtml"
+                   value="#{empty from ? 'Ver' : 'Select'}"
+             propagation="#{empty from ? 'none' : 'default'}"
+                      id="ufsViewId">
+                <f:param name="ufsIdUfs"
+                        value="#{_ufs.idUfs}"/>
+            </s:link>
+            #{' '}
+            <!-- s:link view="/UfsEdit.xhtml"
+                   value="Editar"
+             propagation="none"
+                      id="ufsEdit"
+                rendered="#{empty from}">
+                <f:param name="ufsIdUfs"
+                        value="#{_ufs.idUfs}"/>
+            </s:link-->
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+
+    <div class="tableControl">
+
+        <s:link view="/UfsList.xhtml"
+            rendered="#{ufsList.previousExists}"
+               value="#{messages.left}#{messages.left} Primera Pagina"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link view="/UfsList.xhtml"
+            rendered="#{ufsList.previousExists}"
+               value="#{messages.left} Pagina anterior"
+                  id="previousPage">
+            <f:param name="firstResult"
+                    value="#{ufsList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link view="/UfsList.xhtml"
+            rendered="#{ufsList.nextExists}"
+               value="Siguiente Pagina #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult"
+                    value="#{ufsList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link view="/UfsList.xhtml"
+            rendered="#{ufsList.nextExists}"
+               value="Ultima pagina #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult"
+                    value="#{ufsList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+    
+    <h:form id="ufsSearch" styleClass="edit">
+        <div class="actionButtons">
+            <!-- h:commandButton id="search" value="Buscar" action="/UfsList.xhtml"/-->
+            <!-- s:button id="reset" value="Limpiar" includePageParams="false"/-->
+            <s:button view="/UfsEdit.xhtml"
+                    id="create"
+           propagation="none"
+                 value="Crear Registro"
+                 rendered="#{empty from}">
+            <f:param name="ufsIdUfs"/>
+       		 </s:button>
+        </div>
+    </h:form>
+</ui:define>
+
+</ui:composition>

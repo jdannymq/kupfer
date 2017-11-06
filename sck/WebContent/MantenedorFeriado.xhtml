@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:p="http://primefaces.prime.com.tr/ui"
+    template="layout/template.xhtml">
+	
+	<ui:define name="body">
+	<div class="divTitular"><h1>Feriados</h1></div>
+	
+			<h:form id="frm_feriados">
+				<s:button view="/GenerarSolicitud.xhtml" propagation="none" value="Volver" ></s:button>
+				
+				<h:messages id="messagesEsp" globalOnly="false" styleClass="message"
+		            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
+		            rendered="#{showGlobalMessages != 'false'}" />
+		            
+				<a:commandButton value="Agregar Feriado" ajaxSingle="true" action="#{feriadosAction.initGuardarFeriado()}" 
+					reRender="frm_Tiempo" oncomplete="#{rich:component('mpFeriado')}.show();" />
+				
+				<rich:panel id="rpTurno">
+					<f:facet name="label">Turnos</f:facet>
+						<rich:extendedDataTable id="dtFeriados" value="#{mantenedorMaestroAction_feriados}" var="_feriados" noDataLabel="No se encuentran feriados" >
+							
+							<f:facet name="header">Feriados</f:facet>
+							<rich:column sortBy="#{_feriados.fecha}" label="Fecha"  width="30%;" style="text-align: center;">
+								<f:facet name="header">Fecha</f:facet>
+								<h:outputText value="#{_feriados.fecha}" >
+									<s:convertDateTime pattern="dd-MM-yyyy" />
+								</h:outputText>
+							</rich:column>
+							<rich:column filterBy="#{_feriados.anno}" sortBy="#{_feriados.anno}" label="Año" width="30%;" style="text-align: center;">
+								<f:facet name="header">Año</f:facet>
+								<h:outputText value="#{_feriados.anno}" />
+							</rich:column>
+
+							<rich:column sortBy="#{_feriados.disabled}" label="Activo" width="30%;" style="text-align: center;">
+								<f:facet name="header">Activo</f:facet>
+								<h:outputText value="#{_feriados.disabled ? 'No':'Si'}" />
+							</rich:column>
+							<rich:column  width="30%;" style="text-align: center;">
+							<f:facet name="header">Accion</f:facet>
+								<a:commandLink value="Editar" ajaxSingle="true" action="#{feriadosAction.editFeriado(_feriados)}" 
+									oncomplete="#{rich:component('mpFeriado')}.show();" reRender="frm_Tiempo" />
+								#{'/'}
+								<a:commandLink value="Desactivar" rendered="#{!_feriados.disabled}" ajaxSingle="true" action="#{feriadosAction.cambiarActivoFeriado(true,_feriados)}" 
+									reRender="rpTurno" />
+								<a:commandLink value="Activar" rendered="#{_feriados.disabled}" ajaxSingle="true" action="#{feriadosAction.cambiarActivoFeriado(false,_feriados)}" 
+									reRender="rpTurno" />
+							</rich:column>								
+						</rich:extendedDataTable>
+				</rich:panel>
+			</h:form>
+		 <a:status onstart="abrirModal();" onstop="cerrarModal();"></a:status>	
+		<ui:include src="/layout/modalSck/modalFeriado.xhtml" />  
+	</ui:define>
+</ui:composition>
+

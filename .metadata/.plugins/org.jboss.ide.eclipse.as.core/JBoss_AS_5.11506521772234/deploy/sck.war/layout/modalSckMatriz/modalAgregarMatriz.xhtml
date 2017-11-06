@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+
+	<style type="text/css">
+.top {
+	vertical-align: top;
+}
+</style>
+
+	<rich:modalPanel id="mpMatrizMedicion" autosized="true" width="750" >
+		<f:facet name="header">
+			<h:outputText value="Crear parametro de Medición" style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+
+			<h:panelGroup>
+			<a:commandLink action="#{matrizAction.limpiarMatrizMedicion()}"
+						ajaxSingle="true">
+						<h:graphicImage value="img/close.png" styleClass="hidelink"
+							id="mpMatrizMedicionhidelink" />
+					</a:commandLink>
+				<rich:componentControl for="mpMatrizMedicion" attachTo="mpMatrizMedicionhidelink"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+
+		</f:facet>
+		<h:form id="frm_modalMatrizMedicion">
+			<h:messages id="messagesEsp" globalOnly="true" styleClass="message"
+				errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
+				rendered="#{showGlobalMessages != 'false'}" />
+				
+			<h:panelGrid columns="4">
+				<s:decorate template="/layout/edit.xhtml">
+					<ui:define name="label">Seleccione Tipo Solicitud</ui:define>
+					<h:selectOneMenu value="#{matrizAction.matrizMedicionTargeted.link_solicitud}" style="width:200px;" required="true" requiredMessage="Debe ingresar un tipo de solicitud">
+						<s:selectItems value="#{globalService_tipoSolicitudList}" var="_sol" 
+	               			               label="#{_sol.desTipoSolicitud}" 
+	               			               noSelectionLabel="Seleccione Tipo de Solicitud..." 
+	               			               hideNoSelectionLabel="true"/>
+	               			              <s:convertEntity/>  
+					</h:selectOneMenu> 
+				</s:decorate>
+				
+				<s:decorate template="/layout/edit.xhtml">
+					<ui:define name="label">Seleccione Condicion</ui:define>
+					<h:selectOneMenu value="#{matrizAction.matrizMedicionTargeted.link_condicion}" style="width:200px;" required="true" requiredMessage="Debe ingresar un tipo de condicion">
+						<s:selectItems value="#{globalService_condicionList}" var="_cond" 
+	               			               label="#{_cond.descripcion}" 
+	               			               noSelectionLabel="Seleccione Condición..." 
+	               			               hideNoSelectionLabel="true"/>
+	               			            <s:convertEntity/>  
+					</h:selectOneMenu> 
+				</s:decorate>
+				
+				<s:decorate template="/layout/edit.xhtml">
+					<ui:define name="label">Seleccione Canal</ui:define>
+					<h:selectOneMenu value="#{matrizAction.matrizMedicionTargeted.link_canal}" style="width:200px;" >
+						<s:selectItems value="#{globalService_canalesList}" var="_ppp" 
+	               			               label="#{_ppp.descripcion}" 
+	               			               noSelectionLabel="No hay canal seleccionado..." 
+	               			               hideNoSelectionLabel="true"/>
+	               			              <s:convertEntity/>  
+					</h:selectOneMenu> 
+				</s:decorate>
+				
+				<s:decorate template="/layout/edit.xhtml">
+					<ui:define name="label">Seleccione Rango Monto</ui:define>
+					<h:selectOneMenu value="#{matrizAction.matrizMedicionTargeted.link_montos}" style="width:200px;" >
+						<s:selectItems value="#{globalService_rangoMontosMatrizList}" var="_mon" 
+	               			               label="#{'Desde $'}#{_mon.monto_inicial.toString()}#{' hasta $'}#{_mon.monto_final.toString()}" 
+	               			               noSelectionLabel="No hay montos seleccionados..." 
+	               			               hideNoSelectionLabel="true"/>
+	               			              <s:convertEntity/>  
+					</h:selectOneMenu> 
+				</s:decorate>
+				
+				<s:decorate template="/layout/edit.xhtml">
+					<ui:define name="label">Seleccione Rango PPP</ui:define>
+					<h:selectOneMenu value="#{matrizAction.matrizMedicionTargeted.link_plazoPromedioPago}" style="width:200px;" >
+						<s:selectItems value="#{globalService_rangoPlazoPromedioPagoList}" var="_ppp" 
+	               			               label="#{'Desde '}#{_ppp.plazo_inicial.toString()}#{' hasta '}#{_ppp.plazo_final.toString()}#{' dias'}" 
+	               			               noSelectionLabel="No hay canal PPP seleccionado..." 
+	               			               hideNoSelectionLabel="true"/>
+	               			              <s:convertEntity/>  
+					</h:selectOneMenu> 
+				</s:decorate>
+				
+				<s:decorate template="/layout/edit.xhtml">
+					<ui:define name="label">Seleccione Tiempo</ui:define>
+						<h:inputText value="#{matrizAction.matrizMedicionTargeted.tiempo}" required="true" requiredMessage="Debe ingresar una cantidad de tiempo"/>
+				</s:decorate>
+				
+				<s:decorate template="/layout/edit.xhtml">
+					<ui:define name="label">Seleccione Unidad Medida</ui:define>
+					<h:selectOneMenu value="#{matrizAction.matrizMedicionTargeted.unidadTiempo}" style="width:200px;" required="true"  requiredMessage="Debe ingresar una unidad de tiempo">
+						<s:selectItems value="#{globalService_unidadTiempoList}" var="_ut" 
+	               			               label="#{_ut.nombre}" 
+	               			               noSelectionLabel="Seleccione unidad de tiempo" 
+	               			               hideNoSelectionLabel="true" />
+					</h:selectOneMenu> 
+				</s:decorate>
+				
+					<s:decorate template="/layout/edit.xhtml">
+					<ui:define name="label">Inactivo</ui:define>
+					<h:selectBooleanCheckbox value="#{matrizAction.matrizMedicionTargeted.disabled}" />
+				</s:decorate>
+				
+				<s:decorate>					
+					<div>
+						<a:commandButton value="Guardar Edicion" rendered="#{matrizAction.editando}"
+							action="#{matrizAction.guardarMatrizMedicion()}"
+							reRender="frm_MatrizMedicion,idMensajeModal"
+							oncomplete="if(#{empty facesContext.maximumSeverity}) {#{rich:component('mpMatrizMedicion')}.hide(); alert('Guardado correctamente');}"	/>
+					</div>
+				</s:decorate>
+
+				<s:decorate>					
+					<div>
+						<a:commandButton value="Guardar" rendered="#{!matrizAction.editando}"
+							action="#{matrizAction.guardarEdicionMatrizMedicion()}"
+							reRender="frm_MatrizMedicion,idMensajeModal"
+							oncomplete="if(#{empty facesContext.maximumSeverity}) {#{rich:component('mpMatrizMedicion')}.hide(); alert('Editado correctamente');}"	/>
+					</div>
+				</s:decorate>
+			</h:panelGrid>
+			<br />
+			
+			<a:outputPanel id="idMensajeModal">
+				<div>
+						<h:messages id="messagesModal" globalOnly="false" styleClass="message"
+			            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
+			            rendered="#{showGlobalMessages != 'false'}" />			
+				</div>
+			</a:outputPanel>
+
+		</h:form>
+
+
+	</rich:modalPanel>
+
+</ui:composition>

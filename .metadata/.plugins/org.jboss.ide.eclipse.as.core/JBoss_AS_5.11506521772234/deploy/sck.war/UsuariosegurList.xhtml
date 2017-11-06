@@ -1,0 +1,205 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="usuariosegurSearch" styleClass="edit">
+
+        <div class="actionButtons">
+	        <s:button view="/UsuariosegurEdit.xhtml"
+	                    id="create"
+	           propagation="none"
+	                 value="Crear Usuario"
+	                 rendered="#{empty from}">
+	            <f:param name="usuariosegurIdPersonal"/>
+	        </s:button>            
+            <s:button id="reset" value="Limpiar" includePageParams="false"/>
+            
+        </div>
+      
+
+    </h:form>
+
+    <rich:panel>
+        <f:facet name="header">Resultados de la Búsqueda (#{empty usuariosegurList.resultList ? 0 : (usuariosegurList.paginated ? usuariosegurList.resultCount : usuariosegurList.resultList.size)})</f:facet>
+    <div class="results" id="usuariosegurList">
+
+    <h:outputText value="The usuariosegur search returned no results."
+               rendered="#{empty usuariosegurList.resultList}"/>
+
+    <rich:dataTable id="usuariosegurList"
+                var="_usuariosegur"
+              value="#{usuariosegurList.resultList}"
+           rendered="#{not empty usuariosegurList.resultList}">
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{usuariosegurList}"/>
+                    <ui:param name="propertyLabel" value="Id personal"/>
+                    <ui:param name="propertyPath" value="usuariosegur.idPersonal"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_usuariosegur.idPersonal}" style="with:">
+            </h:outputText>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{usuariosegurList}"/>
+                    <ui:param name="propertyLabel" value="Rut"/>
+                    <ui:param name="propertyPath" value="usuariosegur.rut"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_usuariosegur.rut}"/>
+        </h:column>    
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{usuariosegurList}"/>
+                    <ui:param name="propertyLabel" value="Nombre"/>
+                    <ui:param name="propertyPath" value="usuariosegur.nombre"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_usuariosegur.nombre}"/>
+        </h:column>            
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{usuariosegurList}"/>
+                    <ui:param name="propertyLabel" value="Alias"/>
+                    <ui:param name="propertyPath" value="usuariosegur.alias"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_usuariosegur.alias}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{usuariosegurList}"/>
+                    <ui:param name="propertyLabel" value="Anexo"/>
+                    <ui:param name="propertyPath" value="usuariosegur.anexo"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_usuariosegur.anexo}"/>
+        </h:column>
+        <h:column >
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{usuariosegurList}"/>
+                    <ui:param name="propertyLabel" value="Cargo"/>
+                    <ui:param name="propertyPath" value="usuariosegur.cargo"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_usuariosegur.cargo}" />
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{usuariosegurList}"/>
+                    <ui:param name="propertyLabel" value="Celular"/>
+                    <ui:param name="propertyPath" value="usuariosegur.celular"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_usuariosegur.celular}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{usuariosegurList}"/>
+                    <ui:param name="propertyLabel" value="Centro"/>
+                    <ui:param name="propertyPath" value="usuariosegur.centro"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_usuariosegur.centro}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{usuariosegurList}"/>
+                    <ui:param name="propertyLabel" value="Correo"/>
+                    <ui:param name="propertyPath" value="usuariosegur.correo"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_usuariosegur.correo}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{usuariosegurList}"/>
+                    <ui:param name="propertyLabel" value="Eliminado"/>
+                    <ui:param name="propertyPath" value="usuariosegur.eliminado"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_usuariosegur.eliminado}"/>
+        </h:column>
+        <rich:column styleClass="action">
+            <f:facet name="header">Acción</f:facet>
+            <s:link view="/#{empty from ? 'Usuariosegur' : from}.xhtml"
+                   value="#{empty from ? 'Ver' : 'Select'}"
+             propagation="#{empty from ? 'none' : 'default'}"
+                      id="usuariosegurViewId">
+                <f:param name="usuariosegurIdPersonal"
+                        value="#{_usuariosegur.idPersonal}"/>
+            </s:link>
+            #{' '}
+            <s:link view="/UsuariosegurEdit.xhtml"
+                   value="Editar"
+             propagation="none"
+                      id="usuariosegurEdit"
+                rendered="#{empty from}">
+                <f:param name="usuariosegurIdPersonal"
+                        value="#{_usuariosegur.idPersonal}"/>
+            </s:link>
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+
+    <div class="tableControl">
+
+        <s:link view="/UsuariosegurList.xhtml"
+            rendered="#{usuariosegurList.previousExists}"
+               value="#{messages.left}#{messages.left} Primera Página"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link view="/UsuariosegurList.xhtml"
+            rendered="#{usuariosegurList.previousExists}"
+               value="#{messages.left}  Página Anterior"
+                  id="previousPage">
+            <f:param name="firstResult"
+                    value="#{usuariosegurList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link view="/UsuariosegurList.xhtml"
+            rendered="#{usuariosegurList.nextExists}"
+               value="Siguiente Página #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult"
+                    value="#{usuariosegurList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link view="/UsuariosegurList.xhtml"
+            rendered="#{usuariosegurList.nextExists}"
+               value="Ultima Página #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult"
+                    value="#{usuariosegurList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+
+
+
+</ui:define>
+
+</ui:composition>

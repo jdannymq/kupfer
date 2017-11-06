@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:s="http://jboss.com/products/seam/taglib"
+                xmlns:a="http://richfaces.org/a4j"
+                template="/layout/emailBaseAlertaInternaPrueba.xhtml"  importance="normal"> 
+                <!-- template="/layout/emailBaseAlertaInterna.xhtml" -->
+     
+    <ui:param name="listacorreoUsuariosegur" value="#{emailAlertaContactoMensajeHelper.mensajeGenerador.listaNuevosCorreos}" />  
+	<ui:param name="coreroEmisor" value="#{emailAlertaContactoMensajeHelper.mensajeGenerador.correoEmisor}" />
+	<ui:param name="asunto" value="#{emailAlertaContactoMensajeHelper.mensajeGenerador.tituloRespuesta} SCK N #{emailAlertaContactoMensajeHelper.mensajeGenerador.solicitud.id.numSolicitud} - #{emailAlertaContactoMensajeHelper.mensajeGenerador.soloNombre}" />
+	
+	<ui:define name="contenido">
+		
+	    <table >
+	        <tr>
+	            <td colspan="2">
+	                <label  style="font-size: 13px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Se ha generado la siguiente solicitud de crédito Número #{emailAlertaContactoMensajeHelper.mensajeGenerador.solicitud.id.numSolicitud} </label></td>
+	        </tr>
+	        <tr style="height:5px">
+	            <td colspan="2" style="width:85px; font-weight: bold;">***************************************************</td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight:bold;">Cliente</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">#{emailAlertaContactoMensajeHelper.mensajeGenerador.rutNombre}</label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;" >Canal de venta</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">#{emailAlertaContactoMensajeHelper.mensajeGenerador.canalVenta}</label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Sucursal</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">#{emailAlertaContactoMensajeHelper.mensajeGenerador.sucursal}</label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Emisor</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">#{emailAlertaContactoMensajeHelper.mensajeGenerador.emisor}</label></td>
+	        </tr>
+	        <tr style="height:5px">
+	            <td colspan="2" style="width:85px;font-weight: bold;">***************************************************</td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Tipo de Solicitud</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">#{emailAlertaContactoMensajeHelper.mensajeGenerador.tipoSolicitud}</label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Tipo de venta</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; ">#{emailAlertaContactoMensajeHelper.mensajeGenerador.tipoVentas}</label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Monto Venta c/IVA $</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; ">#{emailAlertaContactoMensajeHelper.mensajeGenerador.montoMasIva}</label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Monto Pie $</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; ">#{emailAlertaContactoMensajeHelper.mensajeGenerador.montoPie}</label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Margen Negocio %</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; ">#{emailAlertaContactoMensajeHelper.mensajeGenerador.margenNegocio} %</label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Forma de Pago</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; ">#{emailAlertaContactoMensajeHelper.mensajeGenerador.formaPago}</label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Motivo de la Compra</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; ">#{emailAlertaContactoMensajeHelper.mensajeGenerador.motivoCompra}</label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Línea Seguro $</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; ">#{emailAlertaContactoMensajeHelper.mensajeGenerador.lineaSeguro}</label></td>
+	        </tr>
+	        <tr style="height:5px">
+	            <td colspan="2" style="width:85px; font-weight: bold;">***************************************************</td>
+	        </tr>	        
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Peak de Crédito $</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; ">#{emailAlertaContactoMensajeHelper.mensajeGenerador.peakCredito}</label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Con cobertura seguro $</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; ">#{emailAlertaContactoMensajeHelper.mensajeGenerador.coberturaSeguro}</label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Riesgo Küpfer $</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size:14px; font-weight:bold; color:#0000FF;" >#{emailAlertaContactoMensajeHelper.mensajeGenerador.risgoKupfer}</label></td>
+	        </tr>
+	        
+	        <tr style="height:5px">
+	            <td colspan="2" style="width:85px;font-weight: bold;">***************************************************</td>
+	        </tr>
+	        <tr>
+	            <td  colspan="2">
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;; font-weight: bold;">Conceptos Cotizados</label>
+	            </td>
+	        </tr>
+	        <a:repeat id="concepto" value="#{emailAlertaContactoMensajeHelper.mensajeGenerador.listaConceptoMontos}" var="_concepto">
+	        <tr>
+	            <td style="width:200px;">
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">#{_concepto.descripcion}</label>
+	            </td>
+	            <td style="width:72%;">
+	            		    <table cellpadding="0" cellspacing="0" style="width:100%;">
+						        <tr>
+						            <td style="width:200px;">
+						                <label  style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;"> 
+						                    #{'$'}#{' '}#{_concepto.montoFormateado}  
+						                </label>
+						            </td>
+						            <td >
+						                <label  style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;"> 
+						                    #{'Margen: '} #{_concepto.margen}% 
+						                </label>
+						            </td>
+						        </tr>
+						    </table>
+	            </td>
+	        </tr>	        
+	        </a:repeat>	        
+	        
+	        <tr style="height:5px">
+	            <td colspan="2" style="width:85px;font-weight: bold;">***************************************************</td>
+	        </tr>
+	        <tr>
+	            <td  colspan="2">
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Productos</label></td>
+	        </tr>
+	         <tr>
+	         	<td style="width:100px;">
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif;">Codigo Material </label></td>	
+	            <td>
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif;">Descripción</label></td>			
+			
+			</tr>	        
+	        
+			<a:repeat id="productos" value="#{emailAlertaContactoMensajeHelper.mensajeGenerador.listaProductos}" var="_producto">
+	         <tr>
+	         	<td style="width:100px;">
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">#{_producto.codigo} </label></td>	
+	            <td>
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">#{_producto.descripcion}</label></td>			
+			
+			</tr>
+			</a:repeat>
+			
+
+	        
+	        
+	        <tr style="height:5px">
+	            <td colspan="2" style="width:85px;font-weight: bold;">***************************************************</td>
+	        </tr>
+	        <tr>
+	            <td  colspan="2">
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Archivos Adjuntos</label></td>
+	        </tr>
+	        <a:repeat id="archivos" value="#{emailAlertaContactoMensajeHelper.mensajeGenerador.listaArchivos}" var="_archivos">
+		        <tr>
+		         	<td style="width:100px;">
+		                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif"> </label>
+		            </td>		        
+		        
+		            <td ><label style="font-size:x-small;  font-family:Arial,Helvetica,sans-serif; font-weight: bold;">
+		            	 	<a href="#{_archivos.rutaCompleta}">#{_archivos.nombreArchivo}</a> 
+		                </label>
+		            </td>
+		        </tr>
+		   </a:repeat>		        
+	    </table>
+	    <br/><br/>
+		<br/><br/>
+		<br/><br/>
+		<p>Importante: correo es generado de forma automatica. ¡NO reponder este correo! </p>
+	</ui:define>
+</ui:composition>

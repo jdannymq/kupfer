@@ -1,0 +1,273 @@
+<rich:toolBar
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:rich="http://richfaces.org/rich">
+    
+    
+    <rich:toolBarGroup>
+        <h:outputText value="#{projectName}:"/> <h:outputLabel value="" style="color:#2B00FF; font-weight:bold;" rendered="#{not identity.loggedIn}"/>
+        
+    </rich:toolBarGroup>
+    
+    <rich:dropDownMenu showDelay="250" hideDelay="0" submitMode="none" rendered="#{identity.loggedIn and identity.menu.parametros == true}">
+        <f:facet name="label">Parametros del Sistema</f:facet>
+		<rich:menuItem rendered="#{identity.menu.mantenedorEstado and identity.usuarioCargo.administrador == true}">
+	    	<s:link view="/LcredEstadoList.xhtml"
+	           	value="Mantenedor Estados"
+	           	id="EstadoId"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>
+	     <ui:remove>
+			<rich:menuItem rendered="#{identity.menu.mantenedorUsuario and identity.usuarioCargo.administrador == true}">
+		    	<s:link view="/UsuariosList.xhtml"
+		           	value="Mantenedor Usuario"
+		           	id="UsuariosId"
+					includePageParams="false"
+		     		propagation="none"/>
+		     </rich:menuItem>
+	     </ui:remove>
+		<rich:menuItem rendered="#{identity.menu.mantenedorMotivoRechazo and identity.usuarioCargo.administrador == true}">
+	    	<s:link view="/LcredMotivoRechazoList.xhtml"
+	           	value="Mantenedor Motivo de Rechazo"
+	           	id="MotivoRechazoId"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>
+		<rich:menuItem rendered="#{identity.menu.mantenedorCargo and identity.usuarioCargo.administrador == true}">
+	    	<s:link view="/LcredCargosList.xhtml"
+	           	value="Mantenedor Cargos"
+	           	id="CargosId"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>	
+		<rich:menuItem rendered="#{identity.menu.mantenedorIngresoUsuarios and identity.usuarioCargo.administrador == true}">
+	    	<s:link view="/UsuarioAction.xhtml"
+	           	value="Mantenedor Perfiles de Usuarios"
+	           	id="PerfilesUsuariosId"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>		     
+		<rich:menuItem rendered="#{identity.menu.mantenedorTipoSolicitud and identity.usuarioCargo.administrador == true}">
+	    	<s:link view="/LcredTipoSolicitudList.xhtml"
+	           	value="Mantenedor Tipo Solicitud"
+	           	id="TipoSolictudId"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>	
+		<rich:menuItem rendered="#{identity.menu.mantenedorTipoUsuario and identity.usuarioCargo.administrador == true}">
+	    	<s:link view="/TipoUsuarioList.xhtml"
+	           	value="Mantenedor Tipos de Usuarios"
+	           	id="TiposUsuariosId"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>
+	     <ui:remove>
+		<rich:menuItem rendered="#{identity.menu.mantenedorUf and identity.usuarioCargo.administrador == true}">
+	    	<s:link view="/UfList.xhtml"
+	           	value="Listado Uf."
+	           	id="UfId"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>
+	     </ui:remove>		     
+		 <rich:menuItem rendered="#{identity.menu.mantenedorUf and identity.usuarioCargo.administrador == true}">
+	    	<s:link view="/UfSolicitudTipoList.xhtml"
+	           	value="UFs Para Solicitudes"
+	           	id="UfSolicitudTipoId"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>	     
+	     
+		<rich:menuItem rendered="#{identity.menu.mantenedorTipoFormaPago and identity.usuarioCargo.administrador == true}">
+	    	<s:link view="/TipoFormaPagoList.xhtml"
+	           	value="Mantenedor Forma de Pago"
+	           	id="TipoFormaPagoId"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>
+		<rich:menuItem rendered="#{identity.menu.mantenedorFormaPago and identity.usuarioCargo.administrador == true}">
+	    	<s:link view="/FormaPagoList.xhtml"
+	           	value="Mantenedor Plazos de Pagos"
+	           	id="FormaPagoId"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>	     
+	     		     
+		<rich:menuItem rendered="#{identity.menu.mantenedorPantalla and identity.usuarioCargo.administrador == true}">
+	    	<s:link view="/PantallaList.xhtml"
+	           	value="Mantenedor Pantallas"
+	           	id="PantallasId"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>		     	     
+		<rich:menuItem rendered="#{identity.menu.mantenedorTipoPantalla and identity.usuarioCargo.administrador == true}">
+	    	<s:link view="/TipoPantallaAction.xhtml"
+	           	value="Asociar Tipo de Usuario a Pantallas"
+	           	id="aTipUsuPantId"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>	
+		<rich:menuItem rendered="#{identity.menu.mantenedorUsuarioTipo and identity.usuarioCargo.administrador == true}">
+	    	<s:link view="/UsuarioTipoAction.xhtml"
+	           	value="Asociar Usuario a Tipos de Usuarios"
+	           	id="aUsuToTiUsuPantId"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>
+		<rich:menuItem rendered="#{identity.menu.mantenedorUsuarioTipo and identity.usuarioCargo.administrador == true}">
+	    	<s:link view="/UsuarioPerfilAction.xhtml"
+	           	value="Asociar Usuario a Perfiles"
+	           	id="aUsuToPerId"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>
+	   	<rich:menuItem rendered="#{identity.menu.mantenedorAsociarTipoAndFormaPago and identity.usuarioCargo.administrador == true}">
+	    	<s:link view="/AsociarTipoAndFormaPagoAction.xhtml"
+	           	value="Asociar Forma de Pago / Plazos de Pagos"
+	           	id="asociarTipoAndFormaPagotId"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>	
+	     
+	   	<rich:menuItem rendered="#{identity.menu.mantenedorLiberarSolicitudes and identity.usuarioCargo.administrador == true}">
+	    	<s:link view="/LiberarSolicitudEnviadaAprobacionAction.xhtml"
+	           	value="Liberar Solicitudes"
+	           	id="LiberarSolicitudesId"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>
+	   	<rich:menuItem rendered="#{identity.menu.mantenedorLiberarSolicitudes and identity.usuarioLogueado.alias == 'ADMINISTRADOR'}">
+	    	<s:link view="/CargaMasiva.xhtml"
+	           	value="Carga Masiva"
+	           	id="CargaMasivaSolicitudesId"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>
+	    <ui:remove> 		</ui:remove>
+		<rich:menuItem rendered="#{identity.usuarioCargo.administrador == true}">
+	    	<s:link view="/MantenedorFeriado.xhtml"
+	           	value="Listado de Feriados"
+	           	id="FeriadoId"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>
+	    <rich:menuItem rendered="#{identity.usuarioCargo.administrador == true}">
+	    	<s:link view="/MantenedorJornada.xhtml"
+	    	   	value="Listado de Jornadas"
+	           	id="JornadaId"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>
+		<rich:menuItem rendered="#{identity.usuarioCargo.administrador == true}">
+	    	<s:link view="/MantenedorCanales.xhtml"
+	           	value="Listado de Canales"
+	           	id="CanalId"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>
+		<rich:menuItem rendered="#{identity.usuarioCargo.administrador == true}">
+	    	<s:link view="/MantenedorMedicion.xhtml"
+	    	   	value="Listado de Mediciones"
+	           	id="MedicionId"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>	
+	    <rich:menuItem rendered="#{identity.usuarioCargo.administrador == true}">
+	    	<s:link view="/MantenedorMedicionCanalRango.xhtml"
+	    	   	value="Listado de Rango de Mediciones"
+	           	id="RangoMedicionId"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>	 
+	    <rich:menuItem rendered="#{identity.usuarioCargo.administrador == true}">
+	    	<s:link view="/MantenedorCondicionMedicionCanalRango.xhtml"
+	    	   	value="Listado de Condiciones de Solicitudes"
+	           	id="CondicionesRangoId"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>	 	     
+	    <rich:menuItem rendered="#{identity.usuarioCargo.administrador == true}">
+	    	<s:link view="/MatrizResponsabilidadesAction.xhtml"
+	    	   	value="Matriz de Responsabilidades"
+	           	id="matrizResponsabilidadId"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>
+	     
+	     <rich:menuItem rendered="#{identity.usuarioCargo.administrador == true}">
+	    	<s:link view="/MantenedorMatrizMontos.xhtml"
+	    	   	value="Mantenedor Rango de Montos -"
+	           	id="MatrizMontoId"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>
+	     <rich:menuItem rendered="#{identity.usuarioCargo.administrador == true}">
+	    	<s:link view="/MantenedorMatrizPlazos.xhtml"
+	    	   	value="Mantenedor Rango de Plazos -"
+	           	id="MatrizPlazoId"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>	
+	      <rich:menuItem rendered="#{identity.usuarioCargo.administrador == true}">
+	    	<s:link view="/MantenedorMatrizMedicion.xhtml"
+	    	   	value="Mantenedor Matriz Mediciones -"
+	           	id="MatrizMedicionId"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>		
+
+	          
+    </rich:dropDownMenu>
+     <rich:dropDownMenu showDelay="250" hideDelay="0" submitMode="none" rendered="#{identity.loggedIn and identity.menu.solicitud == true}">
+        <f:facet name="label">Solicitud</f:facet>
+		<rich:menuItem   rendered="#{identity.menu.mantenedorPantallaSeleccion == true}">
+	    	<s:link view="/GenerarSolicitud.xhtml"
+	           	value="Generar / Aprobar Solicitudes" 
+	           	id="PantallaSeleccionId1"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>
+	     <rich:menuItem   rendered="#{identity.menu.mantenedorPantallaSeleccion == true}">
+	    	<s:link view="/GenerarSolicitudModelo.xhtml"
+	           	value="Generar Solicitud Modelo" 
+	           	id="PantallaSeleccionId2"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>
+
+    </rich:dropDownMenu>   
+    
+     <rich:dropDownMenu showDelay="250" hideDelay="0" submitMode="none" rendered="#{identity.loggedIn and identity.menu.solicitud == true}">
+        <f:facet name="label">Consultas</f:facet>
+		<rich:menuItem   rendered="#{identity.menu.mantenedorPantallaSeleccion == true}">
+	    	<s:link view="/ListadoPorRangosAction.xhtml"
+	           	value="Consulta Solicitudes por Parametros " 
+	           	id="PantallaSeleccionId3"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>
+    </rich:dropDownMenu>   
+    <ui:remove>  </ui:remove>
+    <rich:dropDownMenu showDelay="250" hideDelay="0" submitMode="none" rendered="#{identity.usuarioCargo.administrador == true}">
+        <f:facet name="label">Reportes</f:facet>
+		<rich:menuItem rendered="#{identity.usuarioCargo.administrador == true}">
+	    	<s:link view="/InformeNivelServicioAction.xhtml"
+	           	value="Informe de Nivel de Servicio"
+	           	id="informeNivelServicioId1"
+				includePageParams="false"
+	     		propagation="none"/>
+	     </rich:menuItem>
+   </rich:dropDownMenu>  
+
+    
+    <!-- @newMenuItem@ -->
+    <rich:toolBarGroup location="right" >
+        <h:outputText id="menuWelcomeId" value="Sesion activa:: #{credentials.username}" rendered="#{identity.loggedIn}"/>
+        <blink> <s:link id="menuLoginId" view="/login.xhtml" value="Login" rendered="#{not identity.loggedIn}" propagation="none" style="font-weight:bold; font-size:15px;"/></blink>
+        <s:link id="menuLogoutId" view="/home.xhtml" action="#{identity.logout}" value="Logout" rendered="#{identity.loggedIn}" propagation="none"/>
+    </rich:toolBarGroup>
+</rich:toolBar>

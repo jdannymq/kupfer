@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	<rich:modalPanel id="mpAnalizarSolicitud" autosized="true" width="500" height="100">
+    	 <f:facet name="header">
+            <h:outputText value="Analizar Solicitud" style="padding-right:15px;" />
+        </f:facet>
+    	<f:facet name="controls">
+            <h:panelGroup>
+               	<h:graphicImage value="img/close.png" styleClass="hidelink" id="mpAnalizarSolicitudhidelink" />
+                <rich:componentControl for="mpAnalizarSolicitud" attachTo="mpAnalizarSolicitudhidelink"
+                   	operation="hide" event="onclick" />
+            </h:panelGroup>
+        </f:facet>
+        <h:form id="frm_analizar">
+           <a:outputPanel id="modalAnalista">
+		        <h:panelGrid id="escrituraEjecutivo" columns="1" cellpadding="0" cellspacing="5" width="100%" style="text-align:center;">
+		        	<h:outputLabel value="¿Está seguro de tomar la solicitud para analsis ejecutivo.?" style="font-size:14px; font-weight: bold;" />
+				</h:panelGrid>
+				<table cellpadding="0" cellspacing="0" width="100%">
+					<tr>
+						<td align="center">
+					        <h:panelGrid id="ingresarEjecutivo" columns="3" cellpadding="0" cellspacing="5" columnClasses="col_top">
+				        		<a:commandButton action="#{respuestaSolicitudAction.analizarSolicitud()}" 
+				        						 value="Si" 
+				        						 ajaxSingle="true"
+				        	                reRender="escrituraEjecutivo,mpAnalizarSolicitud,mpMensajeGlobalRespuesta,panelGeneral"
+				        	                oncomplete="if (#{respuestaSolicitudAction.mensajeGlogal != null}) {#{rich:component('mpMensajeGlobalRespuesta')}.show()}else{#{rich:component('mpAnalizarSolicitud')}.hide()}"
+				        		            /> 
+				        		            
+				        		<a:commandButton action="#{respuestaSolicitudAction.salirAnalisisSolicitud()}" 
+				        						 value="No" 
+				        						 ajaxSingle="true"
+				        	                reRender="mpAnalizarSolicitud"
+				        	                disabled="false"
+				        		            oncomplete="if (#{respuestaSolicitudAction.salirDelMensaje==true}) {#{rich:component('mpAnalizarSolicitud')}.hide()}" 
+				        		            />
+							</h:panelGrid>					
+						
+						</td>				
+					</tr>
+				</table>
+			<ui:remove>
+        	<s:fragment rendered="#{respuestaSolicitudAction.modalAnalista !='I'}">
+		        <h:panelGrid id="escrituraAnalista" columns="1" cellpadding="0" cellspacing="5" width="100%" style="text-align:center;">
+		        	<h:outputLabel value="¿Está seguro de tomar la solicitud para analsis analista.?" style="font-size:14px; font-weight: bold;" />
+				</h:panelGrid>
+				<table cellpadding="0" cellspacing="0" width="100%">
+					<tr>
+						<td align="center">
+					        <h:panelGrid id="ingresarAnalisita" columns="3" cellpadding="0" cellspacing="5" columnClasses="col_top">
+				        		<a:commandButton action="#{respuestaSolicitudAction.aprobarSolicitudes()}" 
+				        						 value="Si" 
+				        						 ajaxSingle="true"
+				        	                reRender="escrituraEjecutivo,mpAnalizarSolicitud,mpMensajeGlobalRespuesta,panelGeneral"
+				        	                oncomplete="if (#{respuestaSolicitudAction.mensajeGlogal != null}) {#{rich:component('mpMensajeGlobalRespuesta')}.show()}else{#{rich:component('mpAnalizarSolicitud')}.hide()}"
+				        		            /> 
+				        		            
+				        		<a:commandButton action="#{respuestaSolicitudAction.salirAnalisisSolicitud()}" 
+				        						 value="No" 
+				        						 ajaxSingle="true"
+				        	                reRender="mpAnalizarSolicitud"
+				        	                disabled="false"
+				        		            oncomplete="if (#{respuestaSolicitudAction.salirDelMensaje==true}) {#{rich:component('mpAnalizarSolicitud')}.hide()}" 
+				        		            />
+							</h:panelGrid>					
+						
+						</td>				
+					</tr>
+				</table>
+			</s:fragment>
+		  	</ui:remove>
+		  </a:outputPanel>
+        </h:form>
+    </rich:modalPanel>
+    
+</ui:composition>

@@ -1,0 +1,30 @@
+package org.domain.sck.entity.emuns;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public enum EstadoEntityType {
+	ACTIVO("Activo"), INACTIVO("Inactivo");
+	
+	private String nombre;
+
+	private EstadoEntityType(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public String getNombre() {
+		return nombre;
+	}
+	
+	
+	private static final List<EstadoEntityType> tipos = new ArrayList<EstadoEntityType>();
+	
+	static {
+		tipos.addAll(Arrays.asList(EstadoEntityType.values()));
+	}
+
+	public static List<EstadoEntityType> getTipos() {
+		return tipos;
+	}
+}

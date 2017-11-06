@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd">
+
+   <param name="firstResult" value="#{sociedadList.firstResult}"/>
+   <param name="sort" value="#{sociedadList.orderColumn}"/>
+   <param name="dir" value="#{sociedadList.orderDirection}"/>
+   <param name="logic" value="#{sociedadList.restrictionLogicOperator}"/>
+
+   <param name="from"/>
+   <param name="codigoSociedad" value="#{sociedadList.sociedad.codigoSociedad}"/>
+   <param name="razonSocial" value="#{sociedadList.sociedad.razonSocial}"/>
+   <param name="rut" value="#{sociedadList.sociedad.rut}"/>
+
+</page>

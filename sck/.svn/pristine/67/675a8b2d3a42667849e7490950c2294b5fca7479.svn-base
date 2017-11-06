@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="lcredTipoSolicitud" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{lcredTipoSolicitudHome.managed ? 'Editar' : 'Agregar'}  Tipo Solicitud</f:facet>
+
+
+            <s:decorate id="codTipoSolicitudField" template="layout/edit.xhtml">
+                <ui:define name="label">Codigo Tipo Solicitud</ui:define>
+                <h:inputText id="codTipoSolicitud"
+                       disabled="#{lcredTipoSolicitudHome.managed}"
+                       required="true"
+                           size="3"
+                      maxlength="3"
+                      onkeypress="return isNumberKey(event);"
+                          value="#{lcredTipoSolicitudHome.instance.codTipoSolicitud}">
+                    <a:support event="onblur" reRender="codTipoSolicitudField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="desTipoSolicitudField" template="layout/edit.xhtml" >
+                <ui:define name="label">Descripción Tipo Solicitud</ui:define>
+                <h:inputText id="desTipoSolicitud"
+                           size="30"
+                      maxlength="30"
+                      required="true"
+                          value="#{lcredTipoSolicitudHome.instance.desTipoSolicitud}">
+                    <a:support event="onblur" reRender="desTipoSolicitudField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="indBorradoField" template="layout/edit.xhtml">
+                <ui:define name="label">Ind borrado</ui:define>
+                <h:inputText id="indBorrado"
+                          value="#{lcredTipoSolicitudHome.instance.indBorrado}">
+                    <a:support event="onblur" reRender="indBorradoField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="claveProcesoField" template="layout/edit.xhtml">
+                <ui:define name="label">Clave proceso</ui:define>
+                <h:inputText id="claveProceso"
+                           size="2"
+                      maxlength="2"
+                      required="true"
+                      onkeypress="return isNumberKey(event);"
+                          value="#{lcredTipoSolicitudHome.instance.claveProceso}">
+                    <a:support event="onblur" reRender="claveProcesoField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                Campos Requeridos 
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Guardar"
+                         action="#{lcredTipoSolicitudHome.persist}"
+                       disabled="#{!lcredTipoSolicitudHome.wired}"
+                       rendered="#{!lcredTipoSolicitudHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="Modificar"
+                         action="#{lcredTipoSolicitudHome.update}"
+                       rendered="#{lcredTipoSolicitudHome.managed}"/>
+
+            <h:commandButton id="delete"
+                          value="Eliminar"
+                         action="#{lcredTipoSolicitudHome.remove}"
+                      immediate="true"
+                       rendered="#{lcredTipoSolicitudHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="Cancelar"
+             propagation="end"
+                    view="/LcredTipoSolicitud.xhtml"
+                rendered="#{lcredTipoSolicitudHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="Cancelar"
+             propagation="end"
+                    view="/#{empty lcredTipoSolicitudFrom ? 'LcredTipoSolicitudList' : lcredTipoSolicitudFrom}.xhtml"
+                rendered="#{!lcredTipoSolicitudHome.managed}"/>
+
+        </div>
+    </h:form>
+
+</ui:define>
+
+</ui:composition>

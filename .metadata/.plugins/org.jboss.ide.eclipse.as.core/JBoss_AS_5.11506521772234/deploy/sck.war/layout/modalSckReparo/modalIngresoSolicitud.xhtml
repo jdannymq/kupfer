@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	<rich:modalPanel id="mpIngresarSolicitud" autosized="true" width="400" height="100">
+    	 <f:facet name="header">
+            <h:outputText value="Solicitud Modificada" style="padding-right:15px;" />
+        </f:facet>
+    	<f:facet name="controls">
+            <h:panelGroup>
+               	<h:graphicImage value="img/close.png" styleClass="hidelink" id="mpIngresarSolicitudhidelink" />
+                <rich:componentControl for="mpIngresarSolicitud" attachTo="mpIngresarSolicitudhidelink"
+                   	operation="hide" event="onclick" />
+            </h:panelGroup>
+        </f:facet>
+        <h:form id="frm_ingresar_solicitud">
+        	<s:fragment rendered="#{generarSolicitudReparosAction.habilitarBotonAgregarSolicitud == true}">
+		        <a:outputPanel id="mensajeValidacion">
+		        	<h:panelGrid columns="1" cellpadding="0" cellspacing="0" width="100%" style="text-align:center;">
+			        	<h:messages  globalOnly="true" styleClass="message"
+				    	errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" style="font-size:14px; font-weight: bold;" />
+			    	</h:panelGrid>
+				</a:outputPanel>
+			</s:fragment>
+			<s:fragment rendered="#{generarSolicitudReparosAction.habilitarBotonAgregarSolicitud == false}">
+				<table cellpadding="0" cellspacing="0" width="100%">
+					<tr>
+						<td align="center">
+							<h:outputLabel id="escritura2" value="¿Está seguro de enviar la solicitud modificada.?" style="font-size:14px; font-weight: bold;" />	
+						</td>
+					</tr>
+				</table>		
+				<table cellpadding="0" cellspacing="0" width="100%">
+					<tr>
+						<td align="center">
+					        <h:panelGrid id="ingresar" columns="3" cellpadding="0" cellspacing="5" columnClasses="col_top">
+				        		<a:commandButton action="#{generarSolicitudReparosAction.ingresarSolictud('Enviar')}" 
+				        						 value="Si" 
+				        						 ajaxSingle="true"
+				        	                reRender="mpIngresarSolicitud,codigoSolicitud,frmSeleccion,codigoSolicitud,panelIngresoSolicitud,idValorMonto,mpMensajeGlobal"
+				        	                disabled="#{generarSolicitudReparosAction.habilitarBotonAgregarSolicitud}"
+				        	                oncomplete="if (#{generarSolicitudReparosAction.mensajeGlogal != null}) {#{rich:component('mpMensajeGlobal')}.show()}"
+				        	                
+				        		            /> 
+				        		            
+				        		<a:commandButton action="#{generarSolicitudReparosAction.salirDelIngresoSolicitud()}" 
+				        						 value="No" 
+				        						 ajaxSingle="true"
+				        	                reRender="mpIngresarSolicitud,codigoSolicitud,frmSeleccion,codigoSolicitud"
+				        	                disabled="false"
+				        		            oncomplete="if (#{generarSolicitudReparosAction.salirDelMensaje==true}) {#{rich:component('mpIngresarSolicitud')}.hide()}" 
+				        		            />
+							</h:panelGrid>					
+						
+						</td>				
+					</tr>
+					<tr>
+						<td align="center">
+	    					<strong style="font-size:10px"> </strong>				
+						</td>				
+					</tr>
+				</table>
+			</s:fragment>
+        </h:form>
+    </rich:modalPanel>
+    
+</ui:composition>

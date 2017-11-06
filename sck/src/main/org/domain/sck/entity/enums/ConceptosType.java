@@ -1,0 +1,20 @@
+package org.domain.sck.entity.enums;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public enum ConceptosType {
+	ZONA, SUCURSAL, NEGOCIO, CONCEPTO;
+	
+	
+	private static final List<ConceptosType> tipos = new ArrayList<ConceptosType>();
+	
+	static {
+		tipos.addAll(Arrays.asList(ConceptosType.values()));
+	}
+
+	public static List<ConceptosType> getTipos() {
+		return tipos;
+	}
+}

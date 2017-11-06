@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	
+	
+	<rich:modalPanel id="mpConsultarHitosVer" autosized="true" width="600">
+		<f:facet name="header">
+			<h:outputText value="Consulta de Hitos de Solicitud"	style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:form>
+					<a:commandLink	ajaxSingle="true" action="#{visualizarSolicitudTodasAction.limpiarHitos()}">
+						<h:graphicImage value="img/close.png" styleClass="hidelink"	id="mpConsultarHitosVerlink" />
+					</a:commandLink>
+					<rich:componentControl for="mpConsultarHitosVer"
+						attachTo="mpConsultarHitosVerlink" operation="hide"
+						event="onclick" />
+				</h:form>
+			</h:panelGroup>
+		</f:facet>
+		<h:form id = "frm_consultaHitos">
+		<rich:panel>
+			<f:facet name="header"><h:outputText value="Información de Solicitud"	style="padding-right:15px;" /></f:facet>		
+        	 	<h:panelGrid columns="3" border="0">
+		        	<s:decorate template="/layout/edit.xhtml">
+						<ui:define name="label">N°</ui:define>
+						<h:inputText id="idNumSolicitud" 
+									value="#{visualizarSolicitudTodasAction.solicitudLogHitos.id.numSolicitud}" 
+						          required="false"  
+							       maxlength="10"
+							       size="10" 
+							       disabled="true">
+						</h:inputText>	       
+		 			</s:decorate>        	 	
+		        	<s:decorate template="/layout/edit.xhtml">
+						<ui:define name="label">Nombre</ui:define>
+						<h:inputText id="idNombreSolicitud" 
+									value="#{visualizarSolicitudTodasAction.solicitudLogHitos.nomCliente}" 
+						          required="false"  
+							       maxlength="120"
+							       size="50" 
+							       disabled="true" >
+						</h:inputText>	        	
+					</s:decorate>        	 	
+		        	<s:decorate template="/layout/edit.xhtml">
+						<ui:define name="label">Estado</ui:define>
+						<h:inputText id="idEstadoSolicitud" 
+									value="#{visualizarSolicitudTodasAction.estadoLogHitos.desEstado}" 
+						          required="false"  
+							       maxlength="120"
+							       size="50" 
+							       disabled="true" >
+						</h:inputText>	        	
+					</s:decorate>   
+        	 	</h:panelGrid>
+		</rich:panel>
+
+
+		<rich:panel>
+				<f:facet name="header"><h:outputText value="Hitos de la Solicitud"	style="padding-right:15px;" /></f:facet>
+				<a:outputPanel id="grillaHitos">
+		    	<div class="results" id="grillaProductos" style="height:380px; overflow: auto;">
+			   		<h:outputText value="No existe ningun hitos en esta solicitud." 
+			   		           rendered="#{empty visualizarSolicitudTodasAction.listaHitos}"/>
+				    <rich:dataTable id="idlistaHitos"
+				                var="_sh"
+				              value="#{visualizarSolicitudTodasAction.listaHitos}"
+				           rendered="#{not empty visualizarSolicitudTodasAction.listaHitos}">
+				        <rich:column>
+				            <f:facet name="header">Emisor</f:facet>
+				            <h:outputText value="#{_sh.emisor}"/>
+				        </rich:column>
+				        <rich:column>
+				            <f:facet name="header">Fecha - Hora</f:facet>
+				            <h:outputText value="#{_sh.fechaHora}">
+				            	<s:convertDateTime pattern="dd-MM-yyyy HH:mm" />
+				            </h:outputText>
+				        </rich:column>
+				        <rich:column style="text-align:center; font-size:9px;">
+				            <f:facet name="header">Usuario Actual</f:facet>
+							<s:fragment rendered="#{_sh.codEstadoDerivada == null}">
+								 <h:outputText value="#{_sh.usuarioActual}"/>
+							</s:fragment>				            
+							
+							<s:fragment rendered="#{_sh.codEstadoDerivada == 'B' or _sh.codEstadoDerivada == 'SA'}">
+								<a:commandButton value="Usuarios" 
+							                  reRender="mpSolicitudUsuariosGlobalVer,datos" 
+							                  oncomplete="#{rich:component('mpSolicitudUsuariosGlobalVer')}.show()"
+							                  action="#{visualizarSolicitudTodasAction.sacarLogHitosSolicitudUsuarioDerivada(_sh)}"
+							                  ajaxSingle="true"
+							                  />	
+							</s:fragment>	
+
+				        </rich:column>
+				        <rich:column>
+				            <f:facet name="header">Estado</f:facet>
+				            <h:outputText value="#{_sh.descripcionEstado}"/>
+				        </rich:column>
+				    </rich:dataTable>
+			    </div>
+				</a:outputPanel>
+		</rich:panel>
+
+   	</h:form>
+
+	</rich:modalPanel>
+	
+</ui:composition>

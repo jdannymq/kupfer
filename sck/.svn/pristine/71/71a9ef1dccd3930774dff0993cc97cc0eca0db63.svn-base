@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<components xmlns="http://jboss.com/products/seam/components"
+            xmlns:core="http://jboss.com/products/seam/core"
+            xmlns:persistence="http://jboss.com/products/seam/persistence"
+            xmlns:drools="http://jboss.com/products/seam/drools"
+            xmlns:bpm="http://jboss.com/products/seam/bpm"
+            xmlns:security="http://jboss.com/products/seam/security"
+            xmlns:mail="http://jboss.com/products/seam/mail"
+            xmlns:web="http://jboss.com/products/seam/web"
+            xmlns:async="http://jboss.com/products/seam/async"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns:excel="http://jboss.com/products/seam/excel"
+            xsi:schemaLocation=
+                "http://jboss.com/products/seam/core http://jboss.com/products/seam/core-2.2.xsd
+                 http://jboss.com/products/seam/persistence http://jboss.com/products/seam/persistence-2.2.xsd
+                 http://jboss.com/products/seam/drools http://jboss.com/products/seam/drools-2.2.xsd
+                 http://jboss.com/products/seam/bpm http://jboss.com/products/seam/bpm-2.2.xsd
+                 http://jboss.com/products/seam/security http://jboss.com/products/seam/security-2.2.xsd
+                 http://jboss.com/products/seam/mail http://jboss.com/products/seam/mail-2.2.xsd
+                 http://jboss.com/products/seam/web http://jboss.com/products/seam/web-2.2.xsd
+                 http://jboss.com/products/seam/async http://jboss.com/products/seam/async-2.2.xsd
+                 http://jboss.com/products/seam/components http://jboss.com/products/seam/components-2.2.xsd">
+
+   <core:init debug="true" jndi-pattern="@jndiPattern@"/>
+
+   
+   
+   <web:multipart-filter create-temp-files="true"  
+   								  disabled="true"
+                          max-request-size="26214400" 
+                               url-pattern="*.seam"/> 
+                          
+                      
+                      
+                 
+   <core:manager concurrent-request-timeout="500"
+                 conversation-timeout="7200000"
+                 conversation-id-parameter="cid"
+                 parent-conversation-id-parameter="pid"/>                 
+                 
+
+   <!-- Make sure this URL pattern is the same as that used by the Faces Servlet -->
+   <web:hot-deploy-filter url-pattern="*.seam"/>
+
+   <persistence:entity-manager-factory name="entityManagerFactory" installed="false"/>
+
+   <persistence:managed-persistence-context name="entityManager" auto-create="true"
+		entity-manager-factory="#{entityManagerFactory}" persistence-unit-jndi-name="java:/sck"/>		
+
+   <persistence:entity-manager-factory name="emfIntranetSAPSck" installed="false"/>
+
+   <persistence:managed-persistence-context name="emIntranetSAPSck" auto-create="true"
+		entity-manager-factory="#{emfIntranetSAP}" persistence-unit-jndi-name="java:/IntranetSAPSck"/>
+
+
+   <persistence:entity-manager-factory name="emfSegur" installed="false"/>
+
+   <persistence:managed-persistence-context name="emSegur" auto-create="true"
+		entity-manager-factory="#{emfSegur}" persistence-unit-jndi-name="java:/SegurSck"/>
+
+
+
+
+
+
+   <drools:rule-base name="securityRules">
+      <drools:rule-files><value>/security.drl</value></drools:rule-files>
+   </drools:rule-base>
+
+   <security:rule-based-permission-resolver security-rules="#{securityRules}"/>
+
+   <security:identity authenticate-method="#{authenticator.authenticate}" remember-me="true"/>
+
+	<async:quartz-dispatcher />
+
+   <event type="org.jboss.seam.security.notLoggedIn">
+      <action execute="#{redirect.captureCurrentView}"/>
+   </event>
+   <event type="org.jboss.seam.security.loginSuccessful">
+      <action execute="#{redirect.returnToCapturedView}"/>
+   </event>
+
+ 
+   <!-- mail:mail-session host="10.1.45.4" username="" password="" port="25" ssl="false" tls="false"/-->
+   
+   <!-- mail:mail-session host="10.1.1.70" username="" password="" port="25" ssl="false" tls="false"/-->
+   
+   <mail:mail-session host="10.1.19.30" username="" password="" port="5025" ssl="false" tls="false"/>
+
+
+ 
+   <!-- For use with jBPM pageflow or process management -->
+   <!--
+   <bpm:jbpm>
+      <bpm:process-definitions></bpm:process-definitions>
+      <bpm:pageflow-definitions></bpm:pageflow-definitions>
+   </bpm:jbpm>
+   -->
+   
+
+   <component name="globalParameters" scope="application">
+   
+         
+			<property name="attachedFilesAbsolutePath">/opt/jboss/directorioremoto/sck/</property>
+			<property name="attachedFilesWebPath">http://10.1.19.82/sck/</property>
+			<property name="attachedFilesWebPathPrueba">http://10.1.19.82/sck/</property>
+		 	 	
+			<!--   
+				<property name="attachedFilesAbsolutePath">C:/usr/local/jboss/jboss-5.1.0.GA/server/default/deploy/adjuntos.war/SCK/</property>
+				<property name="attachedFilesWebPath">http://localhost:8080/adjuntos/SCK/</property>
+			    <property name="attachedFilesWebPathPrueba">C:/usr/local/jboss/jboss-5.1.0.GA/server/default/deploy/adjuntos.war/SCK/</property>
+			-->
+		   												   
+		<property name="nameSap">PRD</property>
+		<property name="ipSap">10.1.24.56</property>
+		<property name="clientSap">300</property>
+		<property name="systemNumberSap">0</property>
+		<property name="userSap">intranet</property>
+		<property name="passwordSap">informat</property>
+
+		<!-- property name="nameSap">QAS</property>
+		<property name="ipSap">10.1.24.52</property>
+		<property name="clientSap">300</property>
+		<property name="systemNumberSap">01</property>	
+		<property name="userSap">intranet</property>
+		<property name="passwordSap">informat</property-->
+
+   </component>
+
+</components>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	
+	
+	<rich:modalPanel id="mpArchivosRespuestas" autosized="true" width="800" height="350">
+		<f:facet name="header">
+			<h:outputText value="Archivos Respuesta"	style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:form>
+					<a:commandLink	ajaxSingle="true" 
+					    reRender="panelGeneral" >
+						<h:graphicImage value="img/close.png" styleClass="hidelink"	id="mpArchivosRespuestaslink" />
+					</a:commandLink>
+					<rich:componentControl for="mpArchivosRespuestas"
+						attachTo="mpArchivosRespuestaslink" operation="hide"
+						event="onclick" 
+						/>
+				</h:form>
+			</h:panelGroup>
+		</f:facet>
+		<rich:panel>
+			<f:facet name="header"> Archivos</f:facet>
+			<h:form id = "frm_archivos_respuesta_sck">
+				<a:outputPanel id="panelDatosArchivosRespuesta" >
+				<table cellpadding="0" cellspacing="0" border="0" width="100%" align="center">
+					<tr>
+						<td colspan="2" style="border:1px solid #000000;padding:3px;" align="center"> 
+						  <a:outputPanel id="idArchivoAdjuntosAuxModel">
+					    	<div class="results" id="grillaAAM" style="height:270px; overflow: auto;">
+						   		<h:outputText value="No existen ningun archivo adjunto." 
+						   		   rendered="#{empty respuestaSolicitudAction.listaArchivoGuardadoRespuesta}"/>
+							    <rich:dataTable id="idArchivoAdjunto"
+							                var="_aam"
+							              value="#{respuestaSolicitudAction.listaArchivoGuardadoRespuesta}"
+							           rendered="#{not empty respuestaSolicitudAction.listaArchivoGuardadoRespuesta}"
+							           style="width:100%">
+							        <rich:column >
+							            <f:facet name="header">Archivo</f:facet>
+							            <a href="#{_aam.rutaCompleta}" target="_blank">
+							            	<h:outputText value="#{_aam.nombreArchivo}"/>
+							        	</a>
+							        </rich:column>
+							    </rich:dataTable>
+						    </div>	
+						  </a:outputPanel>  																							
+						</td>
+					</tr>
+				</table>	
+				</a:outputPanel>
+	   			 
+			</h:form>
+		</rich:panel>
+	</rich:modalPanel>
+	
+</ui:composition>

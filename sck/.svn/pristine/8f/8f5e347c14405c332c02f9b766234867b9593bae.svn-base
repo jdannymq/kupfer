@@ -1,0 +1,44 @@
+package org.domain.sck.base;
+
+import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.Name;
+
+@Name(value = "globalService")
+@AutoCreate
+public class GlobalService {
+	
+		
+	public String agregarGuionRut(String rut) {
+		String rutFinal = rut.replaceAll("[^0-9/(k|K)/]", "").toLowerCase();
+		StringBuilder str = new StringBuilder();
+		str.append(rutFinal.substring(0, rutFinal.length()-1));
+		str.append("-");
+		str.append(rutFinal.charAt(rutFinal.length()-1));
+		return str.toString();
+	}
+
+	public String sacarGuionRut(String rut) {
+		String rutFinal = rut.replaceAll("-", "").toLowerCase();
+		return rutFinal;
+	}
+	
+	public Boolean validarRut(String rut) {
+		if(rut.isEmpty() || rut.length()<8) {
+			return false;
+		}
+		String[] arg = rut.split("-");
+		int M = 0, S = 1;
+		int T = Integer.parseInt(arg[0]);
+		char x;
+		for (; T != 0; T /= 10)
+			S = (S + T % 10 * (9 - M++ % 6)) % 11;
+
+		x = (char) (S != 0 ? S + 47 : 75);
+		if (arg[1].length() != 0) {
+			if (arg[1].toUpperCase().charAt(0) != x) {
+				return false;
+			}
+		}
+		return true;
+	}
+}

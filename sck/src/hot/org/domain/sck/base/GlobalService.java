@@ -1,0 +1,152 @@
+package org.domain.sck.base;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+
+import org.domain.sck.entity.Canal;
+import org.domain.sck.entity.LcredTipoSolicitud;
+import org.domain.sck.entity.MatrizMontos;
+import org.domain.sck.entity.MatrizPlazoPromedioPagos;
+import org.domain.sck.entity.Medicion;
+import org.domain.sck.entity.enums.MesesType;
+import org.domain.sck.entity.enums.TiempoType;
+import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.Factory;
+import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Out;
+import org.jboss.seam.annotations.datamodel.DataModel;
+
+@Name(value = "globalService")
+@AutoCreate
+@SuppressWarnings({ "unused", "unchecked" })
+public class GlobalService {
+	@In(value="#{entityManager}")
+	EntityManager entityManager;
+		
+	public String agregarGuionRut(String rut) {
+		String rutFinal = rut.replaceAll("[^0-9/(k|K)/]", "").toLowerCase();
+		StringBuilder str = new StringBuilder();
+		str.append(rutFinal.substring(0, rutFinal.length()-1));
+		str.append("-");
+		str.append(rutFinal.charAt(rutFinal.length()-1));
+		return str.toString();
+	}
+	public String sacarCeroRut(String rut) {
+		StringBuilder str = new StringBuilder();
+		char[] aCaracteres = rut.toCharArray();
+		if(aCaracteres != null && aCaracteres.length > 0){
+			if("0".equals(String.valueOf(aCaracteres[0]))){
+				//Log.debug("nose agrega");
+				for ( int x = 1 ; x < aCaracteres.length ; ++x ){
+					str.append(String.valueOf(aCaracteres[x]));	
+				}	
+			}else{
+				for ( int x = 0 ; x < aCaracteres.length ; ++x ){
+					str.append(String.valueOf(aCaracteres[x]));	
+				}				
+			}
+		}
+		return str.toString();
+	}
+	
+	
+	public String sacarGuionRut(String rut) {
+		String rutFinal = rut.replaceAll("-", "").toLowerCase();
+		return rutFinal;
+	}
+	
+	public Boolean validarRut(String rut) {
+		if(rut.isEmpty() || rut.length()<8) {
+			return false;
+		}
+		String[] arg = rut.split("-");
+		int M = 0, S = 1;
+		int T = Integer.parseInt(arg[0]);
+		char x;
+		for (; T != 0; T /= 10)
+			S = (S + T % 10 * (9 - M++ % 6)) % 11;
+
+		x = (char) (S != 0 ? S + 47 : 75);
+		if (arg[1].length() != 0) {
+			if (arg[1].toUpperCase().charAt(0) != x) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	@Out(value="globalService_tipoSolicitudList", required=false)
+	List<LcredTipoSolicitud> tipoSolicitudesList;
+	
+	@Factory(value="globalService_tipoSolicitudList", autoCreate=false)
+	public void cargarListaSolicitudes(){
+		tipoSolicitudesList = new ArrayList<LcredTipoSolicitud>();
+		tipoSolicitudesList = entityManager.createQuery(" from LcredTipoSolicitud order by codTipoSolicitud")
+		.getResultList();
+		
+	}
+	
+	@Out(value="globalService_rangoMontosMatrizList", required=false)
+	List<MatrizMontos> rangoMontosMatrizList;
+	
+	@Factory(value="globalService_rangoMontosMatrizList", autoCreate=false)
+	public void cargarListaMatrizMontos(){
+		rangoMontosMatrizList = new ArrayList<MatrizMontos>();
+		rangoMontosMatrizList = entityManager.createQuery(" from MatrizMontos where disabled = 0 or disabled = null")
+		.getResultList();
+		
+	}
+	
+
+	@Out(value="globalService_rangoPlazoPromedioPagoList", required=false)
+	List<MatrizPlazoPromedioPagos> rangoPPPMatrizList;
+	
+	@Factory(value="globalService_rangoPlazoPromedioPagoList", autoCreate=false)
+	public void cargarListaMatrizPPP(){
+		rangoPPPMatrizList = new ArrayList<MatrizPlazoPromedioPagos>();
+		rangoPPPMatrizList = entityManager.createQuery(" from MatrizPlazoPromedioPagos where disabled = 0 or disabled = null")
+		.getResultList();
+		
+	}
+	
+	@Out(value="globalService_canalesList", required=false)
+	List<Canal> canalesList;
+	
+	@Factory(value="globalService_canalesList", autoCreate=false)
+	public void cargarListaCanales(){
+		canalesList = new ArrayList<Canal>();
+		canalesList = entityManager.createQuery("from Canal")
+		.getResultList();
+		
+	}
+	
+	@Out(value="globalService_condicionList", required=false)
+	List<Medicion> condicionList;
+	
+	@Factory(value="globalService_condicionList", autoCreate=false)
+	public void cargarListaCondicion(){
+		condicionList = new ArrayList<Medicion>();
+		condicionList = entityManager.createQuery("from Medicion")
+		.getResultList();
+		
+	}
+	
+	@DataModel
+	private List<TiempoType> globalService_unidadTiempoList;
+	
+	@Factory(value = "globalService_unidadTiempoList")
+	public void cargaTipoDicom() {
+		globalService_unidadTiempoList = TiempoType.getTipoTiempo();
+	}
+	
+	@DataModel
+	private List<MesesType> globalService_mesesList;
+	
+	@Factory(value = "globalService_mesesList")
+	public void cargaMesType() {
+		globalService_mesesList = MesesType.getMeses();
+	}
+}

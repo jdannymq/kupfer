@@ -1,0 +1,573 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/layout/template.xhtml"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+    xmlns:p="http://primefaces.prime.com.tr/ui">
+    
+    
+  <ui:define name="body">
+  <p:resources />	
+  <style type="text/css">
+  	.table {border: none; border-color: #000 !important;}
+  	.borderTop {border-top: 1px !important;}
+  	.borderLeft{border-left: 1px !important;}
+  	.borderRight{border-right: 1px !important;}
+  	.borderBottom{border-bottom: 1px !important}
+  </style>
+  <script type="text/javascript">
+	 var piechartStyle = {
+	 	 padding:20,
+	 	 legend: {
+			 display:"right"
+			 ,spacing:10
+	 	 }
+	 };
+ </script>
+  <div class="divTitular"><h1>Informe Nivel de Servicio Área Crédito</h1></div>
+  <h:form id="frmSeleccion">
+    <rich:simpleTogglePanel  switchType="client" id="panelGeneralAux" opened="true" >
+        <f:facet name="header">Filtros de Busquedas</f:facet>
+		<table class="table" cellpadding="0" cellspacing="0" border="0" style="font-size:10px;" width="100%">
+			<tr valign="top">
+				<td style="font-size:11px; text-align:center;" colspan="2"> <strong>Fechas y Acciones</strong></td>
+				<td style="font-size:11px; text-align:center;"><strong>Canales</strong></td>
+				<td style="font-size:11px; text-align:center;"><strong>Negocios</strong></td>
+			</tr>
+			<tr valign="top">
+				<td colspan="2">
+					<table cellpadding="0" cellspacing="0" border="0" style="font-size:10px;" width="100%">
+						<tr valign="top">
+							<td style="font-size:11px;"><strong>Fecha Inicial</strong>  </td>
+							<td style="font-size:11px;"><strong>Fecha Final </strong></td>							
+						</tr>
+						<tr>
+							<td style="font-size:11px;">
+								<rich:calendar id="fechadesde"
+					                       required="false"
+					                       disabled="false"
+					                          value="#{nivelServicioAction.fechaInical}" 
+					                          datePattern="yyyy-MM-dd"
+					                          buttonIcon="/img/calendario_icono.gif"
+					                          style="width:75px;"/>								
+							</td>
+							<td style="font-size:11px;">
+								<rich:calendar id="fechahasta"
+					                       required="false"
+					                       disabled="false"
+					                          value="#{nivelServicioAction.fechaFinal}" 
+					                          datePattern="yyyy-MM-dd" 
+					                          buttonIcon="/img/calendario_icono.gif"/>								
+							</td>							
+						</tr>
+						<tr valign="top">
+							<td style="font-size:11px;" colspan="2" height="20px;"> </td>
+						</tr>
+						<tr valign="top">
+							<td style="font-size:11px;" align="center" colspan="2">
+								<a:commandButton action="#{nivelServicioAction.consultarSolicitudes()}" 
+								                  value="Consultar" 
+								             ajaxSingle="true"
+								                reRender="frmSeleccion,frmResultado "
+		              				                title="Consultar..."
+		              				                process="fechadesde,fechahasta,idResponsable,idListaCanal,idListaNegocio,idTipoSolicitud,idListaSucursal"
+		              				                style="width:75px;"
+								                />							
+								<a:commandButton action="#{nivelServicioAction.limpiarParametos()}" 
+								                  value="Limpiar" 
+								             ajaxSingle="true"
+								                reRender="frmSeleccion,frmResultado "
+		              				                title="Limpiar..."
+		              				                style="width:75px;"
+								                />	
+         	
+							</td>
+						</tr>
+						<tr valign="top">
+							<td style="font-size:12px; " colspan="2" height="20px;">
+							    <a:outputPanel id="panelMensaje" >
+						    		<h:messages  globalOnly="true" styleClass="message"
+							            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" style="color: red;"/>
+						        </a:outputPanel>								
+							</td>
+						</tr>						
+					</table>				
+				</td>
+				<td style="padding:3px;">
+			        <rich:listShuttle id="idListaCanal" sourceValue="#{nivelServicioAction.listaCanales}"
+				            targetValue="#{nivelServicioAction.listaCanalesSeleccionada}" var="canal" listsHeight="100"
+				            sourceListWidth="150" targetListWidth="150" sourceCaptionLabel="Canales Disponible"
+				            targetCaptionLabel="Canales Seleccionado" orderControlsVisible="false" fastOrderControlsVisible="false" > 
+			            <ui:include src="/layout/facetSelectionLists.xhtml" />
+			            <s:convertEntity/>
+			            <rich:column>
+			                <h:outputText value="#{canal.codigo} - #{canal.descripcion.toUpperCase(locale)}"></h:outputText>
+			            </rich:column>
+					</rich:listShuttle>		
+				</td>				
+				<td style="padding:3px;">
+			        <rich:listShuttle id="idListaNegocio" sourceValue="#{nivelServicioAction.listaNegocios}"
+				            targetValue="#{nivelServicioAction.listaNegociosSeleccionados}" var="negocio" listsHeight="100"
+				            sourceListWidth="150" targetListWidth="150" sourceCaptionLabel="Negocios Disponible"
+				            targetCaptionLabel="Negocios Seleccionado" orderControlsVisible="false" fastOrderControlsVisible="false" > 
+			            <ui:include src="/layout/facetSelectionLists.xhtml" />
+			             <s:convertEntity/>
+			            <rich:column>
+			                <h:outputText value="#{negocio.desNegocio.toUpperCase(locale)}"></h:outputText>
+			            </rich:column>
+					</rich:listShuttle>					
+				</td>
+			</tr>
+			<tr valign="top">
+				<td style="font-size:11px; text-align:center;" colspan="2"><strong>Tipo de Solicitudes</strong></td>
+				<td style="font-size:11px; text-align:center;"><strong>Sucursales</strong></td>
+				<td style="font-size:11px; text-align:center;"><strong>Ejecutivo Inicial</strong></td>
+			</tr>			
+			<tr valign="top">
+				<td colspan="2" style="padding:3px;">
+			        <rich:listShuttle id="idTipoSolicitud" sourceValue="#{nivelServicioAction.listaLcredTipoSolicituds}"
+				            targetValue="#{nivelServicioAction.listaLcredTipoSolicitudsSeleccionados}" var="tipo" listsHeight="100"
+				            sourceListWidth="150" targetListWidth="150" sourceCaptionLabel="Tipo Disponible"
+				            targetCaptionLabel="Tipo Seleccionado" orderControlsVisible="false" fastOrderControlsVisible="false" > 
+			            <ui:include src="/layout/facetSelectionLists.xhtml" />
+			            <s:convertEntity/>
+			            <rich:column>
+			                <h:outputText value="#{tipo.desTipoSolicitud.toUpperCase(locale)}"></h:outputText>
+			            </rich:column>
+					</rich:listShuttle>	
+				</td>
+				<td style="padding:3px;">
+			        <rich:listShuttle id="idListaSucursal" sourceValue="#{nivelServicioAction.listaSucursals}"
+				            targetValue="#{nivelServicioAction.listaSucursalsSeleccionados}" var="sucursal" listsHeight="100"
+				            sourceListWidth="150" targetListWidth="150" sourceCaptionLabel="Sucursales Disponible"
+				            targetCaptionLabel="Sucursales Seleccionado" orderControlsVisible="false" fastOrderControlsVisible="false" 
+				            > 
+			            <ui:include src="/layout/facetSelectionLists.xhtml" />
+			             <s:convertEntity/>
+			            <rich:column>
+			                <h:outputText value="#{sucursal.descripcion.toUpperCase(locale)}"></h:outputText>
+			            </rich:column>
+					</rich:listShuttle>		
+				</td>				
+				<td style="padding:3px;">
+			        <rich:listShuttle id="idResponsable" sourceValue="#{nivelServicioAction.listaUsuariosegurs}"
+				            targetValue="#{nivelServicioAction.listaUsuariosegursSeleccionados}" var="usuario" listsHeight="100"
+				            sourceListWidth="150" targetListWidth="150" sourceCaptionLabel="Usuarios Disponible"
+				            targetCaptionLabel="Usuarios Seleccionado" orderControlsVisible="false" fastOrderControlsVisible="false" > 
+			            <ui:include src="/layout/facetSelectionLists.xhtml" />
+			            <s:convertEntity/>
+			            <rich:column>
+			                <h:outputText value="#{usuario.nombre.toUpperCase(locale)}"></h:outputText>
+			            </rich:column>
+					</rich:listShuttle>		
+				</td>
+			</tr>	
+		</table>
+    </rich:simpleTogglePanel>
+    </h:form>
+    
+    <h:form id="frmResultado">
+        <a:outputPanel id="panelGlobal">
+		<rich:panel style="height:300px;">
+			 <f:facet name="header">Graficos</f:facet>
+			 <div style="float: left;width: 48%">
+			 	<p>Solicitudes Activas</p>
+			 	<p:pieChart var="_aux" value="#{nivelServicioAction.nivelServicioTarget.graficoActivas}"  style="piechartStyle"
+							categoryField="#{_aux.label}" dataField="#{_aux.cantidad}" height="250" width="250" />
+			</div>
+			<div style="float: left;width: 48%">
+				<p>Solicitudes evaluadas</p>
+				<p:pieChart var="_aux" value="#{nivelServicioAction.nivelServicioTarget.graficoCumplidas}" style="piechartStyle"
+							categoryField="#{_aux.label}" dataField="#{_aux.cantidad}" height="250" width="250" />
+			</div>
+		</rich:panel>
+        <rich:panel style="height: 300px;">
+            <f:facet name="header">Totales Globales</f:facet>
+
+            <div style="float: left;width: 48%">
+                <table cellpadding="2" cellspacing="3" border="0" style="font-size:10px;" width="100%">
+                    <thead>
+                        <tr valign="top">
+                            <td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="2"><strong></strong></td>
+                            <td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="2"><strong>Total</strong></td>
+                        </tr>
+                    </thead>
+                    <tbody style="text-align:center !important;">
+                        <tr valign="top">
+                            <td colspan="2">Total Base</td>
+                            <td>#{nivelServicioAction.nivelServicioTarget.totalSolicitudes}</td>
+                            <td>100%</td>
+                        </tr>
+                        <tr valign="top">
+                            <td colspan="2">Solicitudes Activas</td>
+                            <td>#{nivelServicioAction.nivelServicioTarget.totalActivas}</td>
+                            <td>#{nivelServicioAction.nivelServicioTarget.porcentajeActivas}</td>
+                        </tr>
+                        <tr valign="top">
+                            <td colspan="2">Solicitudes Eliminadas</td>
+                            <td>#{nivelServicioAction.nivelServicioTarget.totalEliminadas}</td>
+                            <td>#{nivelServicioAction.nivelServicioTarget.porcentajeEliminadas}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <br/><br/>
+
+                <table cellpadding="2" cellspacing="3" border="0" style="font-size:10px;" width="100%">
+                    <thead>
+                    <tr valign="top">
+                        <td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="2"><strong></strong></td>
+                        <td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="2"><strong>Total</strong></td>
+                    </tr>
+                    </thead>
+                    <tbody style="text-align:center !important;">
+                    <tr valign="top">
+                        <td colspan="2">Total Solicitudes Activas</td>
+                        <td>#{nivelServicioAction.nivelServicioTarget.totalActivas}</td>
+                        <td>100%</td>
+                    </tr>
+                    <tr valign="top">
+                        <td colspan="2">Solicitudes a Evaluar</td>
+                        <td>#{nivelServicioAction.nivelServicioTarget.total.size()}</td>
+                        <td>#{nivelServicioAction.nivelServicioTarget.porcentajeSolicitudesEvaluar}</td>
+                    </tr>
+                    <tr valign="top">
+                        <td colspan="2">Solicitudes Abiertas</td>
+                        <td>#{nivelServicioAction.nivelServicioTarget.totalAbiertas}</td>
+                        <td>#{nivelServicioAction.nivelServicioTarget.porcentajeAbiertas}</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <br/><br/>
+
+                <table cellpadding="2" cellspacing="3" border="0" style="font-size:10px;" width="100%">
+                    <thead>
+                    <tr valign="top">
+                        <td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="2"><strong></strong></td>
+                        <td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="2"><strong>Total</strong></td>
+                    </tr>
+                    </thead>
+                    <tbody style="text-align:center !important;">
+                    <tr valign="top">
+                        <td colspan="2">Total Solicitudes a Evaluar</td>
+                        <td><a:commandLink value="#{nivelServicioAction.nivelServicioTarget.total.size()}" 
+								action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.total)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();"   >
+							</a:commandLink>
+						</td>
+                        <td>#{nivelServicioAction.nivelServicioTarget.porcentajeTotal}</td>
+                    </tr>
+                    <tr valign="top">
+                        <td colspan="2">Cumplidas</td>
+                        <td>#{nivelServicioAction.nivelServicioTarget.totalCumplidas.size()}</td>
+                        <td>#{nivelServicioAction.nivelServicioTarget.porcentajeCumplidasTotal}</td>
+                    </tr>
+                    <tr valign="top">
+                        <td colspan="2">No Cumplidas</td>
+                        <td>#{nivelServicioAction.nivelServicioTarget.totalNoCumplidas.size()}</td>
+                        <td>#{nivelServicioAction.nivelServicioTarget.porcentajeNoCumplidasTotal}</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <div style="float: left;width: 48%">
+				<table cellpadding="2" cellspacing="3" border="0" style="font-size:10px;" width="100%">
+                    <thead>
+                    <tr valign="top">
+                        <td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="3"><strong>Estados Abiertos</strong></td>
+                        <td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="2"><strong>Cantidad</strong></td>
+                        <td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="2"><strong>Porcentaje</strong></td>
+                    </tr>
+                    </thead>
+                    <tbody style="text-align:center !important;">
+                    <a:repeat value="#{nivelServicioAction.nivelServicioTarget.solicitudesAbiertasList}" var="_s">
+	                    <tr valign="top">
+	                        <td colspan="3">#{_s.descEstado}</td>
+	                        <td colspan="2">#{_s.solicitudList.size()}</td>
+	                        <td colspan="2">#{_s.porcentajeEstado}</td>
+	                    </tr>
+                    </a:repeat>
+                    <tr valign="top">
+                        <td colspan="3">Total</td>
+                        <td colspan="2">#{nivelServicioAction.nivelServicioTarget.totalAbiertas}</td>
+                        <td colspan="2">#{nivelServicioAction.nivelServicioTarget.porcentajeAbiertas}</td>
+                    </tr>
+                    
+                    </tbody>
+                </table>
+
+            </div>
+
+        </rich:panel>
+		 
+   	    <rich:panel>
+    	   <f:facet name="header">Solicitudes a Evaluar</f:facet>
+    		<table cellpadding="2" cellspacing="3" border="0" style="font-size:10px;" width="100%">
+    			<thead>
+					<tr valign="top">
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="2"><strong></strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="2"><strong>Ejecutivo Inicial</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="2"><strong>Aprobadores</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="2"><strong>Analistal</strong></td>
+						<ui:remove>
+                        <td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="2"><strong>Total</strong></td>
+						<td></td>
+                        </ui:remove>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="2"><strong>Emisor</strong></td>
+					</tr>
+				</thead>
+				<tbody style="text-align:center !important;">
+					 <tr valign="top" style="font-size:11px;">
+						<td colspan="2">Solicitudes</td>
+						<td>
+							<a:commandLink action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.totalEjecutivo)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();"   
+								value="#{nivelServicioAction.nivelServicioTarget.totalEjecutivo.size()}" >
+							</a:commandLink>
+						</td>
+						<td>
+							<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeTotalEjecutivo}">
+                        		<f:convertNumber type="percent" />
+                           </h:outputText>
+                        </td>
+                        <td>
+							<a:commandLink value="#{nivelServicioAction.nivelServicioTarget.totalAprobador.size()}" 
+							action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.totalAprobador)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();"   >
+							</a:commandLink>
+						</td>
+						<td>
+								<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeTotalAprobador}">
+                        		<f:convertNumber type="percent"  />
+	                           </h:outputText>
+                        </td>
+                        <td>
+							<a:commandLink value="#{nivelServicioAction.nivelServicioTarget.totalAnalista.size()}" 
+							action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.totalAnalista)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();"   >
+							</a:commandLink>
+						</td>
+						<td>
+								<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeTotalAnalista}">
+	                        		<f:convertNumber    type="percent" />
+	                           </h:outputText>
+                        </td>
+                        <ui:remove>
+                        <td>
+							<a:commandLink value="#{nivelServicioAction.nivelServicioTarget.total.size()}" 
+								action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.total)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();"   >
+							</a:commandLink>
+						</td>
+						<td>
+							<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeTotal}">
+                        		<f:convertNumber    type="percent"  />
+                        		
+                           </h:outputText>
+                        </td>
+                        <td></td>
+                        </ui:remove>
+                        <td>
+							<a:commandLink value="#{nivelServicioAction.nivelServicioTarget.totalEmisor.size()}" 
+								action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.totalEmisor)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();"   >
+							</a:commandLink>
+						</td>
+						<td>
+								<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeTotalEmisor}">
+	                        		<f:convertNumber    type="percent" />
+	                           </h:outputText>
+                        </td>
+                        
+					</tr>
+					<tr valign="top" style="font-size:11px;">
+						<td colspan="2">Cumplidas</td>
+						<td>
+							<a:commandLink value="#{nivelServicioAction.nivelServicioTarget.totalCumplidasEjecutivo.size()}" 
+								action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.totalCumplidasEjecutivo)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();"   >
+							</a:commandLink>
+						</td>
+						<td>
+								<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeCumplidasEjecutivo}">
+	                           </h:outputText>
+                        </td>
+                        <td>
+							<a:commandLink value="#{nivelServicioAction.nivelServicioTarget.totalCumplidasAprobador.size()}" 
+								action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.totalCumplidasAprobador)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();"   
+								>
+							</a:commandLink>
+						</td>
+						<td>
+							<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeCumplidasAprobador}">
+                           </h:outputText>
+                        </td>
+                        <td>
+							<a:commandLink value="#{nivelServicioAction.nivelServicioTarget.totalCumplidosAnalista.size()}"  
+								action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.totalCumplidosAnalista)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();"   >
+							</a:commandLink>
+						</td>
+						<td>
+								<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeCumplidasAnalista}">
+	                           </h:outputText>
+                        </td>
+                        <ui:remove>
+                        <td>
+							<a:commandLink value="#{nivelServicioAction.nivelServicioTarget.totalCumplidas.size()}" 
+								action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.totalCumplidas)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();">
+							</a:commandLink>
+						</td>
+						<td>
+							<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeCumplidasTotal}">
+                          	</h:outputText>
+	                        
+                        </td>
+                        <td></td>
+                        </ui:remove>
+                        <td>
+							<a:commandLink value="#{nivelServicioAction.nivelServicioTarget.totalCumplidasEmisor.size()}" 
+								action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.totalCumplidasEmisor)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();"   >
+							</a:commandLink>
+						</td>
+						<td>
+							<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeCumplidasEmisor}">
+                           </h:outputText>
+                        </td>
+                        
+					</tr>
+					<tr valign="top" style="font-size:11px;">
+						<td colspan="2">No Cumplidas</td>
+						<td>
+							<a:commandLink value="#{nivelServicioAction.nivelServicioTarget.totalNoCumplidasEjecutivo.size()}" 
+								action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.totalNoCumplidasEjecutivo)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();"   >
+							</a:commandLink>
+						</td>
+						<td>
+								<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeNoCumplidasEjecutivo}">
+	                           </h:outputText>
+                        </td>
+                        <td>
+							<a:commandLink value="#{nivelServicioAction.nivelServicioTarget.totalNoCumplidasAprobador.size()}" 
+							action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.totalNoCumplidasAprobador)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();"   >
+							</a:commandLink>
+						</td>
+						<td>
+								<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeNoCumplidasAprobador}">
+	                           </h:outputText>
+                        </td>
+                        <td>
+							<a:commandLink value="#{nivelServicioAction.nivelServicioTarget.totalNoCumplidosAnalista.size()}" 
+							action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.totalNoCumplidosAnalista)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();"   >
+							</a:commandLink>
+						</td>
+						<td>
+								<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeNoCumplidasAnalista}">
+	                           </h:outputText>
+                        </td>
+                        <ui:remove>
+                        <td>
+							<a:commandLink value="#{nivelServicioAction.nivelServicioTarget.totalNoCumplidas.size()}" 
+							action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.totalNoCumplidas)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();"   >
+							</a:commandLink>
+						</td>
+						<td>
+								<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeNoCumplidasTotal}">
+	                           </h:outputText>
+                        </td>
+                        <td></td>
+                        </ui:remove>
+                        <td>
+							<a:commandLink value="#{nivelServicioAction.nivelServicioTarget.totalNoCumplidasEmisor.size()}" 
+								action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.totalNoCumplidasEmisor)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();"   >
+							</a:commandLink>
+						</td>
+						<td>
+								<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeNoCumplidasEmisor}">
+	                           </h:outputText>
+                        </td>
+                        
+					</tr>
+				</tbody>							
+				
+			</table>
+		  </rich:panel>
+          <rich:panel>
+            <f:facet name="header">Solicitudes Por ejecutivo</f:facet>
+              <table cellpadding="2" cellspacing="0" border="1" style="font-size:10px;" width="100%">
+                  <thead>
+                  <tr>
+                      <td colspan="3"></td>
+                      <td colspan="8">Total Solicitudes</td>
+                      <a:repeat value="#{nivelServicioAction.nivelServicioTarget.usuarioNivelServicioPorTipoDTOList}" var="_t"
+                                rendered="#{not empty nivelServicioAction.nivelServicioTarget.usuarioNivelServicioPorTipoDTOList}">
+                          <td colspan="8">#{_t.tipoSolicitudCodigoType.descripcion}</td>
+
+                      </a:repeat>
+                  </tr>
+                  <tr valign="top">
+
+                      <td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="3"><strong>Usuario</strong></td>
+                      <td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="2"><strong>Cantidad Solicitudes</strong></td>
+                      <td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="2"><strong>Cumplidas</strong></td>
+                      <td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="2"><strong>No Cumplidas</strong></td>
+                      <td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="2"><strong>Porcentaje Cumplimiento</strong></td>
+                      <a:repeat value="#{nivelServicioAction.nivelServicioTarget.usuarioNivelServicioPorTipoDTOList}" var="_t"
+                                rendered="#{not empty nivelServicioAction.nivelServicioTarget.usuarioNivelServicioPorTipoDTOList}">
+                          <td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="2"><strong>Total</strong></td>
+                          <td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="2"><strong>Cumplidas</strong></td>
+                          <td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="2"><strong>No Cumplidas</strong></td>
+                          <td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="2"><strong>Porcentaje Cumplimiento</strong></td>
+                      </a:repeat>
+                  </tr>
+                  </thead>
+                  <tbody style="text-align:center !important;">
+                  <a:repeat value="#{nivelServicioAction.nivelServicioTarget.usuarioNivelServicioDTOList}" var="_u">
+                      <tr valign="top">
+                          <td colspan="3">#{_u.nombre}</td>
+                          <td colspan="2">#{_u.total}</td>
+                          <td colspan="2">#{_u.cumplidasList.size()}</td>
+                          <td colspan="2">#{_u.noCumplidasList.size()}</td>
+                          <td colspan="2">#{_u.porcentajeCumplidas}</td>
+                          <a:repeat value="#{_u.usuarioNivelServicioPorTipoDTOList}" var="_t"
+                                    rendered="#{not empty _u.usuarioNivelServicioPorTipoDTOList}">
+                              <td colspan="2">#{_t.total}</td>
+                              <td colspan="2">#{_t.cumplidasList.size()}</td>
+                              <td colspan="2">#{_t.noCumplidasList.size()}</td>
+                              <td colspan="2">#{_t.porcentajeCumplidas}</td>
+                          </a:repeat>
+                      </tr>
+                  </a:repeat>
+
+                  </tbody>
+              </table>
+          </rich:panel>
+	    </a:outputPanel>
+    
+    </h:form>
+
+
+    <ui:include src="/layout/modalSck/modalNivelServicio.xhtml" />
+    <a:status onstart="abrirModal();" onstop="cerrarModal();"></a:status>
+</ui:define>
+
+
+
+</ui:composition>

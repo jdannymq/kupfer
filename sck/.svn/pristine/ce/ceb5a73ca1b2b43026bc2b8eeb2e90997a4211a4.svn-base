@@ -1,0 +1,69 @@
+package org.domain.sck.entity;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import org.domain.sck.entity.emuns.EstadoEntityType;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.validator.NotNull;
+
+@Entity
+@Table(name = "uf_solicitud_tipo")
+public class UfSolicitudTipo {
+
+	private Long idUfSolicitudTipo;
+	private Double valorUf;
+	private int  tipoSolicitud;
+
+
+	public UfSolicitudTipo() {
+	}
+
+	public UfSolicitudTipo(Long idUfSolicitudTipo, Double valorUf, int  tipoSolicitud) {
+		this.idUfSolicitudTipo = idUfSolicitudTipo;
+		this.valorUf = valorUf;
+		this.tipoSolicitud = tipoSolicitud;
+	}
+
+	@Id
+	@GenericGenerator(name = "ufSolicitudTipoSequenceGenerator", strategy = "org.hibernate.id.enhanced.TableGenerator", parameters = {
+			@Parameter(name = "table_name", value = "hibernate_sequences"),
+			@Parameter(name = "segment_value", value = "SEQ_UF_SOLICITUD_TIPO"),
+			@Parameter(name = "initial_value", value = "1"),
+			@Parameter(name = "increment_size", value = "1") })
+
+	@GeneratedValue(generator = "ufSolicitudTipoSequenceGenerator")
+	@Column(name = "id_uf_solicitud_tipo", unique = true, nullable = false, precision = 18, scale = 0)
+	public Long getIdUfSolicitudTipo() {
+		return this.idUfSolicitudTipo;
+	}
+
+	public void setIdUfSolicitudTipo(long idUfSolicitudTipo) {
+		this.idUfSolicitudTipo = idUfSolicitudTipo;
+	}
+	
+	@Column(name = "valor_uf", precision = 18, scale = 6, nullable = true, columnDefinition = "numeric(18,6)")
+	public Double getValorUf() {
+		return this.valorUf;
+	}
+
+	public void setValorUf(Double valorUf) {
+		this.valorUf = valorUf;
+	}
+	
+
+	@Column(name = "tipo_solicitud", nullable = false)
+	@NotNull
+	public int getTipoSolicitud() {
+		return this.tipoSolicitud;
+	}
+
+	public void setTipoSolicitud(int tipoSolicitud) {
+		this.tipoSolicitud = tipoSolicitud;
+	}
+
+}

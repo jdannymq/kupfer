@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Layout resource="/sck/WebContent/WEB-INF/components.xml">
+ <TreeFormPage>
+  <Memento type="FileSeamComponents22">
+   <Memento type="Seam Components 2.2 File"/>
+   <Memento type="Components"/>
+   <Memento type="Factories"/>
+   <Memento type="Events"/>
+   <Memento type="Imports"/>
+  </Memento>
+ </TreeFormPage>
+</Layout>

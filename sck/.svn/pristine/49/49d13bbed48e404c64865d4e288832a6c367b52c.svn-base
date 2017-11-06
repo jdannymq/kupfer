@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <rich:panel>
+        <f:facet name="header">Detalle Forma Pago </f:facet>
+
+        <s:decorate id="idFormaPago" template="layout/display.xhtml">
+            <ui:define name="label">Id Forma Fago</ui:define>
+            <h:inputText  value="#{formaPagoHome.instance.idFormaPago}" size="10" disabled="true"/>
+        </s:decorate>
+
+        <s:decorate id="descripcion" template="layout/display.xhtml">
+            <ui:define name="label">Descripción</ui:define>
+            <h:inputText value="#{formaPagoHome.instance.descripcion}" size="30" disabled="true"/>
+        </s:decorate>
+
+        <s:decorate id="dias" template="layout/display.xhtml">
+            <ui:define name="label">Días</ui:define>
+            <h:inputText value="#{formaPagoHome.instance.dias}" size="5" disabled="true">
+                <f:convertNumber/>
+            </h:inputText>
+        </s:decorate>
+
+        <div style="clear:both"/>
+
+    </rich:panel>
+
+    <div class="actionButtons">
+
+        <s:button view="/FormaPagoEdit.xhtml"
+                    id="edit"
+                 value="Editar"/>
+
+        <s:button view="/#{empty formaPagoFrom ? 'FormaPagoList' : formaPagoFrom}.xhtml"
+                    id="done"
+                 value="Volver"/>
+
+    </div>
+
+</ui:define>
+
+</ui:composition>

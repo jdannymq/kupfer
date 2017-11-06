@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	
+	<rich:modalPanel id="mpConsultarDocumentoProrroga" autosized="true" width="800">
+		<f:facet name="header">
+			<h:outputText value="Consulta de Documentos de Finacieros"	style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:form>
+					<a:commandLink	ajaxSingle="true">
+						<h:graphicImage value="img/close.png" styleClass="hidelink"	id="mpConsultarDocumentoProrrogalink" />
+					</a:commandLink>
+					<rich:componentControl for="mpConsultarDocumentoProrroga"
+						attachTo="mpConsultarDocumentoProrrogalink" operation="hide"
+						event="onclick" />
+				</h:form>
+			</h:panelGroup>
+		</f:facet>
+		<rich:panel>
+			<h:form id = "frm_consultaDocumentoProrroga">
+		    	<div class="results" id="grillaDocumentoProrroga" style="height:500px; overflow: auto;">
+			   		<h:outputText value="No existe ningun documentos de prorroga." rendered="#{empty generarSolicitudAction.listaDoctoProrroga}"/>
+				    <rich:dataTable id="idDocumentoProrroga"
+				                var="_dp"
+				              value="#{generarSolicitudAction.listaDoctoProrroga}"
+				           rendered="#{not empty generarSolicitudAction.listaDoctoProrroga}">
+				        <rich:column width="50px;" style="text-align: center;">
+				            <f:facet name="header">Estado</f:facet>
+					            <h:selectBooleanCheckbox  value="#{_dp.status}">
+					            	<a:support event="onchange" reRender="idDocumentoProrroga" 
+					            	ajaxSingle="true" action="#{generarSolicitudAction.cambioEstadoDoctoProrroga(_dp)}" />
+					            </h:selectBooleanCheckbox>
+				        </rich:column>
+				        <rich:column width="100px;" style="text-align: center;">
+				            <f:facet name="header">Número de Docto </f:facet>
+				            <h:outputText value="#{_dp.numeroDocto}"/>
+				        </rich:column>				        
+				        <rich:column width="100px;" style="text-align: center;">
+				            <f:facet name="header">Monto</f:facet>
+				            <h:outputText value="#{_dp.monto}">
+		            			<f:convertNumber currencySymbol="$" groupingUsed="#{true}"
+	  									maxFractionDigits="0" type="currency"/> 				            
+				            </h:outputText>
+				        </rich:column>
+				        <rich:column width="100px;" style="text-align: center;">
+				            <f:facet name="header">Fecha Contable</f:facet>
+				            <h:outputText value="#{_dp.fechaContable}">
+				            	<s:convertDateTime type="date" dateStyle="short" pattern="dd/MM/yyyy"/>
+				            </h:outputText>
+				        </rich:column>	
+				        <rich:column width="100px;" style="text-align: center;">
+				            <f:facet name="header">Fecha Vencimiento Actual</f:facet>
+				            <h:outputText value="#{_dp.fechaVencActual}">
+				            	<s:convertDateTime type="date" dateStyle="short" pattern="dd/MM/yyyy"/>
+				            </h:outputText>
+				        </rich:column>				        
+				        
+				    </rich:dataTable>
+			    </div>
+
+	        	<a:commandButton action="#{generarSolicitudAction.guardarEnLaListaDoctoProrrogaAgregados()}" 
+	        	                  value="Agregar Documentos" 
+	        	               reRender="idDocumentoProrrogaList,idDocumentoProrroga"
+	        		         oncomplete="if (#{empty facesContext.maximumSeverity}) {#{rich:component('mpConsultarDocumentoProrroga')}.hide()}" /> 			    
+			    
+			</h:form>
+		</rich:panel>
+	</rich:modalPanel>
+	
+</ui:composition>

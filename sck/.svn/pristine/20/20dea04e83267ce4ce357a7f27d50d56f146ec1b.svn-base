@@ -1,0 +1,505 @@
+package org.domain.sck.session.action;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+
+import org.domain.sck.entity.Canal;
+import org.domain.sck.entity.CondicionTipoSolicitudRango;
+import org.domain.sck.entity.Jornada;
+import org.domain.sck.entity.LcredTipoSolicitud;
+import org.domain.sck.entity.Medicion;
+import org.domain.sck.entity.MedicionCanalRango;
+import org.domain.sck.entity.emuns.TiempoMontoType;
+import org.domain.sck.entity.emuns.TiempoType;
+import org.domain.sck.session.service.scoring.ScoringService;
+import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.Create;
+import org.jboss.seam.annotations.Factory;
+import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.Logger;
+import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Out;
+import org.jboss.seam.annotations.Scope;
+import org.jboss.seam.faces.FacesMessages;
+import org.jboss.seam.international.StatusMessage.Severity;
+import org.jboss.seam.log.Log;
+
+
+@Name("condicionTipoSolicitudRangoAction")
+@Scope(ScopeType.CONVERSATION)
+public class CondicionTipoSolicitudRangoAction implements Serializable{
+
+	@Logger
+	Log log;
+
+	@In(value="#{entityManager}")
+	EntityManager entityManager;
+	
+	@In ScoringService scoringService;
+	
+	
+	private List<TiempoMontoType> listaTiempoMontoTypes;
+	private TiempoMontoType tiempoMontoType;
+	
+	private List<Canal> listaCanales;
+	private Canal canal;
+	private List<Medicion> listaMediciones;
+	private Medicion medicion;
+	private List<MedicionCanalRango> listaMedicionCanalRangos;
+	private MedicionCanalRango medicionCanalRango;
+	private List<LcredTipoSolicitud> listaLcredTipoSolicituds;
+	private LcredTipoSolicitud tipoSolicitud;
+	private String opcionTiempo;
+	private Long  valor;
+	
+	
+	private boolean habilitarCanal;
+
+	@SuppressWarnings("unchecked")
+	@Create
+	public void init(){
+		log.debug("iniciando el componente CondicionTipoSolicitudRangoAction.....!!!!!");
+		try{
+			if(listaTiempoMontoTypes == null){
+				listaTiempoMontoTypes = TiempoMontoType.getAcciones();
+			}
+		
+			listaCanales = entityManager.createQuery("select c from Canal c where c.disabled=0  order by c.systemId").getResultList();
+			if(listaCanales == null || listaCanales.size() == 0){			
+				listaCanales = new ArrayList<Canal>(0);
+			}
+
+			listaMediciones = entityManager.createQuery("select m from Medicion m where m.disabled=0  order by m.systemId").getResultList();
+			if(listaMediciones == null || listaMediciones.size() == 0){			
+				listaMediciones = new ArrayList<Medicion>(0);
+			}
+			
+			listaLcredTipoSolicituds = entityManager.createQuery(" select ts from LcredTipoSolicitud ts " +
+																 " where ts.codTipoSolicitud in ('11','12','21','22','23','31','41','43','44') order by ts.codTipoSolicitud")
+																 .getResultList();
+			if(listaLcredTipoSolicituds == null || listaLcredTipoSolicituds.size() == 0){			
+				listaLcredTipoSolicituds = new ArrayList<LcredTipoSolicitud>(0);
+			}			
+			
+			
+		}catch (Exception e) {
+			log.error("Error, al sacar los perfiles del usuario, error #0", e.getMessage());
+		}
+		log.debug("termino de carga de datos en componente CondicionTipoSolicitudRangoAction.....!!!!!");
+		
+	}
+
+
+	private CondicionTipoSolicitudRango condicionTipoSolicitudRangoTarget;
+    public CondicionTipoSolicitudRango getCondicionTipoSolicitudRangoActionTarget() { return condicionTipoSolicitudRangoTarget; }
+    
+    public void initGuardarCondicionTipoSolicitudRango() {
+    	condicionTipoSolicitudRangoTarget = new CondicionTipoSolicitudRango();
+    	this.medicion = null;
+    	this.canal = null;
+    	this.tiempoMontoType = null;
+    	this.medicionCanalRango = null;
+    	this.tipoSolicitud = null;
+    	this.valor = null;
+    	
+    	
+    }
+    
+    @SuppressWarnings("unchecked")
+	public void editCondicionTipoSolicitudRango(CondicionTipoSolicitudRango ctsr) {
+    	condicionTipoSolicitudRangoTarget = ctsr;
+    	if(ctsr.getMedicionCanalRango() != null){
+        	this.canal = ctsr.getMedicionCanalRango().getCanal();
+        	this.medicion = ctsr.getMedicionCanalRango().getMedicion();
+        	this.tiempoMontoType = ctsr.getMedicionCanalRango().getTiempoMontoType();
+        	this.medicionCanalRango = ctsr.getMedicionCanalRango();
+        	if(TiempoType.D.equals(ctsr.getTiempo())){
+        		this.opcionTiempo = "D";
+        		this.valor = ctsr.getDias();
+        	}else if(TiempoType.H.equals(ctsr.getTiempo())){
+        		this.opcionTiempo = "H";
+        		this.valor = ctsr.getHoras();
+        	}else if(TiempoType.M.equals(ctsr.getTiempo())){
+        		this.opcionTiempo = "M";
+        		this.valor = ctsr.getMinutosTotales();
+        	}
+        	
+        	/* sacar otros datos*/
+			String searchMe = this.medicion.getDescripcion();
+			String findMe = "";
+			if(searchMe != null){
+				String[] array = searchMe.split(" ");
+				if(array != null && array.length > 0){
+					String dato = array[0];
+					if(dato != null && !"Con".equals(dato)){
+						findMe = "Sin";
+						searchMe += " Sin";
+					}else{
+						findMe = "Con";
+					}
+				}
+			}
+			
+			int searchMeLength = searchMe.length();
+			int findMeLength = findMe.length();
+			boolean foundIt = false;
+			for (int i = 0; i <= (searchMeLength - findMeLength); i++) {
+			   if (searchMe.regionMatches(i, findMe, 0, findMeLength)) {
+			      foundIt = true;
+			      System.out.println(searchMe.substring(i, i + findMeLength));
+			      break;	
+			   }
+			}
+			if (!foundIt){
+				log.info("fue selccionado con sobregiro debemos habilitar el canal");
+				this.habilitarCanal = false;
+				this.setListaMedicionCanalRangos(new ArrayList<MedicionCanalRango>());
+		        List<MedicionCanalRango> lMedicionCanalRango = 
+		        		  entityManager.createQuery("select mcr from MedicionCanalRango mcr " +
+		        		  		" where mcr.medicion.systemId=:idMedicion and mcr.canal.systemId=:idCanal " +
+		        		  		" order by mcr.systemId asc ")
+		        		 .setParameter("idMedicion",  this.medicion.getSystemId()) 	
+		        		 .setParameter("idCanal", this.canal.getSystemId())
+		                 .getResultList();
+			        if(lMedicionCanalRango != null ){
+			        	this.setListaMedicionCanalRangos(lMedicionCanalRango);
+			        }else{
+			        	this.setListaMedicionCanalRangos(new ArrayList<MedicionCanalRango>());
+			        }				
+			}else{
+				log.info("fue selccionado sin sobregiro debemos desahabilitar el canal");
+				this.habilitarCanal = true;
+				this.canal = null;
+		        List<MedicionCanalRango> lMedicionCanalRango = 
+		        		  entityManager.createQuery("select mcr from MedicionCanalRango mcr " +
+		        		  		" where mcr.medicion.systemId=:idMedicion " +
+		        		  		" order by mcr.systemId asc ")
+		        		 .setParameter("idMedicion",  this.medicion.getSystemId()) 		
+		                 .getResultList();
+			        if(lMedicionCanalRango != null ){
+			        	this.setListaMedicionCanalRangos(lMedicionCanalRango);
+			        }else{
+			        	this.setListaMedicionCanalRangos(new ArrayList<MedicionCanalRango>());
+			        }
+			}        	
+    	}
+    }
+    
+    public void guardarCondicionTipoSolicitudRango() {
+    	
+    	if(validarDatosAntesSetar()){
+    		if(this.opcionTiempo.equals("D")){
+    			calcularTiempoAMinutos(TiempoType.D,this.valor);
+    			condicionTipoSolicitudRangoTarget.setTiempo(TiempoType.D);
+    		}else if(this.opcionTiempo.equals("H")){
+    			calcularTiempoAMinutos(TiempoType.H,this.valor);
+    			condicionTipoSolicitudRangoTarget.setTiempo(TiempoType.H);
+    		}else if(this.opcionTiempo.equals("M")){
+    			calcularTiempoAMinutos(TiempoType.M,this.valor);
+    			condicionTipoSolicitudRangoTarget.setTiempo(TiempoType.M);
+    		}
+    		
+    		condicionTipoSolicitudRangoTarget.setTipoSolicitud(tipoSolicitud);
+    		condicionTipoSolicitudRangoTarget.setMedicionCanalRango(medicionCanalRango);
+    		
+          if(entityManager.contains(condicionTipoSolicitudRangoTarget)) {
+                 entityManager.merge(condicionTipoSolicitudRangoTarget);
+          } else {
+                 entityManager.persist(condicionTipoSolicitudRangoTarget);
+                 if(condicionMedicionCanalRangoActivosList != null) 
+                	 condicionMedicionCanalRangoActivosList.add(condicionTipoSolicitudRangoTarget);
+          }
+          entityManager.flush();
+    	} 
+    }
+    
+    public void calcularTiempoAMinutos(TiempoType opcion, Long valor){
+    	try{
+			Jornada jornada = scoringService.getSacarUltimaJornada();
+			if(jornada != null){
+    			long valorTiempoFinal = jornada.getHoraFinal().getTime();
+    			long valorTiempoInicial = jornada.getHoraInicial().getTime();	
+    			long resta = (valorTiempoFinal - valorTiempoInicial);
+    			long hora = ((resta/1000)/3600);
+    			if(TiempoType.D.equals(opcion)){
+    				long horaPorDia = valor*hora;
+    				long minutosPorHora = horaPorDia * 60;
+    				condicionTipoSolicitudRangoTarget.setDias(valor);
+    				condicionTipoSolicitudRangoTarget.setHoras(horaPorDia);
+    				condicionTipoSolicitudRangoTarget.setMinutosTotales(minutosPorHora);
+    			}else if(TiempoType.H.equals(opcion)){
+    				long minutosPorHora = valor * 60;
+    				long diaPorHora = (valor/hora);
+    				condicionTipoSolicitudRangoTarget.setDias(diaPorHora);
+    				condicionTipoSolicitudRangoTarget.setHoras(valor);
+    				condicionTipoSolicitudRangoTarget.setMinutosTotales(minutosPorHora);    				
+	    		}else if(TiempoType.M.equals(opcion)){
+	    			long horaPorMinutos = (valor / 60);
+	    			long diaPorHora = (horaPorMinutos/hora);
+    				condicionTipoSolicitudRangoTarget.setDias(diaPorHora);
+    				condicionTipoSolicitudRangoTarget.setHoras(horaPorMinutos);
+    				condicionTipoSolicitudRangoTarget.setMinutosTotales(valor);   	    			
+	    		}
+			}	
+    	}catch (Exception e) {
+    		log.error("error, al calcular y pasar el datos a minuto #0", e.getMessage());
+    	}
+    	return;
+    }
+    
+    
+    
+    public boolean validarDatosAntesSetar(){
+
+    	if(this.tipoSolicitud == null){
+    		FacesMessages.instance().add(Severity.WARN,"Debe seleccionar el tipo de solicitud del registro.");
+    		return false;
+    	}    	
+    	
+    	if(this.medicionCanalRango == null){
+    		FacesMessages.instance().add(Severity.WARN,"Debe seleccionar el rango del registro.");
+    		return false;
+    	}
+    	
+    	if(this.opcionTiempo == null){
+    		FacesMessages.instance().add(Severity.WARN,"Debe seleccionar la opción de transformación.");
+    		return false;
+    	}    	
+    	
+    	if(this.valor == null){
+    		FacesMessages.instance().add(Severity.WARN,"Debe ingresar valor del registro.");
+    		return false;
+    	}else{
+        	if(this.valor.longValue() == 0){
+        		FacesMessages.instance().add(Severity.WARN,"Debe ingresar valor del registro.");
+        		return false;
+        	}
+    	}
+    	
+    	return true;
+    }
+    
+     @Out(value = "mantenedorMaestroAction_condicionTipoSolicitudRango", required = false)
+    private List<CondicionTipoSolicitudRango> condicionMedicionCanalRangoActivosList;
+    
+    @SuppressWarnings("unchecked")
+	@Factory(value = "mantenedorMaestroAction_condicionTipoSolicitudRango", autoCreate = true)
+    public void cargarCondicionMedicionCanalRangoActivosList() {
+    	condicionMedicionCanalRangoActivosList = new ArrayList<CondicionTipoSolicitudRango>();
+          List<CondicionTipoSolicitudRango> condicionMedicionCanalRango = 
+        		  entityManager.createQuery("select ctsr from CondicionTipoSolicitudRango ctsr order by ctsr.tipoSolicitud.codTipoSolicitud asc ")
+                 .getResultList();
+          
+          if(condicionMedicionCanalRango != null && !condicionMedicionCanalRango.isEmpty())
+        	  condicionMedicionCanalRangoActivosList.addAll(condicionMedicionCanalRango);
+          
+    }
+    
+    public void cambiarActivoCondicionMedicionCanalRango(boolean t, CondicionTipoSolicitudRango ctsr) {
+    	  ctsr.setDisabled(t);
+          entityManager.merge(ctsr);
+          entityManager.flush();
+    }
+
+	public void obtenerRangoSeleccionado(){
+		if(this.medicionCanalRango != null){
+			log.info("el rango seleccionado es : "+ this.medicionCanalRango.getTiempoMontoType() 
+					                        +" - "+ this.medicionCanalRango.getValorInicial() 
+					                        +" - "+ this.medicionCanalRango.getValorFinal());
+		}
+	}
+	@SuppressWarnings("unchecked")
+	public void obtenerMedicionSeleccionado(){
+		if(medicion != null){
+			log.info("la medicion seleccionado es : "+ this.medicion.getDescripcion());
+			
+			String searchMe = this.medicion.getDescripcion();
+			String findMe = "";
+			if(searchMe != null){
+				String[] array = searchMe.split(" ");
+				if(array != null && array.length > 0){
+					String dato = array[0];
+					if(dato != null && !"Con".equals(dato)){
+						findMe = "Sin";
+						searchMe += " Sin";
+					}else{
+						findMe = "Con";
+					}
+				}
+			}
+			
+			
+			int searchMeLength = searchMe.length();
+			int findMeLength = findMe.length();
+			boolean foundIt = false;
+			for (int i = 0; i <= (searchMeLength - findMeLength); i++) {
+			   if (searchMe.regionMatches(i, findMe, 0, findMeLength)) {
+			      foundIt = true;
+			      System.out.println(searchMe.substring(i, i + findMeLength));
+			      break;	
+			   }
+			}
+
+			
+			if (!foundIt){
+				log.info("fue selccionado con sobregiro debemos habilitar el canal");
+				this.setCanal(null);
+				this.habilitarCanal = false;
+				this.setListaMedicionCanalRangos(new ArrayList<MedicionCanalRango>());
+				
+			}else{
+				log.info("fue selccionado sin sobregiro debemos desahabilitar el canal");
+				this.setCanal(null);
+				this.habilitarCanal = true;
+		        List<MedicionCanalRango> lMedicionCanalRango = 
+		        		  entityManager.createQuery("select mcr from MedicionCanalRango mcr " +
+		        		  		" where mcr.medicion.systemId=:idMedicion " +
+		        		  		" order by mcr.systemId asc ")
+		        		 .setParameter("idMedicion",  this.medicion.getSystemId()) 		
+		                 .getResultList();
+			        if(lMedicionCanalRango != null ){
+			        	this.setListaMedicionCanalRangos(lMedicionCanalRango);
+			        }else{
+			        	this.setListaMedicionCanalRangos(new ArrayList<MedicionCanalRango>());
+			        }
+			}
+		}
+	}    
+	@SuppressWarnings("unchecked")
+	public void obtenerCanalSeleccionado(){
+		if(canal != null){
+			log.info("el canal seleccionado es : "+ this.canal.getDescripcion());
+			
+	        List<MedicionCanalRango> lMedicionCanalRango = 
+	        		  entityManager.createQuery("select mcr from MedicionCanalRango mcr " +
+	        		  		" where mcr.medicion.systemId=:idMedicion and mcr.canal.systemId=:idCanal " +
+	        		  		" order by mcr.systemId asc ")
+	        		 .setParameter("idMedicion",  this.medicion.getSystemId()) 	
+	        		 .setParameter("idCanal", this.canal.getSystemId())
+	                 .getResultList();
+		        if(lMedicionCanalRango != null ){
+		        	this.setListaMedicionCanalRangos(lMedicionCanalRango);
+		        }else{
+		        	this.setListaMedicionCanalRangos(new ArrayList<MedicionCanalRango>());
+		        }
+		}
+	}  
+	public void obtenerTipoSolicitudSeleccionado(){
+		if(tipoSolicitud != null){
+			log.info("el tipo de solicitud seleccionado es : "+ this.tipoSolicitud.getDesTipoSolicitud());
+		}
+	} 
+	
+    
+	public List<TiempoMontoType> getListaTiempoMontoTypes() {
+		return listaTiempoMontoTypes;
+	}
+
+	public void setListaTiempoMontoTypes(List<TiempoMontoType> listaTiempoMontoTypes) {
+		this.listaTiempoMontoTypes = listaTiempoMontoTypes;
+	}
+
+	public TiempoMontoType getTiempoMontoType() {
+		return tiempoMontoType;
+	}
+
+	public void setTiempoMontoType(TiempoMontoType tiempoMontoType) {
+		this.tiempoMontoType = tiempoMontoType;
+	}
+
+	public List<Canal> getListaCanales() {
+		return listaCanales;
+	}
+
+	public void setListaCanales(List<Canal> listaCanales) {
+		this.listaCanales = listaCanales;
+	}
+
+	public List<Medicion> getListaMediciones() {
+		return listaMediciones;
+	}
+
+	public void setListaMediciones(List<Medicion> listaMediciones) {
+		this.listaMediciones = listaMediciones;
+	}
+
+	public Canal getCanal() {
+		return canal;
+	}
+
+	public void setCanal(Canal canal) {
+		this.canal = canal;
+	}
+
+	public Medicion getMedicion() {
+		return medicion;
+	}
+
+	public void setMedicion(Medicion medicion) {
+		this.medicion = medicion;
+	}
+
+	public boolean isHabilitarCanal() {
+		return habilitarCanal;
+	}
+
+	public void setHabilitarCanal(boolean habilitarCanal) {
+		this.habilitarCanal = habilitarCanal;
+	}
+
+	public List<MedicionCanalRango> getListaMedicionCanalRangos() {
+		return listaMedicionCanalRangos;
+	}
+
+	public void setListaMedicionCanalRangos(
+			List<MedicionCanalRango> listaMedicionCanalRangos) {
+		this.listaMedicionCanalRangos = listaMedicionCanalRangos;
+	}
+
+	public MedicionCanalRango getMedicionCanalRango() {
+		return medicionCanalRango;
+	}
+
+	public void setMedicionCanalRango(MedicionCanalRango medicionCanalRango) {
+		this.medicionCanalRango = medicionCanalRango;
+	}
+
+	public List<LcredTipoSolicitud> getListaLcredTipoSolicituds() {
+		return listaLcredTipoSolicituds;
+	}
+
+	public void setListaLcredTipoSolicituds(
+			List<LcredTipoSolicitud> listaLcredTipoSolicituds) {
+		this.listaLcredTipoSolicituds = listaLcredTipoSolicituds;
+	}
+
+	public LcredTipoSolicitud getTipoSolicitud() {
+		return tipoSolicitud;
+	}
+
+	public void setTipoSolicitud(LcredTipoSolicitud tipoSolicitud) {
+		this.tipoSolicitud = tipoSolicitud;
+	}
+
+	public String getOpcionTiempo() {
+		return opcionTiempo;
+	}
+
+	public void setOpcionTiempo(String opcionTiempo) {
+		this.opcionTiempo = opcionTiempo;
+	}
+
+	public Long getValor() {
+		return valor;
+	}
+
+	public void setValor(Long valor) {
+		this.valor = valor;
+	}
+	
+    
+
+}

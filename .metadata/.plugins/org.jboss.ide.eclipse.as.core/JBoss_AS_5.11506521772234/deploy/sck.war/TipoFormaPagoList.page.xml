@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+      login-required="true">
+      
+      <restrict>#{identity.menu.listTipoFormaPago == true}</restrict>
+
+   <param name="firstResult" value="#{tipoFormaPagoList.firstResult}"/>
+   <param name="sort" value="#{tipoFormaPagoList.orderColumn}"/>
+   <param name="dir" value="#{tipoFormaPagoList.orderDirection}"/>
+   <param name="logic" value="#{tipoFormaPagoList.restrictionLogicOperator}"/>
+
+   <param name="from"/>
+   <param name="descripcion" value="#{tipoFormaPagoList.tipoFormaPago.descripcion}"/>
+
+</page>

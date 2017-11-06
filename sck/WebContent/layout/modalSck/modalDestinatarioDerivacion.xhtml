@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	
+	<rich:modalPanel id="mpDestinatarioDerivacion" autosized="true" width="800" height="600">
+		<f:facet name="header">
+			<h:outputText value="Formulario para Derivación de Solicitudes"	style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:form>
+					<a:commandLink	ajaxSingle="true" action="#{respuestaSolicitudAction.cerrarAnalizarToDerivar()}"
+					    reRender="panelGeneral" >
+						<h:graphicImage value="img/close.png" styleClass="hidelink"	id="mpDestinatarioDerivacionlink" />
+					</a:commandLink>
+					<rich:componentControl for="mpDestinatarioDerivacion"
+						attachTo="mpDestinatarioDerivacionlink" operation="hide"
+						event="onclick" 
+						/>
+				</h:form>
+			</h:panelGroup>
+		</f:facet>
+		<h:form id = "frm_derivacion">
+				<a:outputPanel id="panelDatosAD" >
+				<rich:panel>
+					<f:facet name="header">Seleccionar</f:facet>	
+					<table cellpadding="0" cellspacing="0" border="0" width="100%">
+						<tr>
+							<td width="100%" colspan="3" height="15px;" align="center">
+								 <h:selectOneRadio id="analisisAprobacion"  
+									   value="#{respuestaSolicitudAction.analisisAprobacion}"
+									   dir="ltr" disabled="false" layout="lineDirection">
+									 	 <f:selectItem itemLabel="Solicita Analisis " itemValue="Analisis"/>
+										 <f:selectItem itemLabel="Solicita Aprobación" itemValue="Aprueba"/>
+						       			   	<a:support event="onchange" 
+					                         reRender="analisisAprobacion,seleccionCorreosUsuario,mensajeDerivacionOut,paraAprobacion"
+					             			      ajaxSingle="true" 
+					             			      action="#{respuestaSolicitudAction.obtenerAnalisisAprobacion()}" />	
+
+								 </h:selectOneRadio>   							
+							</td>
+						</tr>	
+						<tr>
+							<td colspan="3" width="100%" align="center">
+							  <a:outputPanel id="seleccionCorreosUsuario">
+								        <rich:listShuttle id="idListaUsuarioCorreo" sourceValue="#{respuestaSolicitudAction.listaDescripcionUsuariosCorreos}"
+									            targetValue="#{respuestaSolicitudAction.listaCorreoSeleccionado}" var="usuarioCorreo" listsHeight="80"
+									            sourceListWidth="250" targetListWidth="250" sourceCaptionLabel="Listas Usuario Disponible"
+									            targetCaptionLabel="Listas Usuario Asignar" orderControlsVisible="false" fastOrderControlsVisible="false" > 
+								            <ui:include src="/layout/facetSelectionLists.xhtml" />
+								            <s:convertEntity/>
+								            <rich:column>
+								                <h:outputText value="#{usuarioCorreo.nombre}"></h:outputText>
+								            </rich:column>
+										</rich:listShuttle>				
+							  </a:outputPanel>						
+							</td>
+						</tr>	
+						<tr>
+							<td width="500px;">
+
+					    		<a:outputPanel id="mensajeDerivacionOut" >
+						    		<h:messages  globalOnly="true" styleClass="message"
+							            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
+						        </a:outputPanel>	
+							</td>
+							<td align="center" colspan="2"> 
+								<a:commandButton value="Agregar" 
+												ajaxSingle="true"
+								                action="#{respuestaSolicitudAction.agregarUsuarioCorreoListaAnalisisDerivacion()}"
+					         		          reRender="frm_derivacion,listaAnalisisDerivacionList,listaAux1,panelDatosAD,seleccionCorreosUsuario,mensajeDerivacionOut,correosAgragado" 
+					         	           		process="idListaUsuarioCorreo"/>		
+								<a:commandButton value="Agregar Todos" 
+												ajaxSingle="true"
+								                action="#{respuestaSolicitudAction.agregarTodosUsuarioCorreoListaAnalisisDerivacion()}"
+					         		          reRender="frm_derivacion,listaAnalisisDerivacionList,listaAux1,panelDatosAD,seleccionCorreosUsuario,mensajeDerivacionOut,correosAgragado" 
+					         	           		process="idListaUsuarioCorreo"/>						         	           						
+								<a:commandButton value="Especial" 
+												ajaxSingle="true"
+								                action="#{respuestaSolicitudAction.limpiarFormulario()}"
+					         		             reRender="mpAgregarUsuarioEspecial" 
+					         		             oncomplete="#{rich:component('mpAgregarUsuarioEspecial')}.show()"
+					         		             title="Agregar Gerentes"
+					         	           		/>
+							</td>
+						</tr>	
+					</table>
+				  </rich:panel>
+				</a:outputPanel>
+				<a:outputPanel id="listaAnalisisDerivacionList">
+					<rich:panel>
+							<a:outputPanel id="correosAgragado">
+					    	<div class="results" id="usuarioCorreoAgregadoList" style="border:1px solid #000000;padding:3px; height:100px; overflow: auto;">
+					   			<h:outputText value="No ha Agregado ningun usuario a la grilla." rendered="#{empty respuestaSolicitudAction.listaCorreoAnaDer}"/>
+							    <rich:dataTable id="idlistaAnalisisDerivacionList"
+							                var="_uc"
+							              value="#{respuestaSolicitudAction.listaCorreoAnaDer}"
+							           rendered="#{not empty respuestaSolicitudAction.listaCorreoAnaDer}"
+							            >
+							        <rich:column>
+							            <f:facet name="header">Usuario</f:facet>
+							            <h:outputText value="#{_uc.nombre}"/>
+							        </rich:column>
+							        <rich:column>
+							            <f:facet name="header">Correo</f:facet>
+							            <h:outputText value="#{_uc.correo}"/>
+							        </rich:column>					        
+							        <rich:column  style="text-align:center">
+							            <f:facet name="header">Aprobacion Obl.</f:facet>
+							            <h:selectBooleanCheckbox value="#{_uc.confirmar}" dir="ltr" disabled="false">
+							            	<a:support event="onchange" 
+							            	      ajaxSingle="true"  
+							            	          action="#{respuestaSolicitudAction.verificaTicketCorreoConfirmar(_uc)}"
+							            	          reRender="correosAgragado,idlistaAnalisisDerivacionList"/>
+							            </h:selectBooleanCheckbox>						            
+							        </rich:column>
+							        <rich:column styleClass="action">
+							            <f:facet name="header">
+											<a:commandButton value="Eliminar Todos" 
+															ajaxSingle="true"
+											                action="#{respuestaSolicitudAction.eliminarTodosUsuarioCorreoListaAnalisisDerivacion()}"
+								         		          reRender="frm_derivacion,listaAnalisisDerivacionList,listaAux1,panelDatosAD,seleccionCorreosUsuario,mensajeDerivacion" 
+								         	           		/>	
+							            </f:facet>
+										<a:commandButton value="Eliminar" 
+										                action="#{respuestaSolicitudAction.eliminarCorreoAnalisisDerivacion(_uc)}"
+										                ajaxSingle="true"
+						         		              reRender="listaAnalisisDerivacionList,frm_agregarCorreo,mensajeDerivacion" />		
+			
+							        </rich:column>
+							    </rich:dataTable>
+					    	</div>
+					    </a:outputPanel>	
+					 </rich:panel>
+	   			 </a:outputPanel>
+	   			 <a:outputPanel id="paraAprobacion" >
+	   			    
+	   			    <s:fragment  rendered="#{respuestaSolicitudAction.habilitaSoloAprobacion == true}">
+						 <rich:panel>
+						   <f:facet name="header">Observaciones del Departamento de Crédito</f:facet>	
+							<table cellpadding="0" cellspacing="0" border="0" width="100%">
+								<tr>
+									<td width="200px;" colspan="1"></td>
+									<td width="100%" colspan="2">Observación</td>
+								</tr>
+								<tr>
+									<td width="200px;" colspan="1" align="center">
+										 <h:selectOneRadio id="aprobarRechazar"  
+											   value="#{respuestaSolicitudAction.aprobarRechazar}"
+											   dir="ltr" disabled="false" layout="pageDirection">
+											 	 <f:selectItem itemLabel="Aprobar" itemValue="Aprobar"/>
+												 <f:selectItem itemLabel="Rechazar" itemValue="Rechazar"/>
+								       			   	<a:support event="onchange" 
+							                         reRender="aprobarRechazar"
+							             			      ajaxSingle="true" 
+							             			      action="#{respuestaSolicitudAction.obtenerAprobarRecharzar()}" />	
+										 </h:selectOneRadio>   							
+									</td>
+										<td width="100%" colspan="2">
+										<h:inputTextarea id="idObservacionesfinalesMotivo" value="#{respuestaSolicitudAction.mensajeAprobacionSolicitud}" 
+			      									rows="2" 
+			      									style="width:99%; height:80%;"
+			      									disabled="false"/> 								
+									
+									</td>
+								</tr>							
+							</table>
+						</rich:panel>
+					</s:fragment>	
+				</a:outputPanel>
+				<rich:panel style="height:110px;">
+					<f:facet name="header" ><strong>Comentarios del Negocio a Evaluar</strong></f:facet>
+					<a:outputPanel id="observacionesfinal11">
+						<table cellpadding="0" cellspacing="0" border="0" style="height:80px;" width="100%">
+							<tr>
+								<td width="100%" height="80px;" >
+								<h:inputTextarea id="idObservacionesfinales11" value="#{respuestaSolicitudAction.mensajeAnalisisAprobacion}" 
+	      									rows="2" 
+	      									style="width:99%; height:80%;"
+	      									disabled="false"/> 																									
+								</td>
+								<td width="100%" height="23px;" align="center">
+											 <s:fragment rendered="#{respuestaSolicitudAction.habilitarCheckEnvio() == true}">
+												<h:selectBooleanCheckbox id="enviacorreoDeriva" value="#{respuestaSolicitudAction.wvarEnviaCorreo}" />
+												<label>¿Envía el Correo?</label>
+											 </s:fragment>	
+						    				 <a:commandButton value="Enviar" 
+						    				 	action="#{respuestaSolicitudAction.analizarToDerivar()}"
+				                           	 	ajaxSingle="true" 
+				                           	    reRender="mensajeDerivada,mensajeDerivacionOut,mpMensajeRespuestaDerivada,frm_derivacion,panelGeneral"
+									            oncomplete="if (#{respuestaSolicitudAction.habilitaMensajeDerivacion == false}) {#{rich:component('mpMensajeRespuestaDerivada')}.show()}"
+				                           	 	title="Enviar Solicitud"
+				                           	 	style="width:75px;"
+				                           	 	process="idObservacionesfinales11,idObservacionesfinalesMotivo,enviacorreoDeriva"
+				                			  />
+																								
+						    				 <a:commandButton value="Cerrar" 
+						    				 	action="#{respuestaSolicitudAction.cerrarAnalizarToDerivar()}"
+						    				 	reRender="mpDestinatarioDerivacion"
+				                           	 	ajaxSingle="true" 
+				                           	 	oncomplete="#{rich:component('mpDestinatarioDerivacion')}.hide()"
+				                           	 	title="Enviar Solicitud"
+				                           	 	style="width:75px;"
+				                			  />
+								</td>
+							</tr>
+						</table>
+					</a:outputPanel>
+				</rich:panel>
+			</h:form>
+	</rich:modalPanel>
+	
+</ui:composition>

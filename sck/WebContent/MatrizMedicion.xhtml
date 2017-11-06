@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:p="http://primefaces.prime.com.tr/ui"
+    template="layout/template.xhtml">
+	
+	<ui:define name="body">
+	<div class="divTitular"><h1>Mantenedor de Matriz de Medicion</h1></div>
+	
+			<h:form id="frm_MatrizMedicion">
+				<s:button view="/GenerarSolicitud.xhtml" propagation="none" value="Volver" ></s:button>
+				
+				<h:messages id="messagesEsp" globalOnly="false" styleClass="message"
+		            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
+		            rendered="#{showGlobalMessages != 'false'}" />
+		            
+				<a:commandButton value="Agregar Rango de Medicion" ajaxSingle="true" action="#{matrizAction.cambiarEstado(false)}"  
+					reRender="frm_modalMatrizMedicion" oncomplete="#{rich:component('mpMatrizMedicion')}.show();" />
+				
+				<rich:panel id="rp_listaMedicion">
+					<f:facet name="label">Matriz de medición</f:facet>
+						<h:selectOneMenu value="#{matrizAction.mesTarget}" style="width:200px;" required="true" requiredMessage="Debe ingresar un tipo de condicion">
+							<s:selectItems value="#{globalService_mesesList}" var="_meses" 
+		               			               label="#{_meses.nombre}" 
+		               			               noSelectionLabel="Seleccione Meses..." 
+		               			               hideNoSelectionLabel="true"/>
+		               			            <s:convertEntity/>  
+						</h:selectOneMenu> 
+					
+				</rich:panel>
+			</h:form>
+		 <a:status onstart="abrirModal();" onstop="cerrarModal();"></a:status>	
+		<ui:include src="/layout/modalSckMatriz/modalAgregarMatriz.xhtml"/>  
+	</ui:define>
+</ui:composition>
+

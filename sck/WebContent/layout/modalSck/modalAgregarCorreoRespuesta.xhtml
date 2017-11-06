@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	
+	
+	<rich:modalPanel id="mpAgregarCorreoRespuesta" autosized="true" width="800">
+		<f:facet name="header">
+			<h:outputText value="Agregar Usuarios de Correo"	style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:form>
+					<a:commandLink	ajaxSingle="true" reRender="idUsuariosCorreosVentaPuntual"  process="lista">
+						<h:graphicImage value="img/close.png" styleClass="hidelink"	id="mpAgregarCorreoRespuestalink" />
+					</a:commandLink>
+					<rich:componentControl for="mpAgregarCorreoRespuesta"
+						attachTo="mpAgregarCorreoRespuestalink" operation="hide"
+						event="onclick" 
+						/>
+				</h:form>
+			</h:panelGroup>
+		</f:facet>
+		<rich:panel>
+			<h:form id = "frm_agregarCorreoRespuesta">
+			
+				<a:outputPanel id="panelDatos" >
+					<table cellpadding="0" cellspacing="0" border="0" width="100%" align="center">
+						<tr>
+							<td width="500px;">Usuario</td>
+							<td width="20px;"> </td>
+							<td></td>
+						</tr>	
+						<tr>
+							<td colspan="3" align="center" width="100%">
+
+							</td>
+						</tr>	
+						<tr>
+							<td colspan="3" height="10px;">
+							
+								<a:commandButton value="Grabar y Salir" 
+								                
+					         		          reRender="idUsuariosCorreosVentaPuntual" 
+					         	            	ajaxSingle="true"
+					         	            	oncomplete="#{rich:component('mpAgregarCorreoRespuesta')}.hide()"
+					         	            	process="lista"
+					         	           />								
+							</td>
+						</tr>							
+					</table>
+				</a:outputPanel>
+			</h:form>
+		</rich:panel>
+	</rich:modalPanel>
+	
+</ui:composition>

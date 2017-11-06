@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="formaPagoSearch" styleClass="edit">
+
+        <rich:simpleTogglePanel label="Filtro de Busquedas" switchType="ajax">
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Descripción</ui:define>
+                <h:inputText id="descripcion" value="#{formaPagoList.formaPago.descripcion}"/>
+            </s:decorate>
+
+
+        </rich:simpleTogglePanel>
+
+        <div class="actionButtons">
+            <h:commandButton id="search" value="Buscar" action="/FormaPagoList.xhtml"/>
+            <s:button id="reset" value="Limpiar" includePageParams="false"/>
+	        <s:button view="/FormaPagoEdit.xhtml"
+	                    id="create"
+	           propagation="none"
+	                 value="Crear Forma Pago"
+	                  rendered="#{empty from}">
+	            <f:param name="formaPagoIdFormaPago"/>
+	        </s:button>            
+        </div>
+
+    </h:form>
+
+    <rich:panel>
+        <f:facet name="header">Resultado (#{empty formaPagoList.resultList ? 0 : (formaPagoList.paginated ? formaPagoList.resultCount : formaPagoList.resultList.size)})</f:facet>
+    <div class="results" id="formaPagoList">
+
+    <h:outputText value="No existe ninguna forma de pago."
+               rendered="#{empty formaPagoList.resultList}"/>
+
+    <rich:dataTable id="formaPagoList"
+                var="_formaPago"
+              value="#{formaPagoList.resultList}"
+           rendered="#{not empty formaPagoList.resultList}">
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{formaPagoList}"/>
+                    <ui:param name="propertyLabel" value="Id Forma Pago"/>
+                    <ui:param name="propertyPath" value="formaPago.idFormaPago"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_formaPago.idFormaPago}">
+                <f:convertNumber/>
+            </h:outputText>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{formaPagoList}"/>
+                    <ui:param name="propertyLabel" value="Descripción"/>
+                    <ui:param name="propertyPath" value="formaPago.descripcion"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_formaPago.descripcion}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{formaPagoList}"/>
+                    <ui:param name="propertyLabel" value="Días"/>
+                    <ui:param name="propertyPath" value="formaPago.dias"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_formaPago.dias}">
+                <f:convertNumber/>
+            </h:outputText>
+        </h:column>
+        <rich:column styleClass="action">
+            <f:facet name="header">Acción</f:facet>
+            <s:link view="/#{empty from ? 'FormaPago' : from}.xhtml"
+                   value="#{empty from ? 'Ver' : 'Seleccionar'}"
+             propagation="#{empty from ? 'none' : 'default'}"
+                      id="formaPagoViewId">
+                <f:param name="formaPagoIdFormaPago"
+                        value="#{_formaPago.idFormaPago}"/>
+            </s:link>
+            #{' '}
+            <s:link view="/FormaPagoEdit.xhtml"
+                   value="Editar"
+             propagation="none"
+                      id="formaPagoEdit"
+                rendered="#{empty from}">
+                <f:param name="formaPagoIdFormaPago"
+                        value="#{_formaPago.idFormaPago}"/>
+            </s:link>
+        </rich:column>
+    </rich:dataTable>
+    </div>
+    </rich:panel>
+
+    <div class="tableControl">
+
+        <s:link view="/FormaPagoList.xhtml"
+            rendered="#{formaPagoList.previousExists}"
+               value="#{messages.left}#{messages.left} Primera Página"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link view="/FormaPagoList.xhtml"
+            rendered="#{formaPagoList.previousExists}"
+               value="#{messages.left} página Anterior"
+                  id="previousPage">
+            <f:param name="firstResult"
+                    value="#{formaPagoList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link view="/FormaPagoList.xhtml"
+            rendered="#{formaPagoList.nextExists}"
+               value="Página Siguiente #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult"
+                    value="#{formaPagoList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link view="/FormaPagoList.xhtml"
+            rendered="#{formaPagoList.nextExists}"
+               value="Ultima Página #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult"
+                    value="#{formaPagoList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+
+</ui:define>
+
+</ui:composition>

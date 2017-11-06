@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	
+	<rich:modalPanel id="mpLiberarPedido" autosized="true" width="400">
+		<f:facet name="header">
+			<h:outputText value="Liberar Pedidos"	style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:form>
+					<a:commandLink	ajaxSingle="true">
+						<h:graphicImage value="img/close.png" styleClass="hidelink"	id="mpLiberarPedidolink" />
+					</a:commandLink>
+					<rich:componentControl for="mpLiberarPedido"
+						attachTo="mpLiberarPedidolink" operation="hide"
+						event="onclick" />
+				</h:form>
+			</h:panelGroup>
+		</f:facet>
+		<rich:panel>
+			 <f:facet name="header">
+           	 <h:outputText value="Ingreso de Pedido" style="padding-right:15px;" />
+      		  </f:facet>
+			<h:form id = "frm_liberarPedido">
+			
+				<table cellpadding="0" cellspacing="0" width="100%">
+					<tr>
+						<td align="center"> Numero de Pedido :</td>				
+						<td align="center" > 
+			                      <h:inputText id="idPedidoCotizacion"
+			                                value="#{generarSolicitudAction.pedidoCotizacionLiberar}" 
+					                  		style="text-align: right; width:100%; "
+					                   		onkeypress="return isNumberKey(event);"
+					                   		size="10" />					
+						</td>				
+					</tr>
+					<tr>
+						<td colspan="2" align="center">
+					        <h:panelGrid id="botones" columns="3" cellpadding="0" cellspacing="5" columnClasses="col_top">
+					        
+				        		<a:commandButton action="#{generarSolicitudAction.libararPedido()}" 
+				        						 value="Liberar" 
+				        						 ajaxSingle="true"
+				        	                reRender="idPedidoCotizacion,mpMensajeGlobal,escritura"
+				        	                oncomplete="if (#{generarSolicitudAction.mensajeGlogal != null}) 
+				        	                              {#{rich:component('mpMensajeGlobal')}.show()}"
+				        		            process="idPedidoCotizacion" /> 
+				        		            
+				   				 <a:commandButton value="Salir" 
+				   				 				action="#{generarSolicitudAction.limpiaMensajeGlobal}"
+				   				 			   reRender="mpLiberarPedido"
+				                        	 ajaxSingle="true" 
+				                        	oncomplete="#{rich:component('mpLiberarPedido')}.hide()"
+				             			  />	
+							</h:panelGrid>					
+						</td>				
+					</tr>
+				</table>			
+			</h:form>
+		</rich:panel>
+	</rich:modalPanel>
+	
+</ui:composition>

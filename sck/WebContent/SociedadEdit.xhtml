@@ -1,0 +1,81 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="sociedad" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{sociedadHome.managed ? 'Editar' : 'Agregar'} Sociedad</f:facet>
+
+
+            <s:decorate id="codigoSociedadField" template="layout/edit.xhtml">
+                <ui:define name="label">Código sociedad</ui:define>
+                <h:inputText id="codigoSociedad"
+                           required="true"
+                              value="#{sociedadHome.instance.codigoSociedad}"/>
+            </s:decorate>
+
+
+            <s:decorate id="razonSocialField" template="layout/edit.xhtml">
+                <ui:define name="label">Razon social</ui:define>
+                <h:inputText id="razonSocial"
+                           required="true"
+                              value="#{sociedadHome.instance.razonSocial}"/>
+            </s:decorate>
+
+
+            <s:decorate id="rutField" template="layout/edit.xhtml">
+                <ui:define name="label">Rut</ui:define>
+                <h:inputText id="rut"
+                			maxlength="10"
+                           required="true"
+                              value="#{sociedadHome.instance.rut}"/>
+            </s:decorate>
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                Datos requeridos
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Guardar"
+                         action="#{sociedadHome.persist}"
+                       disabled="#{!sociedadHome.wired}"
+                       rendered="#{!sociedadHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="Actualizar"
+                         action="#{sociedadHome.update}"
+                       rendered="#{sociedadHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="Cancelar"
+             propagation="end"
+                    view="/Sociedad.xhtml"
+                rendered="#{sociedadHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="Cancelar"
+             propagation="end"
+                    view="/#{empty sociedadFrom ? 'SociedadList' : sociedadFrom}.xhtml"
+                rendered="#{!sociedadHome.managed}"/>
+
+        </div>
+    </h:form>
+
+</ui:define>
+
+</ui:composition>

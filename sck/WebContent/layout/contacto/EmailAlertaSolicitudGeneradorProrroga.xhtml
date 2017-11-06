@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:s="http://jboss.com/products/seam/taglib"
+                xmlns:a="http://richfaces.org/a4j"
+                template="/layout/emailBaseAlertaInternaPrueba.xhtml"  importance="normal"> 
+                <!-- template="/layout/emailBaseAlertaInterna.xhtml" -->
+
+	<ui:param name="listacorreoUsuariosegur" value="#{emailAlertaContactoMensajeHelper.mensajeProrroga.listaNuevosCorreos}" />         
+    <ui:param name="coreroEmisor" value="#{emailAlertaContactoMensajeHelper.mensajeProrroga.correoEmisor}" />  
+	<ui:param name="asunto" value="#{emailAlertaContactoMensajeHelper.mensajeProrroga.tituloRespuesta} SCK N #{emailAlertaContactoMensajeHelper.mensajeProrroga.solicitud.id.numSolicitud} - #{emailAlertaContactoMensajeHelper.mensajeProrroga.soloNombre}" />
+	
+	<ui:define name="contenido">
+		
+	    <table >
+	        <tr>
+	            <td colspan="2">
+	                <label  style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Se ha generado la siguiente solicitud de prorroga #{emailAlertaContactoMensajeHelper.mensajeProrroga.solicitud.id.numSolicitud} </label></td>
+	        </tr>
+	        <tr style="height:5px">
+	            <td colspan="2" style="width:85px; font-weight: bold;">***************************************************</td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Cliente</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: xx-small; font-size: 12px;">#{emailAlertaContactoMensajeHelper.mensajeProrroga.rutNombre}</label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;" >Canal de venta</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: xx-small; font-size: 12px;">#{emailAlertaContactoMensajeHelper.mensajeProrroga.canalVenta}</label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Sucursal</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: xx-small; font-size: 12px;">#{emailAlertaContactoMensajeHelper.mensajeProrroga.sucursal}</label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Emisor</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: xx-small; font-size: 12px;">#{emailAlertaContactoMensajeHelper.mensajeProrroga.emisor}</label></td>
+	        </tr>
+	        <tr style="height:5px">
+	            <td colspan="2" style="width:85px;font-weight: bold;">***************************************************</td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Tipo de Solicitud</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: xx-small; font-size: 12px;">#{emailAlertaContactoMensajeHelper.mensajeProrroga.tipoSolicitud}</label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Tipo </label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: xx-small; font-size: 12px;">#{emailAlertaContactoMensajeHelper.mensajeProrroga.tipoProrroga}</label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;"> </label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: xx-small; font-size: 12px;"> </label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;"> </label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: xx-small; font-size: 12px;"> </label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Motivo </label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: xx-small; font-size: 12px;">#{emailAlertaContactoMensajeHelper.mensajeProrroga.motivoProrroga}</label></td>
+	        </tr>	        
+
+	        <tr style="height:5px">
+	            <td colspan="2" style="width:85px;font-weight: bold;">***************************************************</td>
+	        </tr>
+	        <tr>
+	            <td  colspan="2">
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Documentos</label></td>
+	        </tr>
+	        <tr>
+	            <td>
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif"> </label></td>
+	            <td style="width:72%;">
+           		    <table  style="width:100%;">
+				        <tr>
+				            <td style="width:100px;">
+				                <label  style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;"> 
+				                 	Nro Cheque    
+				                </label>
+				            </td>
+				            <td style="width:100px;" >
+				                <label  style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;"> 
+				                   Monto 
+				                </label>
+				            </td>
+				            <td style="width:100px;" >
+				                <label  style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;"> 
+				                   Venc.Actual 
+				                </label>
+				            </td>
+				            <td style="width:100px;" >
+				                <label  style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;"> 
+				                   Venc. Nuevo 
+				                </label>
+				            </td>
+				        </tr>
+				        <tr>
+				            <td  colspan="5">
+				                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;"></label></td>
+				        </tr>
+				       	        
+				        <a:repeat id="prorroga" value="#{emailAlertaContactoMensajeHelper.mensajeProrroga.listaProrrogas}" var="_prorrogas">
+					        <tr>
+					         	<td style="width:100px;">
+					                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif">
+					                	#{_prorrogas.numeroDocto}
+					                </label>
+					            </td>		        
+					        
+					            <td style="width:100px;" ><label style="font-size: 12px;  font-family:Arial,Helvetica,sans-serif">
+					            	 	#{_prorrogas.montoFormateado}
+					                </label>
+					            </td>
+					            <td style="width:100px;" ><label style="font-size: 12px;  font-family:Arial,Helvetica,sans-serif">
+					            	 	#{_prorrogas.fechaVencicmiento}
+					                </label>
+					            </td>
+					            <td style="width:100px;" ><label style="font-size: 12px;  font-family:Arial,Helvetica,sans-serif">
+					            	 	#{_prorrogas.fechaSolicitado}
+					                </label>
+					            </td>
+				            					            
+					        </tr>
+					   </a:repeat>	
+					   				        
+				    </table>		            
+	            </td>
+	        </tr>
+	        <tr style="height:5px">
+	            <td colspan="2" style="width:85px;font-weight: bold;">***************************************************</td>
+	        </tr>
+	        <tr>
+	            <td  colspan="2">
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Archivos Adjuntos</label></td>
+	        </tr>
+	       
+	        <a:repeat id="archivos" value="#{emailAlertaContactoMensajeHelper.mensajeProrroga.listaArchivos}" var="_archivos">
+		        <tr>
+		         	<td style="width:100px;">
+		                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif"> </label>
+		            </td>		        
+		        
+		            <td ><label style="font-size: 12px;  font-family:Arial,Helvetica,sans-serif">
+		            	 	<a href="#{_archivos.rutaCompleta}">#{_archivos.nombreArchivo}</a> 
+		                </label>
+		            </td>
+		        </tr>
+		   </a:repeat>		        
+	       
+	    </table>
+	    <br/><br/>
+		<br/><br/>
+		<br/><br/>
+		<p>Importante: correo es generado de forma automatica. ¡NO responder este correo! </p>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,77 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	<rich:modalPanel id="mpAdjuntarArchivoOS" autosized="true" width="350"  height="400">
+    	 <f:facet name="header">
+            <h:outputText value="Adjuntar Archivo" style="padding-right:15px;" />
+        </f:facet>
+    	<f:facet name="controls">
+            <h:panelGroup>
+               	<h:graphicImage value="img/close.png" styleClass="hidelink" id="archivosAdjuntosOShidelink" />
+                <rich:componentControl for="mpAdjuntarArchivoOS" attachTo="archivosAdjuntosOShidelink"
+                   	operation="hide" event="onclick" />
+            </h:panelGroup>
+        </f:facet>
+        <h:form id="frm_AdjuntarArchivoOS">
+        	<h:messages  globalOnly="true" styleClass="message"
+		    	errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
+		    <h:panelGrid>
+	        	<s:decorate template="/layout/edit.xhtml">
+					<ui:define name="label">Archivo</ui:define>
+						<rich:fileUpload id="newPDF_uploadAdjuntoOS"
+					         uploadData="#{generarSolicitudAction.uploadFile}"
+					         maxFilesQuantity="100" ajaxSingle="true" immediateUpload="false"
+					         acceptedTypes="*" autoclear="false" allowFlash="auto" listHeight="390" listWidth="340"
+					         addControlLabel="Agregar..." cancelEntryControlLabel="Cancelar"
+					         clearAllControlLabel="Limpiar" clearControlLabel="Limpiar" 
+					         stopEntryControlLabel="Parar Proceso" uploadControlLabel="Subir" doneLabel="Hecho" required="true">
+					         <a:support ajaxSingle="true" reRender="newPDF_uploadAdjuntoOS" event="onclear" />
+						</rich:fileUpload>
+						
+<!-- 				        <rich:fileUpload fileUploadListener="#{fileUploadBean.listener}" id="upload" acceptedTypes=".jpg, .gif, .png, .bmp" -->
+<!-- 				            ontyperejected="alert('Only JPG, GIF, PNG and BMP files are accepted');" maxFilesQuantity="5"> -->
+<!-- 				            <a4j:ajax event="uploadcomplete" execute="@none" render="info" /> -->
+<!-- 				        </rich:fileUpload> -->
+<!-- 				        <h:panelGroup id="info" layout="block" style="width: 400px; margin-top: 10px"> -->
+<!-- 				            <rich:panel bodyClass="info"> -->
+<!-- 				                <f:facet name="header"> -->
+<!-- 				                    <h:outputText value="Uploaded Files Info" /> -->
+<!-- 				                </f:facet> -->
+<!-- 				                <h:outputText value="No files currently uploaded" rendered="#{fileUploadBean.size==0}" /> -->
+<!-- 				                <rich:dataGrid columns="1" value="#{fileUploadBean.files}" var="file" rowKeyVar="row"> -->
+<!-- 				                    <rich:panel bodyClass="rich-laguna-panel-no-header"> -->
+<!-- 				                        <h:panelGrid columns="2"> -->
+<!-- 				                            <a4j:mediaOutput element="img" mimeType="image/jpeg" createContent="#{fileUploadBean.paint}" -->
+<!-- 				                                value="#{row}" style="width:100px; height:100px;" cacheable="false"> -->
+<!-- 				                                <f:param value="#{fileUploadBean.timeStamp}" name="time" /> -->
+<!-- 				                            </a4j:mediaOutput> -->
+<!-- 				                            <h:panelGrid columns="2"> -->
+<!-- 				                                <h:outputText value="File Name:" /> -->
+<!-- 				                                <h:outputText value="     #{file.name}" /> -->
+<!-- 				                                <h:outputText value="File Length(bytes):" /> -->
+<!-- 				                                <h:outputText value="     #{file.length}" /> -->
+<!-- 				                            </h:panelGrid> -->
+<!-- 				                        </h:panelGrid> -->
+<!-- 				                    </rich:panel> -->
+<!-- 				                </rich:dataGrid> -->
+<!-- 				            </rich:panel> -->
+<!-- 				            <br /> -->
+<!-- 				            <a4j:commandButton action="#{fileUploadBean.clearUploadData}" render="info, upload" value="Clear Uploaded Data" -->
+<!-- 				                rendered="#{fileUploadBean.size>0}" /> -->
+<!-- 				        </h:panelGroup> -->						
+						
+	 			</s:decorate>
+        	</h:panelGrid>
+        	<a:commandButton action="#{generarSolicitudAction.guardarArchivo('archivosOS')}" value="Guardar Archivo" reRender="frm_AdjuntarArchivoOS,archivosListOS,idArchivosAgregadosOS2,archivosListOS2"
+        		oncomplete="if (#{empty facesContext.maximumSeverity}) {#{rich:component('mpAdjuntarArchivoOS')}.hide()}" /> 
+        </h:form>
+    </rich:modalPanel>
+	
+</ui:composition>

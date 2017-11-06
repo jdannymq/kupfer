@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	
+	<rich:modalPanel id="mpAgregarSocios" autosized="true" width="800">
+		<f:facet name="header">
+			<h:outputText value="Ingreso de Negocios"	style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:form>
+					<a:commandLink	ajaxSingle="true" reRender="rutNombresSocios" action="#{generarSolicitudReparosAction.generarStringSocios()}">
+						<h:graphicImage value="img/close.png" styleClass="hidelink"	id="mpAgregarSocioslink" />
+					</a:commandLink>
+					<rich:componentControl for="mpAgregarSocios"
+						attachTo="mpAgregarSocioslink" operation="hide"
+						event="onclick" 
+						/>
+				</h:form>
+			</h:panelGroup>
+		</f:facet>
+		<rich:panel>
+			<h:form id = "frm_agregarSocios">
+			
+				<a:outputPanel id="panelDatos" >
+					<table cellpadding="0" cellspacing="0" border="0" width="100%">
+						<tr>
+							<td >Rut :</td>
+							<td >
+							  <h:inputText 	id="rutSocio" value="#{generarSolicitudReparosAction.rutSocio}" 
+										style="text-align: left; width:95%;"
+										/>								
+							</td>
+							<td>Nombre :</td>
+							<td>
+							  <h:inputText 	id="nombreSocio" value="#{generarSolicitudReparosAction.socio}" 
+										style="text-align: left; width:95%;"
+										
+										/>								
+							</td>
+							<td>
+								<a:commandButton value="Agregar" 
+								                action="#{generarSolicitudReparosAction.agregarSociosListaReserva()}"
+					         		          reRender="agregarSocios,listaSociosList,rutSocio,nombreSocio" 
+					         	            oncomplete="if (#{generarSolicitudAction.mensajeExplicativo == null}) {alert('Socio fue Agregado con exito!');}"
+					         	            process="rutSocio,nombreSocio"/>								
+							</td>
+						</tr>	
+						<tr>
+							<td colspan="5" height="10px;"></td>
+						</tr>							
+					</table>
+				</a:outputPanel>
+	    		<a:outputPanel id="agregarSocios" >
+		    		<h:messages  globalOnly="true" styleClass="message"
+			            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
+		        </a:outputPanel>
+		        
+				<a:outputPanel id="listaSociosList">
+					<rich:panel>
+					        <f:facet name="header">Resultados (#{generarSolicitudReparosAction.listaSocios.size()})</f:facet>
+					    	<div class="results" >
+					   		<h:outputText value="No ha Agregado ningun socio a la grilla." rendered="#{empty generarSolicitudReparosAction.listaSocios}"/>
+							    <rich:dataTable id="idRutsSocios"
+							                var="_socio"
+							              value="#{generarSolicitudReparosAction.listaSocios}"
+							           rendered="#{not empty generarSolicitudReparosAction.listaSocios}">
+							        <rich:column>
+							            <f:facet name="header">Rut - Nombres</f:facet>
+							            <h:outputText value="#{_socio}"/>
+							        </rich:column>
+							        <rich:column styleClass="action">
+							            <f:facet name="header">Acción</f:facet>
+										<a:commandButton value="Eliminar" 
+										                action="#{generarSolicitudReparosAction.eliminarSociosListaAgregado(_socio)}"
+						         		              reRender="listaSociosList,frm_agregarSocios" />		
+			
+							        </rich:column>
+							    </rich:dataTable>
+					   		</div>
+					 </rich:panel>
+	   			 </a:outputPanel>
+			</h:form>
+		</rich:panel>
+	</rich:modalPanel>
+	
+</ui:composition>

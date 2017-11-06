@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+
+	<style type="text/css">
+.top {
+	vertical-align: top;
+}
+</style>
+
+	<rich:modalPanel id="mpMedicionCanalRango" autosized="true" width="550" >
+		<f:facet name="header">
+			<h:outputText value="Agregar Rango" style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+
+			<h:panelGroup>
+				<h:graphicImage value="img/close.png" styleClass="hidelink"
+					id="mpMedicionCanalRangohidelink" />
+				<rich:componentControl for="mpMedicionCanalRango" attachTo="mpMedicionCanalRangohidelink"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+
+		</f:facet>
+		<h:form id="frm_medicionCanalRango_model">
+			<h:messages id="messagesEsp" globalOnly="true" styleClass="message"
+				errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
+				rendered="#{showGlobalMessages != 'false'}" />
+				
+			<h:panelGrid columns="3">
+			
+				<s:decorate template="/layout/edit.xhtml">
+					<ui:define name="label">Codigo</ui:define>
+					<h:inputText value="#{medicionCanalRangoAction.medicionCanalRangoTarget.systemId}"
+					size="4"
+					maxlength="4" 
+					disabled="true"/>
+				</s:decorate>
+				<s:decorate template="/layout/display.xhtml">
+					<ui:define name="label"></ui:define>
+				</s:decorate>					
+				<s:decorate template="/layout/display.xhtml">
+					<ui:define name="label"></ui:define>
+				</s:decorate>	
+
+				<s:decorate template="/layout/edit.xhtml">
+					<ui:define name="label">Medición</ui:define>
+	    				<h:selectOneMenu id="medicionCbo" value="#{medicionCanalRangoAction.medicion}" style="width:200px;">
+	               			<s:selectItems value="#{medicionCanalRangoAction.listaMediciones}" 
+	               			                 var="_med"  
+	               			               label="#{_med.descripcion}" 
+	               			               noSelectionLabel="Seleccione Medición..." 
+	               			               hideNoSelectionLabel="true"/>
+	               			              <s:convertEntity/>  
+			       			   	<a:support event="onchange" 
+			                         reRender="medicionCbo,outCanalModal,canalCbo,idMensajeModal"
+			             			      ajaxSingle="true" 
+			             			      action="#{medicionCanalRangoAction.obtenerMedicionSeleccionado()}" />						                			               
+	               		</h:selectOneMenu>
+				</s:decorate>				
+				<a:outputPanel id="outCanalModal">
+					<s:decorate template="/layout/edit.xhtml">
+						<ui:define name="label">Canal</ui:define>
+		    				<h:selectOneMenu id="canalCbo" value="#{medicionCanalRangoAction.canal}" style="width:200px;" >
+		               			<s:selectItems value="#{medicionCanalRangoAction.listaCanales}" 
+		               			                 var="_can"  
+		               			               label="#{_can.descripcion}" 
+		               			               noSelectionLabel="Seleccione Canal..." 
+		               			               hideNoSelectionLabel="true"
+		               			               />
+		               			              <s:convertEntity/>  
+				       			   	<a:support event="onchange" 
+				                         reRender="canalCbo,idMensajeModal"
+				             			      ajaxSingle="true" 
+				             			      action="#{medicionCanalRangoAction.obtenerCanalSeleccionado()}" />						                			               
+		               		</h:selectOneMenu>
+					</s:decorate>	
+				</a:outputPanel>
+				
+				<s:decorate template="/layout/edit.xhtml">
+					<ui:define name="label">Tipo</ui:define>
+	    				<h:selectOneMenu id="tipoCbo" value="#{medicionCanalRangoAction.tiempoMontoType}" style="width:200px;">
+	               			<s:selectItems value="#{medicionCanalRangoAction.listaTiempoMontoTypes}" 
+	               			                 var="_tmt"  
+	               			               label="#{_tmt.nombre}" 
+	               			               noSelectionLabel="Seleccione Tipo..." 
+	               			               hideNoSelectionLabel="true"/>
+			       			   	<a:support event="onchange" 
+			                         reRender="tipoCbo,idMensajeModal"
+			             			      ajaxSingle="true" 
+			             			      action="#{medicionCanalRangoAction.obtenerTipoSeleccionado()}" />						                			               
+	               		</h:selectOneMenu>
+				</s:decorate>
+
+
+				<s:decorate template="/layout/edit.xhtml">
+					<ui:define name="label">Valor Inicial</ui:define>
+					<h:inputText value="#{medicionCanalRangoAction.medicionCanalRangoTarget.valorInicial}"
+								size="20"
+								maxlength="20" 
+								disabled="false"/>
+				</s:decorate>
+				<s:decorate template="/layout/edit.xhtml">
+					<ui:define name="label">Valor Final</ui:define>
+					<h:inputText value="#{medicionCanalRangoAction.medicionCanalRangoTarget.valorFinal}"
+								size="20"
+								maxlength="20" 
+								disabled="false"/>
+				</s:decorate>					
+				<s:decorate template="/layout/edit.xhtml">
+					<ui:define name="label"></ui:define>
+					<div>
+						<a:commandButton value="Guardar"
+							action="#{medicionCanalRangoAction.guardarMedicionCanalRango()}"
+							reRender="frm_medicion_canal_rango,rpMedicionCanalRango,idMensajeModal"
+							oncomplete="if(#{empty facesContext.maximumSeverity}) {#{rich:component('mpMedicionCanalRango')}.hide(); alert('Guardado correctamente');}"
+							/>
+		
+					</div>
+				</s:decorate>	
+				
+			</h:panelGrid>
+			<br />
+			<a:outputPanel id="idMensajeModal">
+				<div>
+						<h:messages id="messagesModal" globalOnly="false" styleClass="message"
+			            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
+			            rendered="#{showGlobalMessages != 'false'}" />			
+				</div>
+			</a:outputPanel>
+
+		</h:form>
+
+
+	</rich:modalPanel>
+
+</ui:composition>

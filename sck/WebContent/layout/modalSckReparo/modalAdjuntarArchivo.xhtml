@@ -1,0 +1,50 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	<rich:modalPanel id="mpAdjuntarArchivo" autosized="true" width="350" height="200">
+    	 <f:facet name="header">
+            <h:outputText value="Adjuntar Archivo" style="padding-right:15px;" />
+        </f:facet>
+    	<f:facet name="controls">
+            <h:panelGroup>
+               	<h:graphicImage value="img/close.png" styleClass="hidelink" id="archivosAdjuntoshidelink" />
+                <rich:componentControl for="mpAdjuntarArchivo" attachTo="archivosAdjuntoshidelink"
+                   	operation="hide" event="onclick" />
+            </h:panelGroup>
+        </f:facet>
+        <h:form id="frm_AdjuntarArchivo">
+        	<h:messages  globalOnly="true" styleClass="message"
+		    	errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
+		    <h:panelGrid>
+	        	<s:decorate template="/layout/edit.xhtml">
+					<ui:define name="label">Archivo</ui:define>
+						<rich:fileUpload id="newPDF_uploadAdjunto"
+					         uploadData="#{generarSolicitudReparosAction.uploadFile}"
+					         maxFilesQuantity="100" ajaxSingle="true" immediateUpload="false"
+					         acceptedTypes="*" autoclear="false" allowFlash="auto" listHeight="200" listWidth="400"
+					         addControlLabel="Agregar..." cancelEntryControlLabel="Cancelar"
+					         clearAllControlLabel="Limpiar" clearControlLabel="Limpiar" 
+					         stopEntryControlLabel="Parar Proceso" uploadControlLabel="Subir" doneLabel="Hecho" required="true">
+					         <a:support ajaxSingle="true" reRender="newPDF_uploadAdjunto" event="onclear" />
+						</rich:fileUpload>
+	 			</s:decorate>
+		 			<ui:remove>
+		 			<s:decorate template="/layout/edit.xhtml">
+							<ui:define name="label">Nombre archivo</ui:define>
+			        		<h:inputText value="#{generarSolicitudReparosAction.nombreArchivoTarget}" />
+			        	</s:decorate>
+			        </ui:remove>	
+        	</h:panelGrid>
+        	<a:commandButton action="#{generarSolicitudReparosAction.guardarArchivo('archivos')}" value="Guardar Archivo" reRender="frm_AdjuntarArchivo,archivosList,archivosListLC"
+        		oncomplete="if (#{empty facesContext.maximumSeverity}) {#{rich:component('mpAdjuntarArchivo')}.hide()}" /> 
+        </h:form>
+    </rich:modalPanel>
+	
+</ui:composition>

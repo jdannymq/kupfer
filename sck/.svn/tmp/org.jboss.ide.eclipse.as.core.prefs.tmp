@@ -1,0 +1,6 @@
+eclipse.preferences.version=1
+<<<<<<< .mine
+org.jboss.ide.eclipse.as.core.singledeployable.deployableList=resources/sck-ds.xml\nresources/sck-ds.xml\n
+=======
+org.jboss.ide.eclipse.as.core.singledeployable.deployableList=resources/sck-ds.xml\n
+>>>>>>> .r1633

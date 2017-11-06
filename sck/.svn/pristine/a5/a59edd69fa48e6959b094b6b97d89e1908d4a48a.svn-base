@@ -1,0 +1,614 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/layout/template.xhtml"
+    xmlns:a="http://richfaces.org/a4j"
+     xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+    xmlns:p="http://primefaces.prime.com.tr/ui">
+    
+    
+  <ui:define name="body">
+  <style>
+  	.table {border: none; border-color: #000 !important;}
+  	.borderTop {border-top: 1px !important;}
+  	.borderLeft{border-left: 1px !important;}
+  	.borderRight{border-right: 1px !important;}
+  	.borderBottom{border-bottom: 1px !important}
+  </style>
+  <div class="divTitular"><h1>Informe Nivel de Servicio Área Crédito</h1></div>
+  <h:form id="frmSeleccion">
+    <rich:simpleTogglePanel  switchType="client" id="panelGeneralAux" opened="true" >
+        <f:facet name="header">Filtros de Busquedas</f:facet>
+		<table class="table" cellpadding="0" cellspacing="0" border="0" style="font-size:10px;" width="100%">
+			<tr valign="top">
+				<td style="font-size:11px; text-align:center;" colspan="2"> <strong>Fechas y Acciones</strong></td>
+				<td style="font-size:11px; text-align:center;"><strong>Canales</strong></td>
+				<td style="font-size:11px; text-align:center;"><strong>Negocios</strong></td>
+			</tr>
+			<tr valign="top">
+				<td colspan="2">
+					<table cellpadding="0" cellspacing="0" border="0" style="font-size:10px;" width="100%">
+						<tr valign="top">
+							<td style="font-size:11px;"><strong>Fecha Inicial</strong>  </td>
+							<td style="font-size:11px;"><strong>Fecha Final </strong></td>							
+						</tr>
+						<tr>
+							<td style="font-size:11px;">
+								<rich:calendar id="fechadesde"
+					                       required="false"
+					                       disabled="false"
+					                          value="#{nivelServicioAction.fechaInical}" 
+					                          datePattern="yyyy-MM-dd"
+					                          buttonIcon="/img/calendario_icono.gif"
+					                          style="width:75px;"/>								
+							</td>
+							<td style="font-size:11px;">
+								<rich:calendar id="fechahasta"
+					                       required="false"
+					                       disabled="false"
+					                          value="#{nivelServicioAction.fechaFinal}" 
+					                          datePattern="yyyy-MM-dd" 
+					                          buttonIcon="/img/calendario_icono.gif"/>								
+							</td>							
+						</tr>
+						<tr valign="top">
+							<td style="font-size:11px;" colspan="2" height="20px;"> </td>
+						</tr>
+						<tr valign="top">
+							<td style="font-size:11px;" align="center" colspan="2">
+								<a:commandButton action="#{nivelServicioAction.consultarSolicitudes()}" 
+								                  value="Consultar" 
+								             ajaxSingle="true"
+								                reRender="frmSeleccion,frmResultado "
+		              				                title="Consultar..."
+		              				                process="fechadesde,fechahasta,idResponsable,idListaCanal,idListaNegocio,idTipoSolicitud,idListaSucursal"
+		              				                style="width:75px;"
+								                />							
+								<a:commandButton action="#{nivelServicioAction.limpiarParametos()}" 
+								                  value="Limpiar" 
+								             ajaxSingle="true"
+								                reRender="frmSeleccion,frmResultado "
+		              				                title="Limpiar..."
+		              				                style="width:75px;"
+								                />	
+         	
+							</td>
+						</tr>
+						<tr valign="top">
+							<td style="font-size:12px; " colspan="2" height="20px;">
+							    <a:outputPanel id="panelMensaje" >
+						    		<h:messages  globalOnly="true" styleClass="message"
+							            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" style="color: red;"/>
+						        </a:outputPanel>								
+							</td>
+						</tr>						
+					</table>				
+				</td>
+				<td style="padding:3px;">
+			        <rich:listShuttle id="idListaCanal" sourceValue="#{nivelServicioAction.listaCanales}"
+				            targetValue="#{nivelServicioAction.listaCanalesSeleccionada}" var="canal" listsHeight="100"
+				            sourceListWidth="150" targetListWidth="150" sourceCaptionLabel="Canales Disponible"
+				            targetCaptionLabel="Canales Seleccionado" orderControlsVisible="false" fastOrderControlsVisible="false" > 
+			            <ui:include src="/layout/facetSelectionLists.xhtml" />
+			            <s:convertEntity/>
+			            <rich:column>
+			                <h:outputText value="#{canal.codigo} - #{canal.descripcion.toUpperCase(locale)}"></h:outputText>
+			            </rich:column>
+					</rich:listShuttle>		
+				</td>				
+				<td style="padding:3px;">
+			        <rich:listShuttle id="idListaNegocio" sourceValue="#{nivelServicioAction.listaNegocios}"
+				            targetValue="#{nivelServicioAction.listaNegociosSeleccionados}" var="negocio" listsHeight="100"
+				            sourceListWidth="150" targetListWidth="150" sourceCaptionLabel="Negocios Disponible"
+				            targetCaptionLabel="Negocios Seleccionado" orderControlsVisible="false" fastOrderControlsVisible="false" > 
+			            <ui:include src="/layout/facetSelectionLists.xhtml" />
+			             <s:convertEntity/>
+			            <rich:column>
+			                <h:outputText value="#{negocio.desNegocio.toUpperCase(locale)}"></h:outputText>
+			            </rich:column>
+					</rich:listShuttle>					
+				</td>
+			</tr>
+			<tr valign="top">
+				<td style="font-size:11px; text-align:center;" colspan="2"><strong>Tipo de Solicitudes</strong></td>
+				<td style="font-size:11px; text-align:center;"><strong>Sucursales</strong></td>
+				<td style="font-size:11px; text-align:center;"><strong>Ejecutivo Inicial</strong></td>
+			</tr>			
+			<tr valign="top">
+				<td colspan="2" style="padding:3px;">
+			        <rich:listShuttle id="idTipoSolicitud" sourceValue="#{nivelServicioAction.listaLcredTipoSolicituds}"
+				            targetValue="#{nivelServicioAction.listaLcredTipoSolicitudsSeleccionados}" var="tipo" listsHeight="100"
+				            sourceListWidth="150" targetListWidth="150" sourceCaptionLabel="Tipo Disponible"
+				            targetCaptionLabel="Tipo Seleccionado" orderControlsVisible="false" fastOrderControlsVisible="false" > 
+			            <ui:include src="/layout/facetSelectionLists.xhtml" />
+			            <s:convertEntity/>
+			            <rich:column>
+			                <h:outputText value="#{tipo.desTipoSolicitud.toUpperCase(locale)}"></h:outputText>
+			            </rich:column>
+					</rich:listShuttle>	
+				</td>
+				<td style="padding:3px;">
+			        <rich:listShuttle id="idListaSucursal" sourceValue="#{nivelServicioAction.listaSucursals}"
+				            targetValue="#{nivelServicioAction.listaSucursalsSeleccionados}" var="sucursal" listsHeight="100"
+				            sourceListWidth="150" targetListWidth="150" sourceCaptionLabel="Sucursales Disponible"
+				            targetCaptionLabel="Sucursales Seleccionado" orderControlsVisible="false" fastOrderControlsVisible="false" 
+				            > 
+			            <ui:include src="/layout/facetSelectionLists.xhtml" />
+			             <s:convertEntity/>
+			            <rich:column>
+			                <h:outputText value="#{sucursal.descripcion.toUpperCase(locale)}"></h:outputText>
+			            </rich:column>
+					</rich:listShuttle>		
+				</td>				
+				<td style="padding:3px;">
+			        <rich:listShuttle id="idResponsable" sourceValue="#{nivelServicioAction.listaUsuariosegurs}"
+				            targetValue="#{nivelServicioAction.listaUsuariosegursSeleccionados}" var="usuario" listsHeight="100"
+				            sourceListWidth="150" targetListWidth="150" sourceCaptionLabel="Usuarios Disponible"
+				            targetCaptionLabel="Usuarios Seleccionado" orderControlsVisible="false" fastOrderControlsVisible="false" > 
+			            <ui:include src="/layout/facetSelectionLists.xhtml" />
+			            <s:convertEntity/>
+			            <rich:column>
+			                <h:outputText value="#{usuario.nombre.toUpperCase(locale)}"></h:outputText>
+			            </rich:column>
+					</rich:listShuttle>		
+				</td>
+			</tr>	
+		</table>
+    </rich:simpleTogglePanel>
+    </h:form>
+    
+    <h:form id="frmResultado">
+	   	<a:outputPanel id="panelGlobal"> 
+	   	<!--   rendered="#{not empty nivelServicioAction.nivelServicioTarget.total}"-->
+	   	 
+		 
+   	   <rich:panel>
+    	   <f:facet name="header">Porcentajes Globales</f:facet>
+    		<table cellpadding="2" cellspacing="3" border="0" style="font-size:10px;" width="100%">
+    			<thead>
+					<tr valign="top">
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="2"><strong></strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="2"><strong>Ejecutivo Inicial</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="2"><strong>Aprobadores</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="2"><strong>Analistal</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="2"><strong>Total</strong></td>
+						<td></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="2"><strong>Emisor</strong></td>
+					</tr>
+				</thead>
+				<tbody style="text-align:center !important;">
+					 <tr valign="top" style="font-size:11px;">
+						<td colspan="2">Solicitudes</td>
+						<td>
+							<a:commandLink action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.totalEjecutivo)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();"   
+								value="#{nivelServicioAction.nivelServicioTarget.totalEjecutivo.size()}" >
+							</a:commandLink>
+						</td>
+						<td>
+							<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeTotalEjecutivo}">
+                        		<f:convertNumber type="percent" />
+                           </h:outputText>
+                        </td>
+                        <td>
+							<a:commandLink value="#{nivelServicioAction.nivelServicioTarget.totalAprobador.size()}" 
+							action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.totalAprobador)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();"   >
+							</a:commandLink>
+						</td>
+						<td>
+								<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeTotalAprobador}">
+                        		<f:convertNumber type="percent"  />
+	                           </h:outputText>
+                        </td>
+                        <td>
+							<a:commandLink value="#{nivelServicioAction.nivelServicioTarget.totalAnalista.size()}" 
+							action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.totalAnalista)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();"   >
+							</a:commandLink>
+						</td>
+						<td>
+								<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeTotalAnalista}">
+	                        		<f:convertNumber    type="percent" />
+	                           </h:outputText>
+                        </td>
+                        <td>
+							<a:commandLink value="#{nivelServicioAction.nivelServicioTarget.total.size()}" 
+								action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.total)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();"   >
+							</a:commandLink>
+						</td>
+						<td>
+							<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeTotal}">
+                        		<f:convertNumber    type="percent"  />
+                        		
+                           </h:outputText>
+                        </td>
+                        <td></td>
+                        <td>
+							<a:commandLink value="#{nivelServicioAction.nivelServicioTarget.totalEmisor.size()}" 
+								action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.totalEmisor)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();"   >
+							</a:commandLink>
+						</td>
+						<td>
+								<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeTotalEmisor}">
+	                        		<f:convertNumber    type="percent" />
+	                           </h:outputText>
+                        </td>
+                        
+					</tr>
+					<tr valign="top" style="font-size:11px;">
+						<td colspan="2">Cumplidas</td>
+						<td>
+							<a:commandLink value="#{nivelServicioAction.nivelServicioTarget.totalCumplidasEjecutivo.size()}" 
+								action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.totalCumplidasEjecutivo)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();"   >
+							</a:commandLink>
+						</td>
+						<td>
+								<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeCumplidasEjecutivo}">
+	                           </h:outputText>
+                        </td>
+                        <td>
+							<a:commandLink value="#{nivelServicioAction.nivelServicioTarget.totalCumplidasAprobador.size()}" 
+								action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.totalCumplidasAprobador)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();"   
+								>
+							</a:commandLink>
+						</td>
+						<td>
+							<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeCumplidasAprobador}">
+                           </h:outputText>
+                        </td>
+                        <td>
+							<a:commandLink value="#{nivelServicioAction.nivelServicioTarget.totalCumplidosAnalista.size()}"  
+								action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.totalCumplidosAnalista)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();"   >
+							</a:commandLink>
+						</td>
+						<td>
+								<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeCumplidasAnalista}">
+	                           </h:outputText>
+                        </td>
+                        <td>
+							<a:commandLink value="#{nivelServicioAction.nivelServicioTarget.totalCumplidas.size()}" 
+								action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.totalCumplidas)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();">
+							</a:commandLink>
+						</td>
+						<td>
+							<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeCumplidasTotal}">
+                          	</h:outputText>
+	                        
+                        </td>
+                        <td></td>
+                        <td>
+							<a:commandLink value="#{nivelServicioAction.nivelServicioTarget.totalCumplidasEmisor.size()}" 
+								action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.totalCumplidasEmisor)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();"   >
+							</a:commandLink>
+						</td>
+						<td>
+							<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeCumplidasEmisor}">
+                           </h:outputText>
+                        </td>
+                        
+					</tr>
+					<tr valign="top" style="font-size:11px;">
+						<td colspan="2">No Cumplidas</td>
+						<td>
+							<a:commandLink value="#{nivelServicioAction.nivelServicioTarget.totalNoCumplidasEjecutivo.size()}" 
+								action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.totalNoCumplidasEjecutivo)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();"   >
+							</a:commandLink>
+						</td>
+						<td>
+								<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeNoCumplidasEjecutivo}">
+	                           </h:outputText>
+                        </td>
+                        <td>
+							<a:commandLink value="#{nivelServicioAction.nivelServicioTarget.totalNoCumplidasAprobador.size()}" 
+							action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.totalNoCumplidasAprobador)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();"   >
+							</a:commandLink>
+						</td>
+						<td>
+								<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeNoCumplidasAprobador}">
+	                           </h:outputText>
+                        </td>
+                        <td>
+							<a:commandLink value="#{nivelServicioAction.nivelServicioTarget.totalNoCumplidosAnalista.size()}" 
+							action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.totalNoCumplidosAnalista)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();"   >
+							</a:commandLink>
+						</td>
+						<td>
+								<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeNoCumplidasAnalista}">
+	                           </h:outputText>
+                        </td>
+                        <td>
+							<a:commandLink value="#{nivelServicioAction.nivelServicioTarget.totalNoCumplidas.size()}" 
+							action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.totalNoCumplidas)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();"   >
+							</a:commandLink>
+						</td>
+						<td>
+								<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeNoCumplidasTotal}">
+	                           </h:outputText>
+                        </td>
+                        <td></td>
+                        <td>
+							<a:commandLink value="#{nivelServicioAction.nivelServicioTarget.totalNoCumplidasEmisor.size()}" 
+								action="#{nivelServicioAction.initPlanilla(nivelServicioAction.nivelServicioTarget.totalNoCumplidasEmisor)}" 
+								reRender="mpInformacionMatriz" oncomplete="#{rich:component('mpInformacionMatriz')}.show();"   >
+							</a:commandLink>
+						</td>
+						<td>
+								<h:outputText value="#{nivelServicioAction.nivelServicioTarget.porcentajeNoCumplidasEmisor}">
+	                           </h:outputText>
+                        </td>
+                        
+					</tr>
+				</tbody>							
+				
+			</table>
+		  </rich:panel>
+	    </a:outputPanel>
+    
+    </h:form>
+    <ui:remove>
+    
+    
+    <a:outputPanel id="panelPorcentajeIndividualesAux"> 
+    	<s:fragment rendered="#{nivelServicioAction.listaPorcentajes != null and nivelServicioAction.listaPorcentajes.size() > 0}" >
+    	   <rich:panel>
+    	   <f:facet name="header">Porcentaje Individuales</f:facet>
+    		<table cellpadding="2" cellspacing="3" border="0" style="font-size:10px;" width="100%">
+				<tr valign="top">
+					<td style="font-size:11px; text-align:center; background-color:#A9A5A5;"><strong>Usuario</strong></td>
+					<td style="font-size:11px; text-align:center; background-color:#A9A5A5;"><strong>Cumplidas</strong></td>
+					<td style="font-size:11px; text-align:center; background-color:#A9A5A5;"><strong>No Cumplidas</strong></td>
+					<td style="font-size:11px; text-align:center; background-color:#A9A5A5;"><strong>Total</strong></td>
+					<td style="font-size:11px; text-align:center; background-color:#A9A5A5;"><strong>Porcentaje (%)</strong></td>
+				</tr>
+				<a:repeat id="porsentaje"
+					value="#{nivelServicioAction.listaPorcentajes}"
+					var="porcentaje">
+					<tr valign="top">
+						<td style="font-size:11px; text-align:center;">#{porcentaje.usuario}</td>
+						<td style="font-size:11px; text-align:center;">#{porcentaje.cumplidas}</td>
+						<td style="font-size:11px; text-align:center;">#{porcentaje.noCumplidas}</td>
+						<td style="font-size:11px; text-align:center;">#{porcentaje.totalSolicitudesIndividual}</td>
+						<td style="font-size:11px; text-align:center; background-color: #A9A5A5;">
+						       <h:outputText value="#{porcentaje.porcentajes}">
+	                           		 <f:convertNumber     />
+	                           </h:outputText>						
+						</td>
+					</tr>							
+				</a:repeat>
+			</table>
+		  </rich:panel>
+    	</s:fragment>
+    </a:outputPanel>
+    <a:outputPanel id="panelPorcentajeIndividualesPorTipoAux"> 
+		<s:fragment rendered="#{nivelServicioAction.listaPorcentajeTipoSolicitudes != null and nivelServicioAction.listaPorcentajeTipoSolicitudes.size() > 0}" >
+    	   <rich:panel >
+    	   		<f:facet name="header">Porcentaje Tipos de Solicitudes</f:facet>
+    		
+    		<table cellpadding="2" cellspacing="3" border="0" style="font-size:10px;" width="100%">
+				<tr valign="top">
+					<td style="font-size:11px; text-align:center;background-color:#A9A5A5;"><strong>Usuario</strong></td>
+					<s:fragment rendered="#{nivelServicioAction.ventasNormal}">
+						<td style="font-size:11px; text-align:center;background-color:#A9A5A5;" colspan="4"><strong>Venta Normal </strong></td>
+					</s:fragment>
+					<s:fragment rendered="#{nivelServicioAction.ventaEnCuotas}">
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="4"><strong>Venta en Cuotas</strong></td>
+					</s:fragment>
+					<s:fragment rendered="#{nivelServicioAction.innomindas}">
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="4"><strong>Innomina</strong></td>
+					</s:fragment>
+					<s:fragment rendered="#{nivelServicioAction.nominadas}">
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="4"><strong>Nominada</strong></td>
+					</s:fragment>
+					<s:fragment rendered="#{nivelServicioAction.riesgoKupfer}">
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="4"><strong>Riesgo Kupfer</strong></td>
+					</s:fragment>				
+					<s:fragment rendered="#{nivelServicioAction.riesgoPago}">
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="4"><strong>Riesgo y Pago</strong></td>
+					</s:fragment>
+					<s:fragment rendered="#{nivelServicioAction.bloqueoDesbloqueo}">
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="4"><strong>Bloqueo y Desbloqueo</strong></td>
+					</s:fragment>
+					<s:fragment rendered="#{nivelServicioAction.creacionDm}">
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="4"><strong>Creacion de DM</strong></td>
+					</s:fragment>
+					<s:fragment rendered="#{nivelServicioAction.prorogas}">
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" colspan="4"><strong>Prorroga</strong></td>
+					</s:fragment>				
+				</tr>
+				<tr valign="top">
+					<td style="font-size:11px; text-align:center; background-color:#A9A5A5;"><strong></strong></td>
+					<s:fragment rendered="#{nivelServicioAction.ventasNormal}">
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>Cumplio</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>No Cumplio</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>Total</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>% Cumplido</strong></td>
+					</s:fragment>
+					<s:fragment rendered="#{nivelServicioAction.ventaEnCuotas}">
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>Cumplio</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>No Cumplio</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>Total</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>% Cumplido</strong></td>
+					</s:fragment>
+					<s:fragment rendered="#{nivelServicioAction.innomindas}">
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>Cumplio</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>No Cumplio</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>Total</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>% Cumplido</strong></td>
+					</s:fragment>
+					<s:fragment rendered="#{nivelServicioAction.nominadas}">
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>Cumplio</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>No Cumplio</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>Total</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>% Cumplido</strong></td>
+
+					</s:fragment>
+					<s:fragment rendered="#{nivelServicioAction.riesgoKupfer}">
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>Cumplio</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>No Cumplio</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>Total</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>% Cumplido</strong></td>
+					</s:fragment>				
+					<s:fragment rendered="#{nivelServicioAction.riesgoPago}">
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>Cumplio</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>No Cumplio</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>Total</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>% Cumplido</strong></td>
+					</s:fragment>
+					<s:fragment rendered="#{nivelServicioAction.bloqueoDesbloqueo}">
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>Cumplio</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>No Cumplio</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>Total</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>% Cumplido</strong></td>
+					</s:fragment>
+					<s:fragment rendered="#{nivelServicioAction.creacionDm}">
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>Cumplio</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>No Cumplio</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>Total</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>% Cumplido</strong></td>
+					</s:fragment>
+					<s:fragment rendered="#{nivelServicioAction.prorogas}">
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>Cumplio</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>No Cumplio</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>Total</strong></td>
+						<td style="font-size:11px; text-align:center; background-color:#A9A5A5;" ><strong>% Cumplido</strong></td>
+					</s:fragment>				
+				</tr>
+				<a:repeat id="por"
+					value="#{nivelServicioAction.listaPorcentajeTipoSolicitudes}"
+					var="porTipo">
+					<tr valign="top">
+						<td style="font-size:11px; text-align:center;">#{porTipo.usuario}</td>
+						
+						<a:repeat id="subTipo"
+						   value="#{porTipo.listasProcentajeTipoSolicitudes}"
+						   var="sub">
+							<s:fragment rendered="#{sub.ventasNormal}">
+								<td style="font-size:11px; text-align:center;">#{sub.cumplidas}</td>
+								<td style="font-size:11px; text-align:center;">#{sub.noCumplidas}</td>
+								<td style="font-size:11px; text-align:center;">#{sub.totalSolicitudesIndividual}</td>
+								<td style="font-size:11px; text-align:center; background-color: #A9A5A5;">
+								       <h:outputText value="#{sub.porcentajes}">
+			                           		 <f:convertNumber   pattern="###0.00"  />
+			                           </h:outputText>						
+								</td>
+							</s:fragment>
+							<s:fragment rendered="#{sub.ventaEnCuotas}">
+								<td style="font-size:11px; text-align:center;">#{sub.cumplidas}</td>
+								<td style="font-size:11px; text-align:center;">#{sub.noCumplidas}</td>
+								<td style="font-size:11px; text-align:center;">#{sub.totalSolicitudesIndividual}</td>
+								<td style="font-size:11px; text-align:center; background-color: #A9A5A5;">
+								       <h:outputText value="#{sub.porcentajes}">
+			                           		 <f:convertNumber   pattern="###0.00"  />
+			                           </h:outputText>						
+								</td>
+							</s:fragment>
+							<s:fragment rendered="#{sub.innomindas}">
+								<td style="font-size:11px; text-align:center;">#{sub.cumplidas}</td>
+								<td style="font-size:11px; text-align:center;">#{sub.noCumplidas}</td>
+								<td style="font-size:11px; text-align:center;">#{sub.totalSolicitudesIndividual}</td>
+								<td style="font-size:11px; text-align:center; background-color: #A9A5A5;">
+								       <h:outputText value="#{sub.porcentajes}">
+			                           		 <f:convertNumber   pattern="###0.00"  />
+			                           </h:outputText>						
+								</td>
+		
+							</s:fragment>
+							<s:fragment rendered="#{sub.nominadas}">
+								<td style="font-size:11px; text-align:center;">#{sub.cumplidas}</td>
+								<td style="font-size:11px; text-align:center;">#{sub.noCumplidas}</td>
+								<td style="font-size:11px; text-align:center;">#{sub.totalSolicitudesIndividual}</td>
+								<td style="font-size:11px; text-align:center; background-color: #A9A5A5;">
+								       <h:outputText value="#{sub.porcentajes}">
+			                           		 <f:convertNumber   pattern="###0.00"  />
+			                           </h:outputText>						
+								</td>
+		
+							</s:fragment>
+							<s:fragment rendered="#{sub.riesgoKupfer}">
+								<td style="font-size:11px; text-align:center;">#{sub.cumplidas}</td>
+								<td style="font-size:11px; text-align:center;">#{sub.noCumplidas}</td>
+								<td style="font-size:11px; text-align:center;">#{sub.totalSolicitudesIndividual}</td>
+								<td style="font-size:11px; text-align:center; background-color: #A9A5A5;">
+								       <h:outputText value="#{sub.porcentajes}">
+			                           		 <f:convertNumber   pattern="###0.00"  />
+			                           </h:outputText>						
+								</td>
+							</s:fragment>				
+							<s:fragment rendered="#{sub.riesgoPago}">
+								<td style="font-size:11px; text-align:center;">#{sub.cumplidas}</td>
+								<td style="font-size:11px; text-align:center;">#{sub.noCumplidas}</td>
+								<td style="font-size:11px; text-align:center;">#{sub.totalSolicitudesIndividual}</td>
+								<td style="font-size:11px; text-align:center; background-color: #A9A5A5;">
+								       <h:outputText value="#{sub.porcentajes}">
+			                           		 <f:convertNumber   pattern="###0.00"  />
+			                           </h:outputText>						
+								</td>
+							</s:fragment>
+							<s:fragment rendered="#{sub.bloqueoDesbloqueo}">
+								<td style="font-size:11px; text-align:center;">#{sub.cumplidas}</td>
+								<td style="font-size:11px; text-align:center;">#{sub.noCumplidas}</td>
+								<td style="font-size:11px; text-align:center;">#{sub.totalSolicitudesIndividual}</td>
+								<td style="font-size:11px; text-align:center; background-color: #A9A5A5;">
+								       <h:outputText value="#{sub.porcentajes}">
+			                           		 <f:convertNumber   pattern="###0.00"  />
+			                           </h:outputText>						
+								</td>
+							</s:fragment>
+							<s:fragment rendered="#{sub.creacionDm}">
+								<td style="font-size:11px; text-align:center;">#{sub.cumplidas}</td>
+								<td style="font-size:11px; text-align:center;">#{sub.noCumplidas}</td>
+								<td style="font-size:11px; text-align:center;">#{sub.totalSolicitudesIndividual}</td>
+								<td style="font-size:11px; text-align:center; background-color: #A9A5A5;">
+								       <h:outputText value="#{sub.porcentajes}">
+			                           		 <f:convertNumber   pattern="###0.00"  />
+			                           </h:outputText>						
+								</td>
+							</s:fragment>
+							<s:fragment rendered="#{sub.prorogas}">
+								<td style="font-size:11px; text-align:center;">#{sub.cumplidas}</td>
+								<td style="font-size:11px; text-align:center;">#{sub.noCumplidas}</td>
+								<td style="font-size:11px; text-align:center;">#{sub.totalSolicitudesIndividual}</td>
+								<td style="font-size:11px; text-align:center; background-color: #A9A5A5;">
+								       <h:outputText value="#{sub.porcentajes}">
+			                           		 <f:convertNumber   pattern="###0.00"  />
+			                           </h:outputText>						
+								</td>
+							</s:fragment>							   
+						</a:repeat>
+					</tr>							
+				</a:repeat>
+			</table>
+		  </rich:panel>
+    	</s:fragment>    
+    </a:outputPanel>
+    
+    
+     
+	
+     
+    </ui:remove>
+    <ui:include src="/layout/modalSck/modalNivelServicio.xhtml" />
+    <a:status onstart="abrirModal();" onstop="cerrarModal();"></a:status>	
+</ui:define>
+
+
+
+</ui:composition>

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    template="/layout/template.xhtml">
+
+<ui:define name="body">
+	<h:form>
+    <rich:panel>
+        <f:facet name="header">Página Para Asignar de Pantalla</f:facet>
+			<table cellpadding="0" cellspacing="0" border="0" width="100%">
+				<tr>
+					<td colspan="3" align="left"> Lista de Tipo de Usuario </td>
+				</tr>
+				<tr>
+					<td align="left" width="400px;">
+					<h:selectOneMenu id="idComboTipoUsuarios"
+                		          value="#{tipoPaginaAction.tipoUsuario}"
+                		       required="false"
+                		          style="width :300px;">
+                  	    <s:selectItems value="#{tipoPaginaAction.listaTipoUsuarios}" 
+                  	                     var="_usu" 
+                  	    hideNoSelectionLabel="true" 
+                  	        noSelectionLabel="Seleccionar Tipo Usuario..."
+               			               label="#{_usu.descripcion}"/>
+               			    <s:convertEntity/>
+       			   	<a:support event="onchange" 
+                         reRender="idComboTipoUsuarios"
+             			      ajaxSingle="true" 
+             			      action="#{tipoPaginaAction.obtenerTipoUsuario()}" />		 
+               			    
+               			    
+					</h:selectOneMenu>							
+					</td>
+					<td align="left">
+						<a:commandButton action="#{tipoPaginaAction.consultarTipoPantalla()}" 
+						                  value="Consultar" 
+						             ajaxSingle="true"
+						                reRender="idUsuarioTipo,mensaje,grillas"
+						                status="ajaxStatus"
+						                title="Consultar La InformaciÃ³n..."
+						                />						
+						<a:commandButton action="#{tipoPaginaAction.limpiar()}" 
+						                  value="Limpiar" 
+						                  title="Limpiar la PÃ¡gina..."
+						             ajaxSingle="true"
+						                reRender="idUsuarioTipo,mensaje,grillas,idComboTipoUsuarios"
+						                status="ajaxStatusLimpiar"/>						
+					 </td>
+					<td align="left">&nbsp;</td>
+				</tr>
+				<tr>
+					<td align="left" colspan="3" height="20px;"> &nbsp;</td>
+				</tr>
+				<tr>
+					<td align="left" colspan="2" > 
+						<a:outputPanel id="mensaje">
+						 <span class="required" >
+							 <h:outputLabel  
+							 value="#{tipoPaginaAction.mensaje}"  rendered="#{tipoPaginaAction.mensaje != null}"/></span>
+						 </a:outputPanel>
+					</td>
+				</tr>
+				<tr>
+					<td align="center" colspan="3" >
+					<a:outputPanel id="idUsuarioTipo">
+						<rich:panel >
+							<f:facet name="header">Seleccionar</f:facet>
+						        <rich:listShuttle id="idListaUsuarioTipo" sourceValue="#{tipoPaginaAction.listaPantallas}"
+							            targetValue="#{tipoPaginaAction.listaPantallasSeleccionados}" var="pantalla" listsHeight="150"
+							            sourceListWidth="250" targetListWidth="250" sourceCaptionLabel="Listas Página Disponible"
+							            targetCaptionLabel="Listas Páginas Asignar" orderControlsVisible="false" fastOrderControlsVisible="false" > 
+						            <ui:include src="/layout/facetSelectionLists.xhtml" />
+						            <s:convertEntity/>
+						            <rich:column>
+						                <h:outputText value="#{pantalla.descripcion}"></h:outputText>
+						            </rich:column>
+								</rich:listShuttle>				
+						</rich:panel>
+							<a:commandButton action="#{tipoPaginaAction.asignarPantallas()}" 
+						                  value="Asignar Páginas" 
+						             ajaxSingle="true"
+						                reRender="idUsuarioTipo,mensaje,grillas"
+						                status="ajaxStatusAgregar"
+						                title="Asignar PÃ¡ginas..."
+						                process="idListaUsuarioTipo"/>	
+					       </a:outputPanel>
+					 </td>
+				</tr>				
+				<tr>
+					<td align="left" colspan="3" height="20px;"> &nbsp;	</td>
+				</tr>				
+				<tr>
+					<td align="left" colspan="3">
+						<a:outputPanel id="grillas" style="width:100%;">
+						   <rich:panel id="grillaUsuarioTipo">
+						    <f:facet name="header">Resultado (#{tipoPaginaAction.listaTipoPantallas.size()})</f:facet>
+						    <div class="results" id="usuarioTipoList">
+									<table cellpadding="0" cellspacing="0" border="0" width="100%">
+										<tr valign="top" >
+											<td align="center"><strong> Grilla de Páginas Asignadas </strong></td>
+										</tr>
+										<tr valign="top">
+											<td style="border:1px solid #000000;padding:3px;"> 
+											<div class="results" style="height:100px; overflow: auto;"  >
+											   <h:outputText value="No se asignado ninguna pagina al tipo de usuario."
+											               rendered="#{tipoPaginaAction.listaTipoPantallas.size() == 0}"/>
+											
+												    <rich:dataTable id="usuarioNuevoList"
+												                var="_pr"
+												              value="#{tipoPaginaAction.listaTipoPantallas}"
+												           rendered="#{not empty tipoPaginaAction.listaTipoPantallas}">
+												
+												        <rich:column style="text-align: center;">
+												            <f:facet name="header">Id Página</f:facet>
+												            <h:outputText value="#{_pr.pantalla.idPantalla}"/>
+												        </rich:column>
+												        <rich:column>
+												            <f:facet name="header">Descripción</f:facet>
+												            <h:outputText value="#{_pr.pantalla.descripcion}"/>
+												        </rich:column>       
+   
+												        <rich:column style="text-align: center;">
+												            <f:facet name="header">Acción</f:facet>
+															<a:commandButton action="#{tipoPaginaAction.eliminarTipoPantalla(_pr)}" 
+															                  value="Eliminar" 
+															             ajaxSingle="true"
+															                reRender="idUsuarioTipo,mensaje,grillas"
+															                status="ajaxStatusEliminar"
+															                title="Eliminar PÃ¡gina..."
+															                />													            
+												        </rich:column> 
+												    </rich:dataTable>
+											   </div>    
+											</td>
+										</tr>
+									</table>
+						    </div>
+						   </rich:panel>						
+						</a:outputPanel>
+					</td>
+				</tr>	
+			</table>
+        <div style="clear:both"/>
+    </rich:panel>
+		<a:outputPanel id="cargarCodigoGrupo" ajaxRendered="false">
+			 <a:region renderRegionOnly="true">
+		    	<a:status id="ajaxStatus"
+			   	     onstart="#{rich:component('waitPanelcargarUsuarioTipo')}.show('',{top:'350px', left:'570px',height:'60px', width:'235px'})"
+			          onstop="#{rich:component('waitPanelcargarUsuarioTipo')}.hide()" />	 
+			 </a:region>
+		</a:outputPanel>   
+	 	<a:outputPanel id="agregarTipoUsuario" ajaxRendered="false">
+			 <a:region renderRegionOnly="true">
+		    	<a:status id="ajaxStatusAgregar"
+			   	     onstart="#{rich:component('waitPanelAgregarTipoUsuario')}.show('',{top:'350px', left:'570px',height:'60px', width:'235px'})"
+			          onstop="#{rich:component('waitPanelAgregarTipoUsuario')}.hide()" />	 
+			 </a:region>
+		</a:outputPanel>   
+	    <a:outputPanel id="limpiarUsuarioTipo" ajaxRendered="false">
+			 <a:region renderRegionOnly="true">
+		    	<a:status id="ajaxStatusLimpiar"
+			   	     onstart="#{rich:component('waitPanelLimpiarUsuarioTipo')}.show('',{top:'350px', left:'570px',height:'60px', width:'235px'})"
+			          onstop="#{rich:component('waitPanelLimpiarUsuarioTipo')}.hide()" />	 
+			 </a:region>
+		</a:outputPanel>  
+	 	<a:outputPanel id="eliminarrTipoUsuario" ajaxRendered="false">
+			 <a:region renderRegionOnly="true">
+		    	<a:status id="ajaxStatusEliminar"
+			   	     onstart="#{rich:component('waitPanelEliminarTipoUsuario')}.show('',{top:'350px', left:'570px',height:'60px', width:'235px'})"
+			          onstop="#{rich:component('waitPanelEliminarTipoUsuario')}.hide()" />	 
+			 </a:region>
+		</a:outputPanel> 
+	</h:form>
+
+	<rich:modalPanel id="waitPanelAgregarTipoUsuario" style="text-align:center;" styleClass="reporte_tablas" >
+     	<h:outputText value="Agregado Páginas..." style="font-size:16px;"/>
+     	<h:graphicImage value="/img/connect_active_nuevo.gif" />
+    </rich:modalPanel>	
+	<rich:modalPanel id="waitPanelcargarUsuarioTipo" style="text-align:center;" styleClass="reporte_tablas" >
+     	<h:outputText value="Cargado Información..." style="font-size:16px;"/>
+     	<h:graphicImage value="/img/connect_active_nuevo.gif" />
+    </rich:modalPanel>	
+	<rich:modalPanel id="waitPanelLimpiarUsuarioTipo" style="text-align:center;" styleClass="reporte_tablas" >
+     	<h:outputText value="Limpiando Página..." style="font-size:16px;"/>
+     	<h:graphicImage value="/img/connect_active_nuevo.gif" />
+    </rich:modalPanel>		
+	<rich:modalPanel id="waitPanelEliminarTipoUsuario" style="text-align:center;" styleClass="reporte_tablas" >
+     	<h:outputText value="Eliminado Página..." style="font-size:16px;"/>
+     	<h:graphicImage value="/img/connect_active_nuevo.gif" />
+    </rich:modalPanel>		
+</ui:define>
+
+</ui:composition>

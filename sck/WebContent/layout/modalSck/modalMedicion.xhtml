@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+
+	<style type="text/css">
+.top {
+	vertical-align: top;
+}
+</style>
+
+	<rich:modalPanel id="mpMedicion" autosized="true" width="450" >
+		<f:facet name="header">
+			<h:outputText value="Agregar Mediciones" style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+
+			<h:panelGroup>
+				<h:graphicImage value="img/close.png" styleClass="hidelink"
+					id="mpMedicionhidelink" />
+				<rich:componentControl for="mpMedicion" attachTo="mpMedicionhidelink"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+
+		</f:facet>
+		<h:form id="frm_medicion_model">
+			<h:messages id="messagesEsp" globalOnly="true" styleClass="message"
+				errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
+				rendered="#{showGlobalMessages != 'false'}" />
+			<h:panelGrid columns="2">
+				<s:decorate template="/layout/edit.xhtml">
+					<ui:define name="label">Codigo</ui:define>
+					<h:inputText value="#{medicionAction.medicionTarget.systemId}"
+					size="4"
+					maxlength="4" 
+					disabled="true"/>
+				</s:decorate>
+				<s:decorate template="/layout/edit.xhtml">
+					<ui:define name="label">Descripción</ui:define>
+					<h:inputText value="#{medicionAction.medicionTarget.descripcion}"
+					size="50"
+					maxlength="50" 
+					disabled="false"/>
+				</s:decorate>
+			</h:panelGrid>
+			<div>
+				<a:commandButton value="Guardar"
+					action="#{medicionAction.guardarMedicion()}"
+					reRender="frm_medicion,dtMedicion"
+					oncomplete="if(#{empty facesContext.maximumSeverity}) {#{rich:component('mpMedicion')}.hide(); alert('Guardado correctamente');}"
+					/>
+
+			</div>
+
+		</h:form>
+
+
+	</rich:modalPanel>
+
+</ui:composition>

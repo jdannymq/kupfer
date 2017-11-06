@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	
+	<rich:modalPanel id="mpAgregarUsuarioCorreosCC" autosized="true" width="800">
+		<f:facet name="header">
+			<h:outputText value="Agregar Usuario"	style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:form>
+					<a:commandLink	ajaxSingle="true" reRender="idUsuariosCorreosCCAux">
+						<h:graphicImage value="img/close.png" styleClass="hidelink"	id="mpAgregarUsuarioCorreosCClink" />
+					</a:commandLink>
+					<rich:componentControl for="mpAgregarUsuarioCorreosCC"
+						attachTo="mpAgregarUsuarioCorreosCClink" operation="hide"
+						event="onclick" 
+						/>
+				</h:form>
+			</h:panelGroup>
+		</f:facet>
+		<rich:panel>
+			<h:form id = "frm_agregarUsuarioCorreoCC">
+			
+				<a:outputPanel id="panelDatosCC" >
+					<table cellpadding="0" cellspacing="0" border="0" width="100%">
+						<tr>
+							<td width="500px;">Usuarios</td>
+							<td width="20px;"></td>
+							<td></td>
+						</tr>	
+						<tr>
+							<td width="500px;">
+								<h:selectOneMenu id="idComboUsuarioCorreoCC"
+ 								                 value="#{generarSolicitudAction.usuarioCorreo}" 
+ 								                 style="width:480px;">
+		               			<s:selectItems id="listaCCAux" value="#{generarSolicitudAction.listaDescripcionUsuariosCorreos}" 
+		               			                 var="_usuCorr"  
+		               			               label="#{_usuCorr}" 
+		               			               noSelectionLabel="Seleccione Usuario..." 
+		               			               hideNoSelectionLabel="true" />
+		              			</h:selectOneMenu>								
+							</td>
+							<td width="20px;"></td>
+							<td> 
+								<a:commandButton value="Agregar" 
+								                action="#{generarSolicitudAction.agregarUsuarioCorreoListaUsuarioCorreoReserva()}"
+					         		          reRender="frm_agregarUsuarioCorreoCC,idUsuarioCorreoAgregadosCC,idComboUsuarioCorreoCC,mensajeModalAgregarCC,listaCCAux,panelDatosCC" 
+					         	            oncomplete="if (#{generarSolicitudAction.mensajeExplicativo == null}) {alert('Usuario Agregado con exito!');}"/>							
+							</td>
+						</tr>	
+						<tr>
+							<td colspan="3" height="10px;"></td>
+						</tr>							
+					</table>
+				
+				
+				</a:outputPanel>
+				<a:outputPanel id="mensajeModalAgregarCC" rendered="#{generarSolicitudAction.mensajeExplicativo != null}" >
+		           <div style="clear:both">
+		                <span class="required">* #{generarSolicitudAction.mensajeExplicativo} </span>
+		            </div>
+				</a:outputPanel>
+
+				<rich:panel>
+				        <f:facet name="header">Resultados (#{generarSolicitudAction.listaUsuarioCorreoagregados.size()})</f:facet>
+				        
+				    	<div class="results" id="usuarioCorreoAgregadoListCC">
+				
+				   		<h:outputText value="No ha Agregado ningun usuario a la grilla." rendered="#{empty generarSolicitudAction.listaUsuarioCorreoagregados}"/>
+				
+					    <rich:dataTable id="idUsuarioCorreoAgregadosCC"
+					                var="_uc"
+					              value="#{generarSolicitudAction.listaUsuarioCorreoagregados}"
+					           rendered="#{not empty generarSolicitudAction.listaUsuarioCorreoagregados}">
+					        <rich:column>
+					            <f:facet name="header">Usuario</f:facet>
+					            <h:outputText value="#{_uc.nombreUsuario}"/>
+					        </rich:column>
+					        <rich:column>
+					            <f:facet name="header">Correo</f:facet>
+					            <h:outputText value="#{_uc.correoElectronico}"/>
+					        </rich:column>					        
+					        <rich:column styleClass="action">
+					            <f:facet name="header">Acción</f:facet>
+								<a:commandButton value="Eliminar" 
+								                action="#{generarSolicitudAction.eliminarUsuarioCorreoListaAgregado(_uc)}"
+								                rendered="#{_uc.status}"
+								                ajaxSingle="true"
+				         		              reRender="idUsuarioCorreoAgregadosCC,frm_agregarUsuarioCorreoCC" />		
+	
+					        </rich:column>
+					    </rich:dataTable>
+				    </div>
+				 </rich:panel>
+	   			
+			</h:form>
+		</rich:panel>
+	</rich:modalPanel>
+	
+</ui:composition>

@@ -1,0 +1,1652 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    template="/layout/template.xhtml">
+
+    <ui:define name="body">
+ 		<rich:tabPanel switchType="client">
+			<rich:tab label="Generación de solicitudes">
+		    	<rich:panel style="text-align:center;">
+		    		<f:facet name="header" >Solicitud de Crédito Küpfer Hermanos.(Solicitud Para Reparos)</f:facet>
+		    		<h:form id="frmSeleccion" enctype="multipart/form-data">
+		    			<table cellpadding="0" cellspacing="0" border="0" width="100%;">
+		    				<tr >
+		    					<td colspan="1" align="left" width="1000px;" >
+			    					<strong style="font-size:13px">
+			    						Tiempo de Ejecución del Proceso :
+							     		<a:outputPanel id="panelMensaje" >
+				    						<s:fragment rendered="#{generarSolicitudReparosAction.tiempoEjecucionProceso != null}">
+			    								<blink><span style="color:#E00000; font-weight:bold;font-size:13px;">#{generarSolicitudReparosAction.tiempoEjecucionProceso}</span></blink> 
+			    							</s:fragment>
+								        </a:outputPanel>   					
+			    					</strong>
+		    					</td>
+   								<td width="30%" align="center">	
+   									<s:fragment rendered="#{generarSolicitudReparosAction.solicitud.usuarioDevuelve != null}">
+   										<span>Usuario que Devuelve Solicitud: <strong >#{generarSolicitudReparosAction.solicitud.usuarioDevuelve}</strong></span>
+   										
+   									</s:fragment>
+   								</td>		    					
+		    					<td colspan="1" align="right" width="260px;" >Número Solicitud Generada: <strong style="font-size:15px" >
+		    					  	<a:outputPanel id="codigoSolicitud">
+			    						<s:fragment rendered="#{generarSolicitudReparosAction.solicitud == null}">
+			    							0000000
+			    						</s:fragment>
+			    						<s:fragment rendered="#{generarSolicitudReparosAction.solicitud != null}">
+			    							#{generarSolicitudReparosAction.solicitud.id.numSolicitud}
+			    						</s:fragment>
+		    						</a:outputPanel>
+		    					</strong>
+		    					</td>
+							</tr>
+					
+							<!-- encabezado de datos -->	
+		    				<tr valign="top">
+		    					<td align="left" width="280px;">
+		    						<rich:panel style=" width:100%; height:78px;">
+										<f:facet name="header" >Buscar.</f:facet>   
+										<table cellpadding="0" cellspacing="0" border="0" width="250px;">
+											<tr>
+												<td></td>
+												<td>
+													RUT:#{' '}<h:inputText value="#{generarSolicitudReparosAction.rutAux}"
+													             size="10"
+													             maxlength="10" 
+													             required="true"
+													             onkeypress="return isRutValidCharacter(event);"
+													             disabled="true"/>
+													             #{' '}
+													             <a:commandButton value="Buscar" 
+								                           	 		ajaxSingle="false" 
+								                            		action="#{generarSolicitudReparosAction.obtenerInformacionCliente}" 
+								                            		reRender="opDatosCliente,botonCtaCte,opDatosComportamiento,opDatosExposi,idMuestraSeleccionSolicitud,panelMensaje"
+								                			  	 	rendered="false"
+								                			  	 />
+													<s:decorate id="rutExt" template="layout/edit.xhtml">
+					            						<ui:define name="label">Rut Extranjero</ui:define>
+														<h:selectBooleanCheckbox value="#{generarSolicitudReparosAction.rutExtranjero}" />
+				            						</s:decorate> 
+				            					
+												</td>
+												<td>
+								                										                    
+												</td>
+												<td>&nbsp;</td>
+											</tr>
+											<tr>
+												<td colspan="4">&nbsp;</td>
+											</tr>	
+										</table> 						
+		    						</rich:panel> 
+		    					</td>
+		    					<td align="left" width="700px;">
+		    						<rich:panel style=" width:100%; height:78px;">
+										<f:facet name="header" >Concepto / Negocio.</f:facet> 
+										<table cellpadding="0" cellspacing="0" border="0" width="100%;">
+											<tr>
+												<td align="center">
+								    				 
+								    				 <a:commandButton value="Observación" 
+								    				 	reRender="mpIngresoObservaciones,grillaObservacion"
+						                           	 	ajaxSingle="true" 
+						                           	 	oncomplete="#{rich:component('mpIngresoObservaciones')}.show()"
+						                            	action="#{generarSolicitudReparosAction.ingresoObservaciones()}" 
+						                            	style="width:80px;"
+						                            	title="Ingreso de Observaciones"
+						                			  />												
+								    				 <a:commandButton id="conceptoMonto"
+								    				    value="Conceptos  y Montos Cotizados" 
+						                           	 	ajaxSingle="true" 
+						                           	 	reRender="mpRevisarConceptoMontoReparo"
+						                           	 	oncomplete="#{rich:component('mpRevisarConceptoMontoReparo')}.show()"
+						                            	
+						                			  />	
+								    				 <a:commandButton id="salirReparo"
+								    				    value="Volver" 
+						                           	 	ajaxSingle="true" 
+						                            	action="#{generarSolicitudReparosAction.limpiarVolver()}"
+						                			  />							                			  
+												</td>
+											</tr>
+										</table>									 
+										 
+		    						</rich:panel>
+		
+		    					</td>
+		    					<td align="left"  width="280px;">
+		    					
+		     						<rich:panel>
+										<f:facet name="header" >Datos.</f:facet>   
+										<table cellpadding="0" cellspacing="0" border="0" width="400px;">
+											<tr>
+												<td>Emisor:</td>
+												<td><h:outputLabel value="#{generarSolicitudReparosAction.usuarioEmisor}" /></td>
+												<td>Fecha:</td>
+												<td>
+												  
+													<h:outputLabel value="#{generarSolicitudReparosAction.fechaActual}">
+														<s:convertDateTime pattern="dd-MM-yyyy" />
+												    </h:outputLabel>
+		
+												</td>
+											</tr>
+											<tr>
+												<td>Sucursal:</td>
+												<td>
+													
+			         								<h:selectOneMenu id="cboSucursal"
+			         								               value="#{generarSolicitudReparosAction.sucursal}" 
+			         								                style="width:200px;"
+			         								                disabled="true">
+							                			<s:selectItems value="#{generarSolicitudReparosAction.listaSucursales}" 
+							                			                 var="_suc"  
+							                			               label="#{_suc.descripcion}" 
+							                			               noSelectionLabel="Seleccione Sucursal..." 
+							                			               hideNoSelectionLabel="true"/>
+							                			               <s:convertEntity/> 
+											       			   	<a:support event="onchange" 
+											                         reRender="cboSucursal"
+											             			      ajaxSingle="true" 
+											             			      action="#{generarSolicitudReparosAction.obtenerSucursalSeleccionada()}" />						                			               
+							                		</h:selectOneMenu>
+							                		
+												</td>
+												<td>&nbsp;</td>
+												<td>
+													<h:outputLabel value="#{generarSolicitudReparosAction.fechaActual}">
+														<s:convertDateTime pattern="HH:mm:ss" />
+												    </h:outputLabel>										
+												
+												</td>
+											</tr>
+										</table> 									    						
+		    						</rich:panel> 
+		    					     						
+		    					</td>
+		    				</tr>
+		  				
+		    				<!-- informacion del cliente -->
+		 	   				
+		    				<tr>
+		    					<td colspan="3" align="left"  width="1260px;">
+								<a:outputPanel id="opDatosCliente">
+		    					   <rich:panel>
+										<f:facet name="header" >Datos Actuales Del Cliente.</f:facet> 
+										<table cellpadding="0" cellspacing="0" border="0" width="100%">
+											<tr>
+												<td width="40px;">Razón Social</td>
+												<td width="90px;">:&nbsp;<strong> <h:outputLabel value="#{generarSolicitudReparosAction.clienteTarget.razonSocial}" /></strong></td>
+												<td width="40px;">L.Crédito KH</td>
+												<td width="90px;">:<strong><h:outputLabel value="#{generarSolicitudReparosAction.clienteTarget.lineaCreditoKH}">
+																				<f:convertNumber type="currency" currencySymbol="$ "/>
+																		   </h:outputLabel>	
+												 					</strong> </td>
+												<td width="40px;">Tipo Seguro</td>
+												<td width="90px;">:<strong><h:outputLabel value="#{generarSolicitudReparosAction.clienteTarget.seguro}" /></strong></td>
+											</tr>
+											<tr>
+												<td>Giro de Cliente</td>
+												<td>:<strong><h:outputLabel value="#{generarSolicitudReparosAction.clienteTarget.giro}" /></strong></td>
+												<td>L.Crédito KH Utilizado</td>
+												<td>:<strong><h:outputLabel value="#{generarSolicitudReparosAction.clienteTarget.lineaCreditoKHUtilizado}">
+																<f:convertNumber type="currency" currencySymbol="$ "/>
+															 </h:outputLabel>	
+													 </strong></td>
+												<td>Vigencia Seguro</td>
+												<td>:<strong><h:outputLabel value="#{generarSolicitudReparosAction.clienteTarget.vigenciaSeguro}" /></strong></td>
+											</tr>							
+											<tr>
+												<td>Dirección</td>
+												<td>:<strong><h:outputLabel value="#{generarSolicitudReparosAction.clienteTarget.direccion}" /></strong></td>
+												<td>L.Crédito KH Disponible</td>
+												<td>:<strong><h:outputLabel value="#{generarSolicitudReparosAction.clienteTarget.lineaCreditoKHDisponible}">
+																<f:convertNumber type="currency" currencySymbol="$ "/>
+															</h:outputLabel>	
+													</strong></td>
+												<td>Monto Seguro $</td>
+												<td>:<strong><h:outputLabel value="#{generarSolicitudReparosAction.clienteTarget.montoSeguro}">
+																<f:convertNumber type="currency" currencySymbol="$ "/>
+															</h:outputLabel>	
+													</strong></td>
+											</tr>	
+											<tr>
+												<td>Fono / Fax</td>
+												<td>:<strong>	<h:outputLabel value="tel: #{generarSolicitudReparosAction.clienteTarget.fono}" rendered="#{generarSolicitudReparosAction.clienteTarget.fono ne null}"/>
+														#{' '}  <h:outputLabel value="fax: #{generarSolicitudReparosAction.clienteTarget.fax}" rendered="#{generarSolicitudReparosAction.clienteTarget.fax ne null}"/>
+													</strong>	
+												</td>
+												<td>Estado L.Crédito KH</td>
+												<td>:<strong><h:outputLabel value="#{generarSolicitudReparosAction.clienteTarget.estadoLineaCreditoKH}" /></strong> </td>
+												<td>Monto Seguro UF</td>
+												<td>:<strong><h:outputLabel value="#{generarSolicitudReparosAction.clienteTarget.montoSeguroUf}">
+																<f:convertNumber type="currency" currencySymbol="$ "/>
+															</h:outputLabel>	
+												     </strong> </td>
+											</tr>	
+											<tr>
+												<td>Comuna</td>
+												<td>:<strong><h:outputLabel value="#{generarSolicitudReparosAction.clienteTarget.comuna}" /></strong> </td>
+												<td>Número RV</td>
+												<td>:<strong><h:outputLabel value="#{generarSolicitudReparosAction.clienteTarget.numeroRV}" /></strong></td>
+												<td>Ventas Prom 12 Meses</td>
+												<td>:<strong><h:outputLabel value="#{generarSolicitudReparosAction.clienteTarget.ventasProm12Meses}">
+																<f:convertNumber type="currency" currencySymbol="$ "/>
+															 </h:outputLabel>	
+												    </strong></td>
+											</tr>	
+											<tr>
+												<td>Ciudad</td>
+												<td>:<strong><h:outputLabel value="#{generarSolicitudReparosAction.clienteTarget.ciudad}" /></strong> </td>
+												<td >Condición de Pago</td>
+												<td>:<strong><h:outputLabel value="#{generarSolicitudReparosAction.clienteTarget.condicionPago}" /></strong> </td>
+												<td>Fact. Prom 12 Meses</td>
+												<td>:<strong><h:outputLabel value="#{generarSolicitudReparosAction.clienteTarget.factProm12Meses}"/>
+													</strong></td>
+											</tr>	
+											<tr>
+												<td>Suc.Cliente</td>
+												<td>:<strong><h:outputLabel value="#{generarSolicitudReparosAction.clienteTarget.sucursalCliente}" /></strong> </td>
+												<td >Clasificación Riesgo</td>
+												<td >:<strong><h:outputLabel value="#{generarSolicitudReparosAction.clienteTarget.clasificacionRiesgo}" /></strong></td>
+												<td>Cant. Meses Ventas</td>
+												<td>:<strong><h:outputLabel value="#{generarSolicitudReparosAction.clienteTarget.cantMesesVentas}"/>	
+														</strong> </td>
+											</tr>	
+											<tr>
+												<td>Canal Venta</td>
+												<td >:<strong><h:outputLabel value="#{generarSolicitudReparosAction.clienteTarget.canalVenta}" /></strong> </td>
+												<td ></td>
+												<td ><strong></strong> </td>
+												<td >Ventas Total 12 Meses</td>
+												<td>:<strong><h:outputLabel value="#{generarSolicitudReparosAction.clienteTarget.ventasTotal12Meses}">
+																<f:convertNumber type="currency" currencySymbol="$ "/>
+															</h:outputLabel>	
+													</strong> </td>
+											</tr>	
+											<tr>
+												<td >Tipo Cliente</td>
+												<td >:<strong><h:outputLabel value="#{generarSolicitudReparosAction.clienteTarget.tipoCliente}" /></strong></td>
+												<td ></td>
+												<td></td>
+												<td>Creación en SAP</td>
+												<td>:<strong>
+													<h:outputLabel value="#{generarSolicitudReparosAction.clienteTarget.creacionSap}">
+														<s:convertDateTime pattern="dd-MM-yyyy" />
+													</h:outputLabel>
+												</strong> </td>
+											</tr>	
+											<tr>
+												<td >DM de Ventas</td>
+												<td >:<strong> 
+														<h:outputLabel value="#{generarSolicitudReparosAction.clienteTarget.dmVentasUno}" />
+													</strong>
+												</td>
+												<td>Cuenta Corriente</td>
+												<td>
+													<a:outputPanel id="botonCtaCte">
+								    				 <a:commandButton value="Detalle de Cta Cte" 
+								    				 	reRender="frm_consultaCuentaCorriente"
+						                           	 	ajaxSingle="true" 
+						                           	 	oncomplete="#{rich:component('mpConsultarCuentaCorriente')}.show()"
+						                            	action="#{generarSolicitudReparosAction.informacionCtaCte()}" 
+						                            	rendered="#{generarSolicitudReparosAction.habilitarCtaCte}"
+						                			  />	
+						                			 </a:outputPanel> 									
+												</td>
+												<td >Estado de Solictud</td>
+												<td width="50px;">:<strong><h:outputLabel value="#{generarSolicitudReparosAction.clienteTarget.estadoSolicitud}" /></strong> </td>
+											</tr>	
+											<tr>
+												<td >&nbsp;</td>
+												<td >&nbsp;</td>
+												<td >&nbsp;</td>
+												<td >&nbsp;</td>
+												<td >&nbsp;</td>
+												<td >&nbsp;</td>
+											</tr>
+										</table> 								
+									</rich:panel> 					
+								  </a:outputPanel> 
+		    					</td>
+		    				</tr>
+											
+		    				<!-- informacion del Montos de La solictud -->
+		    				<tr>
+		    					<td colspan="3" align="left"  width="1260px;">
+		    						<table cellpadding="0" cellspacing="0" border="0" width="100%" >
+		    							<tr valign="top">
+		    								<td width="45%">
+		    								  <a:outputPanel id="opDatosComportamiento">
+					     						<rich:panel style="height:115px;">
+													<f:facet name="header" >Comportamiento Comercial con Küpfer Hermanos</f:facet>  
+														<table cellpadding="0" cellspacing="0" border="0" width="100%">
+							    							<tr>
+							    								<td>&nbsp;</td>
+							    								<td>Monto Total</td>
+							    								<td>&nbsp;</td>					    								
+							    								<td>Nro</td>	
+							    								<td>Días de Mora</td>	
+							    							</tr>
+							    							<tr>
+							    								<td>Morosidad</td>
+							    								<td><h:inputText value="#{generarSolicitudReparosAction.clienteCompComrcial.montoTotalMoro}" disabled="true" style="text-align: right;">
+							    										<f:convertNumber type="currency" currencySymbol="$ "/>
+							    									</h:inputText>
+							    								
+							    								</td>
+							    								<td>&nbsp;</td>					    								
+							    								<td><h:inputText value="#{generarSolicitudReparosAction.clienteCompComrcial.numeroMoro}" disabled="true" style="text-align: right;"/></td>	
+							    								<td><h:inputText value="#{generarSolicitudReparosAction.clienteCompComrcial.diasMoras}" disabled="true" style="text-align: right;"/></td>	
+							    							</tr>
+		
+							    							<tr>
+							    								<td colspan="5">&nbsp;</td>					    								
+							    							</tr>
+							    							<tr>
+							    								<td>&nbsp;</td>
+							    								<td>Monto Total</td>
+							    								<td>&nbsp;</td>					    								
+							    								<td>Nro</td>	
+							    								<td>Días de Mora</td>	
+							    							</tr>
+							    							<tr>
+							    								<td>Protesto</td>
+							    								<td><h:inputText value="#{generarSolicitudReparosAction.clienteCompComrcial.montoTotalProt}" disabled="true" style="text-align: right;">
+							    										<f:convertNumber type="currency" currencySymbol="$ "/>
+							    									</h:inputText>
+							    								</td>
+							    								<td>&nbsp;</td>					    								
+							    								<td><h:inputText value="#{generarSolicitudReparosAction.clienteCompComrcial.numeroProt}" disabled="true" style="text-align: right;"/></td>	
+							    								<td><h:inputText value="#{generarSolicitudReparosAction.clienteCompComrcial.dmPort}" disabled="true" style="text-align: right;"/></td>	
+							    							</tr>
+							    						</table>												 
+		
+												</rich:panel>	
+											  </a:outputPanel>
+		    								</td>
+		    								<td colspan="2" width="55%">
+		    								   <a:outputPanel id="opDatosExposi">
+					     						<rich:panel style="height:115px;">
+													<f:facet name="header" >Exposición de Riesgo Küpfer Hermanos.</f:facet>   
+														<table cellpadding="0" cellspacing="0" border="0" width="100%">
+							    							<tr>
+							    								<td width="120px;">Peak Crédito</td>
+							    								<td ><strong>:
+							    								             <h:outputText value="#{generarSolicitudReparosAction.clienteExpoRiesgoKh.peakCredito}">
+							    												<f:convertNumber type="currency" currencySymbol="$ "/>
+							    											  </h:outputText>	
+							    									</strong>
+							    								      </td>
+							    								<td width="300px;">Pedidos en Proceso</td>					    								
+							    								<td><strong> :
+							    								             <h:outputText value="#{generarSolicitudReparosAction.clienteExpoRiesgoKh.montoPedidoProceso}">
+							    												<f:convertNumber type="currency" currencySymbol="$ "/>
+							    											  </h:outputText>						    								
+							    								 </strong></td>	
+							    							</tr>												
+							    							<tr>
+							    								<td>Seguro</td>
+							    								<td><strong> :
+							    								             <h:outputText value="#{generarSolicitudReparosAction.clienteExpoRiesgoKh.montoAsegurado}">
+							    												<f:convertNumber type="currency" currencySymbol="$ "/>
+							    											  </h:outputText>						    								
+							    								</strong></td>
+							    								<td>Peak Crédito + Pedido en Proceso</td>					    								
+							    								<td><strong> :
+							    								             <h:outputText value="#{generarSolicitudReparosAction.clienteExpoRiesgoKh.montoPeakCreditoPedidoProceso}">
+							    												<f:convertNumber type="currency" currencySymbol="$ "/>
+							    											  </h:outputText>	
+							    									</strong></td>	
+							    							</tr>	
+							    							<tr>
+							    								<td>Riesgo Küpfer</td>
+							    								<td><strong> :
+							    								             <h:outputText value="#{generarSolicitudReparosAction.clienteExpoRiesgoKh.montoRiesgoKupfer}">
+							    												<f:convertNumber type="currency" currencySymbol="$ "/>
+							    											  </h:outputText>	
+							    									</strong></td>
+							    								<td>Riesgo Küpfer + Pedido en Proceso</td>					    								
+							    								<td><strong> :
+							    								             <h:outputText value="#{generarSolicitudReparosAction.clienteExpoRiesgoKh.montoRiesgoKupferPedidoProceso}">
+							    												<f:convertNumber type="currency" currencySymbol="$ "/>
+							    											  </h:outputText>	
+							    								</strong></td>	
+							    							</tr>
+														</table>
+												</rich:panel>
+											  </a:outputPanel>		
+		    								</td>
+		    							</tr>
+		    						</table>
+		    					</td>
+							</tr>
+		
+		
+		
+							
+							<!-- informacion del Montos de La solictud -->
+		   					<tr>
+		    					<td colspan="3" align="left" width="1260px;" >
+		    					<a:outputPanel id="idMuestraSeleccionSolicitud">
+		    						<s:fragment rendered="#{generarSolicitudReparosAction.muestraSeleccionSolicitud == true}">
+		    					    <rich:panel>
+							    		<rich:tabPanel switchType="client" >
+							    			<rich:tab label="Solicitud Seleccionada" >
+					    						<table cellpadding="0" cellspacing="0" border="0">
+					    							<tr valign="top">
+					    								<td >
+													    	<rich:panel style="width:223px;">
+																<f:facet name="header" >Acción</f:facet> 
+																	<a:commandButton id="idIngresarSolicitud" value="Reenviar" 
+																	              reRender="mensajeValidacion,mpIngresarSolicitud" 
+																	            oncomplete="#{rich:component('mpIngresarSolicitud')}.show()"
+																	            action="#{generarSolicitudReparosAction.validarSolicitud()}"
+																	            ajaxSingle="true"
+																	            process="tiempoValidar,idMotivoCompra,idObervaciones,idobservacionesCredito,idPlazoEjecucion,conceptoInv,rutNombresSocios,idDescripcionProyecto,idMotivoRiesgoPago,idTextoObservaciones,logicOS1,idCreacionDMList,idUsuariosCorreosOSAux3,archivosListOS2,idMotivoProrroga">
+																    </a:commandButton>					
+
+															</rich:panel>
+															<rich:panel style="width:223px;">
+												    			<table cellpadding="0" cellspacing="0" border="0" width="100%;">
+												    				<tr >
+												    					<td colspan="2" align="left" width="100%" >
+													    					<strong style="font-size:10px">
+													    						Tiempo de Ejecución :
+																	     		<a:outputPanel id="tiempoEjecMenu" >
+														    						<s:fragment rendered="#{generarSolicitudReparosAction.tiempoEjecucionMenu != null}">
+													    								<span style="color:#E00000; font-weight:bold;font-size:10px;">#{generarSolicitudReparosAction.tiempoEjecucionMenu}</span> 
+													    							</s:fragment>
+																		        </a:outputPanel>   					
+													    					</strong>
+												    					</td>
+												    				</tr>
+												    			</table>	
+															</rich:panel>
+															<rich:panel>
+																<f:facet name="header" >Documentos Creación Solicitud</f:facet>
+																<table cellpadding="0" cellspacing="0" border="0" width="100%" align="center">
+																	<tr>
+																		<td colspan="2" style="border:1px solid #000000;padding:3px;" align="center"> 
+																		  <a:outputPanel id="idArchivoAdjuntosReparo">
+																	    	<div class="results" id="grillaAAR" style="height:364px; overflow: auto;">
+																		   		<h:outputText value="No existen ningun archivo adjunto." 
+																		   		   rendered="#{empty generarSolicitudReparosAction.listaArchivoGuardado}"/>
+																			    <rich:dataTable id="idArchivoAdjunto"
+																			                var="_aa"
+																			              value="#{generarSolicitudReparosAction.listaArchivoGuardado}"
+																			           rendered="#{not empty generarSolicitudReparosAction.listaArchivoGuardado}"
+																			           style="width:100%">
+																			        <rich:column >
+																			            <f:facet name="header">Archivo</f:facet>
+																			            <a href="#{_aa.rutaCompleta}" target="_blank">
+																			            	<h:outputText value="#{_aa.nombreArchivo}"/>
+																			        	</a>
+																			        </rich:column>
+																			        <rich:column >
+																			            <f:facet name="header">Tipo</f:facet>
+																						<h:outputText value="#{_aa.tipoArchivoType}"/>
+																			        </rich:column>
+																			    </rich:dataTable>
+																		    </div>	
+																		  </a:outputPanel>  																							
+																		</td>
+																	</tr>
+																</table>																					
+															</rich:panel>																
+					    								</td>
+					    								<td >
+					    								    <a:outputPanel id="panelIngresoSolicitud">
+					    									<rich:panel >
+													    			<f:facet name="header" ><strong>#{generarSolicitudReparosAction.tituloGeneral}</strong></f:facet>
+															    	<s:fragment rendered="#{generarSolicitudReparosAction.paginaIngreso == 11 || generarSolicitudReparosAction.paginaIngreso == 12}">
+															    			<table  cellpadding="0" cellspacing="0" border="0" width="100%">
+															    				<tr valign="top">
+																					<td width="300px;" > 
+																						<rich:panel>
+																							<f:facet name="header" ><strong>#{generarSolicitudReparosAction.tituloIngreso}</strong></f:facet>
+																							<a:outputPanel id="idValorMonto">
+																								<table cellpadding="0" cellspacing="0" border="0" style="height:137px;">
+																									<tr>
+																										<td colspan="2">
+																								    		<a:outputPanel id="panelMonto" >
+																									    		<h:messages  globalOnly="true" styleClass="message"
+																										            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
+																									        </a:outputPanel>
+																										</td>
+																									</tr>
+																									<tr>
+																										<td><strong>Monto ($) </strong></td>
+																										<td ><h:inputText id="montoSol"
+																														  value="#{generarSolicitudReparosAction.monto}" 
+																										                  style="text-align: right;"
+																										                   onkeypress="return isNumberKey(event);"
+																										                   disabled="true">
+																										       			   	<a:support event="onchange" 
+																										                         reRender="montoSol,opDatosExposi,panelMonto,cboFormaPago,cboFPEnc,idUsuariosCorreosAux"
+																										             			      ajaxSingle="true" 
+																										             			      action="#{generarSolicitudReparosAction.obtenerCalculosMontosExposicion()}" />
+																										             			      
+																										             		<f:convertNumber type="currency" currencySymbol="" locale="#{globalLocale}"/>																								                   
+																										     </h:inputText>              
+																										</td>
+																									</tr>
+																									<tr>	
+																										<td><strong>Pie ($)</strong></td>
+																										<td ><h:inputText id="pieSol"
+																														  value="#{generarSolicitudReparosAction.pie}" 
+																										                  style="text-align: right;"
+																										                   onkeypress="return isNumberKey(event);"
+																										                   disabled="#{generarSolicitudReparosAction.habilitar}">
+																										       			   	<a:support event="onchange" 
+																										                         reRender="pieSol,opDatosExposi,panelMonto,cboFormaPago,cboFPEnc,idUsuariosCorreosAux,mpMensajeGlobal"
+																										             			      ajaxSingle="true" 
+																										             			      action="#{generarSolicitudReparosAction.obtenerCalculosMontosExposicion()}"
+																										             			      oncomplete="if (#{generarSolicitudReparosAction.mensajeGlogal != null}) {#{rich:component('mpMensajeGlobal')}.show()}"
+																										             			      process="montoSol" />	
+																										             			      
+																										            <f:convertNumber type="currency" currencySymbol="" locale="#{globalLocale}"/> 			      
+																										             																									                   
+																										     </h:inputText>
+																										   </td>
+																									</tr>
+																								</table>
+																							</a:outputPanel>
+																						</rich:panel>
+																						<rich:panel>
+																							<f:facet name="header" >Destinatarios</f:facet>
+																							<table cellpadding="0" cellspacing="0" border="0" width="100%">
+																								<ui:remove>
+																									<tr>
+																										<td colspan="2" align="center">
+																												<a:commandButton value="Agregar Usuarios" 
+																													              reRender="mpAgregarUsuarioCorreos" 
+																													            oncomplete="#{rich:component('mpAgregarUsuarioCorreos')}.show()">
+																												    </a:commandButton>	
+																										</td>
+																									</tr>
+																									<tr>
+																										<td colspan="2" height="10px;">&nbsp;</td>
+																									</tr>
+																								</ui:remove>
+																								<tr>
+																									<td colspan="2" style="border:1px solid #000000;padding:3px;" > 
+																									  <a:outputPanel id="idUsuariosCorreosAux">
+																								    	<div class="results" id="grillaUC" style="height:125px; overflow: auto;">
+																									   		<h:outputText value="No existen usuarios agregado para envio de correo." 
+																									   		   rendered="#{empty generarSolicitudReparosAction.listaUsuarioCorreoagregados}"/>
+																										    <rich:dataTable id="idUsuariosCorreos"
+																										                var="_usuarioCorreo"
+																										              value="#{generarSolicitudReparosAction.listaUsuarioCorreoagregados}"
+																										           rendered="#{not empty generarSolicitudReparosAction.listaUsuarioCorreoagregados}"
+																										           style="width:100%">
+																										        <rich:column>
+																										            <f:facet name="header">Usuario</f:facet>
+																										            <h:outputText value="#{_usuarioCorreo.nombre}"/>
+																										        </rich:column>
+																										    </rich:dataTable>
+																									    </div>	
+																									  </a:outputPanel>  																							
+																									</td>
+																								</tr>
+																							</table>																					
+																						</rich:panel>																			
+																					</td>
+																					<td width="800px;">
+																						<rich:panel>
+																							<f:facet name="header" >Datos de Compras</f:facet>
+																								<table cellpadding="0" cellspacing="0" border="0" width="100%" >
+																								   <tr valign="top" >
+																										<td width="150px;" align="left"><strong>Cotización o Pedido</strong></td>
+																										<td align="left">
+																						                      <h:inputText id="idPedidoCotizacion"
+																						                                value="#{generarSolicitudReparosAction.pedidoCotizacion}" 
+																								                  		style="text-align: right;"
+																								                   		onkeypress="return isNumberKey(event);"
+																								                   		size="10">
+																									       			   	<!-- a:support event="onchange" 
+																									                         reRender="verproductos,panelMonto,idConsultarPedCot"
+																									             			      ajaxSingle="true" 
+																									             			      action="#{generarSolicitudReparosAction.obtenerPedidoCotizacion()}"/-->	
+																									            </h:inputText>     		
+																										</td>
+																										<td align="left" colspan="2">
+																												
+																												<a:commandButton id="idConsultarPedCot" value="Agregar" 
+																												              reRender="mpAgregarCotizacion,verproductos,idConsultarPedCot,idPedidoCotizacion,panelMonto,mpMensajeGlobal,escritura,panelMensaje,tiempoEjec" 
+																												            oncomplete="if (#{generarSolicitudReparosAction.mensajeGlogal == null}) {#{rich:component('mpAgregarCotizacion')}.show()}else{#{rich:component('mpMensajeGlobal')}.show()}"
+																												            action="#{generarSolicitudReparosAction.buscarInformacionCotizacionPedido()}"
+																												            ajaxSingle="true"
+																												            process="idPedidoCotizacion">
+																											    </a:commandButton>					
+																												<a:commandButton value="Ver Productos Agregados" id="verproductos"
+																												              reRender="mpAgregarCotizacion" 
+																												            oncomplete="#{rich:component('mpAgregarCotizacion')}.show()">
+																											    </a:commandButton>																										    
+																											    
+																										</td>
+																										<td align="left">&nbsp;</td>
+																									</tr>
+																								   <tr valign="top" >
+																										<td colspan="5" height="10px;" >&nbsp;</td>	
+																								   </tr>																							
+																								   <tr valign="top">
+																										<td width="150px;" align="left"><strong>Forma de Pago</strong></td>
+																										<td width="120px;" align="left">
+																	         								<h:selectOneMenu id="cboFormaPago" 
+																	         								              value="#{generarSolicitudReparosAction.tipoFormaPago}" 
+																	         								                 style="width:120px;">
+																					                			<s:selectItems value="#{generarSolicitudReparosAction.listaTipoFormaPagos}" 
+																					                			                 var="_suc"  
+																					                			               label="#{_suc.descripcion}" 
+																					                			               noSelectionLabel="Tipo Pago..." 
+																					                			               hideNoSelectionLabel="true"/>
+																					                			               <s:convertEntity/> 
+																								       			   	<a:support event="onchange" 
+																								                         reRender="cboFormaPago,cboFPEnc,panelMonto,idValorMonto,idUsuariosCorreosAux"
+																								             			      ajaxSingle="true" 
+																								             			      action="#{generarSolicitudReparosAction.obtenerFormaPagos()}" />						                			               
+																					                		</h:selectOneMenu>																		                			
+																										</td>
+																	         							<td align="center">
+																	         								<h:selectOneMenu id="cboFPEnc" 
+																	         								              value="#{generarSolicitudReparosAction.encabezado}" 
+																	         								              style="width:150px;"
+																	         								              >
+																					                			<s:selectItems value="#{generarSolicitudReparosAction.listaEncabezados}" 
+																					                			                 var="_enc"  
+																					                			               label="#{_enc.descripcion}" 
+																					                			               noSelectionLabel="Forma Pago..." 
+																					                			               hideNoSelectionLabel="true"/>
+																					                			               <s:convertEntity/> 
+																								       			   	<a:support event="onchange" 
+																								                         reRender="cboFormaPago,panelMonto,cboFPEnc,idValorMonto,idUsuariosCorreosAux,mpMensajeGlobal"
+																								             			      ajaxSingle="true" 
+																								             			      action="#{generarSolicitudReparosAction.obtenerFormaPagosEncabezado()}" 
+																								             			      oncomplete="if (#{generarSolicitudReparosAction.mensajeGlogal != null}) {#{rich:component('mpMensajeGlobal')}.show()}"/>						                			               
+																					                		</h:selectOneMenu>																	         							
+																	         							
+																	         							</td>
+																										<td  align="center"><strong>Margen</strong></td>
+																	         							<td  align="left">
+																	         										<a:outputPanel id="margenGlobal">
+																	         											<h:inputText value="#{generarSolicitudReparosAction.margenGlobal}" 
+																									                  		style="text-align: right; width:97%;"
+																									                  		size="3"
+																									                  		disabled="true"
+																									                   		onkeypress="return isNumberKey(event);">
+																									                   		<f:convertNumber pattern="###0.00" />
+																									                   	</h:inputText>
+																									                </a:outputPanel>    		
+																	         							</td>
+																									</tr>																								
+																								</table>
+																								
+																								<table cellpadding="0" cellspacing="0" border="0" width="100%">
+																								   <tr >
+																										<td width="126px;" align="left" height="15px;"><strong>Motivo de Compra</strong></td>
+																	         							<td width="600px;" colspan="3"  height="15px;">
+																	         								<h:inputTextarea id="idMotivoCompra" value="#{generarSolicitudReparosAction.motivoCompra}" 
+																	         									rows="2" 
+																	         									style="width:99%;"/> 
+																	         							</td>
+																									</tr>																							
+																								
+																									<tr>
+																										<td width="126px;" align="left" height="15px;"><strong>Observaciones</strong></td>
+																	         							<td width="600px;" colspan="3"  height="15px;">
+																	         								<h:inputTextarea id="idObervaciones" value="#{generarSolicitudReparosAction.observaciones}" 
+																	         									rows="2" 
+																	         									style="width:99%;"/> 
+																	         							</td>
+																									</tr>
+																								</table>
+																						</rich:panel>
+																						
+																						<rich:panel>
+																							<f:facet name="header" >Adjuntar Archvios</f:facet>
+																								<table cellpadding="0" cellspacing="0" border="0" width="100%" >
+																								   <tr valign="top" >
+																										<td width="150px;" colspan="3" align="center">  
+																							    			<h:outputLink value="javascript:void(0);" id="openMpAdjuntarArchivo">
+																										       <strong> Adjuntar archivo </strong>
+																										        <rich:componentControl for="mpAdjuntarArchivo" attachTo="openMpAdjuntarArchivo" operation="show" event="onclick"/>
+																										    </h:outputLink>																								
+																										</td>
+																									</tr>	
+																								   <tr valign="top" >
+																										<td width="500px;" colspan="3" align="left" style="border:1px solid #000000;padding:3px;">
+																										    <a:outputPanel id="archivosList">
+																									    	<div class="results" style="height:111px; overflow: auto;">
+																										   		<h:outputText value="No ha Agregado ningun Archivo." 
+																										   		 rendered="#{empty generarSolicitudReparosAction.listaFileUploadedDTOs}"/>
+																									
+																											    <rich:dataTable id="idArchivosAgregados"
+																											                var="_arch"
+																											              value="#{generarSolicitudReparosAction.listaFileUploadedDTOs}"
+																											           rendered="#{not empty generarSolicitudReparosAction.listaFileUploadedDTOs}">
+																											        <rich:column>
+																											            <f:facet name="header">Nombre</f:facet>
+																											            <s:fragment rendered="#{_arch.archivo == null}">
+																												            <a href="#{_arch.rutaArchivo}" target="_blank">
+																												            	<h:outputText value="#{_arch.nombreArchivo}"/>
+																												        	</a>
+																											        	</s:fragment>
+																											            <s:fragment rendered="#{_arch.archivo != null}">
+																									                    <s:link value="#{_arch.nombreArchivo}" action="#{downloadAttachment.download}">
+																										                    <f:param name="attachmentId" value="${_arch.archivo.id}" />
+																										                </s:link>
+																											        	</s:fragment>
+																											        </rich:column>
+		
+																											        <rich:column styleClass="action">
+																											            <f:facet name="header">Acción</f:facet>
+																														<a:commandButton value="Eliminar" 
+																														                action="#{generarSolicitudReparosAction.eliminarArchivo(_arch)}"
+																														                ajaxSingle="true"
+																										         		              reRender="archivosList,idArchivosAgregados" 
+																										         		              rendered="#{_arch.eliminar}"/>		
+																							
+																											        </rich:column>
+																										    	  </rich:dataTable>
+																									    	  </div>
+																									    	</a:outputPanel>  
+																										</td>
+																									</tr>
+																							   </table>
+																						</rich:panel>																				
+		
+																					</td>
+																				</tr>
+																			</table>		
+															    	</s:fragment>
+															    	<s:fragment rendered="#{generarSolicitudReparosAction.paginaIngreso == 21 || generarSolicitudReparosAction.paginaIngreso == 22 || generarSolicitudReparosAction.paginaIngreso == 23 || generarSolicitudReparosAction.paginaIngreso == 24}">
+															    			<table  cellpadding="0" cellspacing="0" border="0" width="100%">
+															    				<tr valign="top">
+																					<td width="300px;" > 
+																						<rich:panel>
+																							<f:facet name="header" ><strong>#{generarSolicitudReparosAction.tituloIngreso}</strong> </f:facet>
+																							<table cellpadding="0" cellspacing="0" border="0" style="height:269px;">
+																								<tr valign="top">
+																									<td width="100%;" colspan="2" >
+																								    		<a:outputPanel id="panelineacredito" >
+																									    		<h:messages  globalOnly="true" styleClass="message"
+																										            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
+																									        </a:outputPanel>																							
+																									</td>
+																								</tr>	
+																								<tr valign="top">	 
+																									<td width="100%" colspan="2">
+																										<table cellpadding="0" cellspacing="0" border="0" width="100%">
+																											<tr valign="top">
+																												<td><strong> Monto</strong></td>																								        	
+																												<td>
+																													 <h:inputText id="montoDos"
+																															  value="#{generarSolicitudReparosAction.monto}" 
+																											                  style="text-align: right; width:99%;"
+																											                   onkeypress="return isNumberKey(event);"
+																											                   disabled="false">
+																											                   
+																										       			   	<a:support event="onchange" 
+																										                         reRender="montoDos,panelineacredito,idUsuariosCorreosLCAux,mpMensajeGlobal"
+																										             			      ajaxSingle="true" 
+																										             			      action="#{generarSolicitudReparosAction.obtenerMontoCredito()}" 
+																										             			       oncomplete="if (#{generarSolicitudReparosAction.mensajeGlogal != null}) {#{rich:component('mpMensajeGlobal')}.show()}"/>																									                   
+																											             		<f:convertNumber type="currency" currencySymbol="" locale="#{globalLocale}"/>																								                   
+																											     	  </h:inputText>  																										
+																									            </td>
+																											</tr>
+																											<tr valign="top" ><td height="30px;" colspan="2">&nbsp;</td></tr>	
+																											<tr valign="top" ><td height="20px;" colspan="2"><strong> Condición de Riesgo</strong></td></tr>
+																											<tr valign="top">
+																												<td colspan="2">
+																														<a:outputPanel id="idcondicionRiesgo">		
+																					         								<h:selectOneMenu value="#{generarSolicitudReparosAction.clsRiesgo}" 
+																					         								                 style="width:100%;"
+																					         								                 disabled="#{generarSolicitudReparosAction.activarCboClsRiesgo}">
+																								                			<s:selectItems value="#{generarSolicitudReparosAction.listaStringClsRiesgos}" 
+																								                			                 var="_cr"  
+																								                			               label="#{_cr}" 
+																								                			               noSelectionLabel="Seleccionar ..." 
+																								                			               hideNoSelectionLabel="true"/>
+																								                			              
+																										                		<a:support event="onchange" 
+																											                         reRender="idcondicionRiesgo"
+																											             			      ajaxSingle="true" 
+																											             			      action="#{generarSolicitudReparosAction.obtenerCondicionRiesgo()}" />						                			               
+																								                		    </h:selectOneMenu>	
+																							                		    																						
+																													</a:outputPanel>
+																									            </td>
+																											</tr>	
+																											<tr valign="top"><td height="30px;" colspan="2" >&nbsp;</td></tr>
+																											<tr valign="top"><td height="20px;" colspan="2"><strong> Condición de Pago</strong></td></tr>
+																											<tr valign="top">
+																												<td colspan="2">
+																												   <a:outputPanel id="idCondicionPago">
+																				         								<h:selectOneMenu value="#{generarSolicitudReparosAction.cPago}" 
+																				         								                 style="width:100%;"
+																				         								                 disabled="#{generarSolicitudReparosAction.activarCboCdnPago}">
+																							                			<s:selectItems value="#{generarSolicitudReparosAction.listaStringCdnPagos}" 
+																							                			                 var="_cp"  
+																							                			               label="#{_cp}" 
+																							                			               noSelectionLabel="Seleccionar ..." 
+																							                			               hideNoSelectionLabel="true"/>
+																							                			              
+																									                		<a:support event="onchange" 
+																										                         reRender="idCondicionPago"
+																										             			      ajaxSingle="true" 
+																										             			      action="#{generarSolicitudReparosAction.obtenerCondicionPago()}" />							                			               
+																							                		    </h:selectOneMenu>	
+																						                		   </a:outputPanel>
+																									            </td>
+																											</tr>																																																			
+																										</table>
+																									</td>
+																								</tr>
+																							</table>
+																						</rich:panel>
+																						<rich:panel>
+																							<f:facet name="header" >Destinatarios</f:facet>
+																							<table cellpadding="0" cellspacing="0" border="0" width="100%">
+																								<tr>
+																									<td colspan="2" >
+																									  <a:outputPanel id="idUsuariosCorreosLCAux">
+																								    	<div class="results" id="grillaUC" style="height:132px; overflow: auto;">
+																									   		<h:outputText value="No existen usuarios agregado para envio de correo." 
+																									   		   rendered="#{empty generarSolicitudReparosAction.listaUsuarioCorreoagregados}"/>
+																										    <rich:dataTable id="idUsuariosCorreosLC"
+																										                var="_usuarioCorreo"
+																										              value="#{generarSolicitudReparosAction.listaUsuarioCorreoagregados}"
+																										           rendered="#{not empty generarSolicitudReparosAction.listaUsuarioCorreoagregados}"
+																										           style="width:100%">
+																										        <rich:column>
+																										            <f:facet name="header">Usuario</f:facet>
+																										            <h:outputText value="#{_usuarioCorreo.nombre}"/>
+																										        </rich:column>
+																										    </rich:dataTable>
+																									    </div>	
+																									  </a:outputPanel>  
+																									</td>
+																								</tr>
+																							</table>																					
+																						</rich:panel>																			
+																					</td>
+																					<td width="800px;">
+																					
+																						<rich:panel>
+																							<f:facet name="header" >Descripción del Proyecto</f:facet>
+																								<table cellpadding="0" cellspacing="0" border="0" width="100%">
+																								   <tr valign="top" >
+																										<td width="800px;" align="left" colspan="6">
+																											<h:inputTextarea id="idDescripcionProyecto" value="#{generarSolicitudReparosAction.descripcionProyecto}" 
+																															rows="2" 
+																															style="width:99%;"/> 																								
+																										</td>
+																								   </tr>
+																								   <tr valign="top">
+																										<td  align="left" width="50px;"><strong> Monto:</strong></td>
+																										<td  align="left" width="150px;">
+																													 <h:inputText id="montoCredito"
+																															  value="#{generarSolicitudReparosAction.montoCredito}" 
+																											                  style="text-align: right; width:95%;"
+																											                   onkeypress="return isNumberKey(event);"
+																											                   disabled="false">
+																											                   
+																										       			   	<a:support event="onchange" 
+																										                         reRender="montoCredito"
+																										             			      ajaxSingle="true" 
+																										             			      action="#{generarSolicitudReparosAction.obtenerMontoProyecto()}" />																									                   
+																											             		<f:convertNumber type="currency" currencySymbol="" locale="#{globalLocale}"/>																								                   
+																											     	  </h:inputText> 
+																										</td>																								
+																										<td  align="left" width="120px;"><strong>Plazo de Ejecución:</strong></td>
+																										<td  align="left" colspan="3">
+																										  <h:inputText 	id="idPlazoEjecucion" value="#{generarSolicitudReparosAction.plazoEjecucion}" 
+																													style="text-align: left; width:98%;"
+																													size="5"
+																													/>																									
+																										</td>																								
+																									</tr>	
+																								</table>
+																						</rich:panel>
+		
+																						<rich:panel>
+																							<f:facet name="header" >Concepto de Negocios y Socios</f:facet>
+																								<table cellpadding="0" cellspacing="0" border="0" width="100%">
+																								   <tr valign="top">
+																										<td  align="left" colspan="5">
+																										     <strong> Conceptos de Negocios Involucrados:</strong>
+																										</td>
+																										<td  align="left" colspan="1" width="130px;">
+																										     <strong>Potencial Compra:</strong>
+																										</td>
+																										
+																									</tr>	
+																								   <tr valign="top">
+																										<td  align="left" colspan="4">
+																											<h:inputTextarea id="conceptoInv" value="#{generarSolicitudReparosAction.conceptoNegocios}" 
+																															rows="2" 
+																															cols="20"
+																															disabled="true"
+																															style="width:97%;"/> 																							
+																										</td>																								
+																										<td  align="center">
+																											<a:commandButton id="idAgregarConcepto" value="Agregar" 
+																												              reRender="mpAgregarConceptoNegocio" 
+																												            oncomplete="#{rich:component('mpAgregarConceptoNegocio')}.show()"
+																												            ajaxSingle="true"
+																												            >
+																											    </a:commandButton>	
+																										</td>
+																										<td  align="left">
+																													 <h:inputText id="montoPotencial"
+																															  value="#{generarSolicitudReparosAction.potencialCompra}" 
+																											                  style="text-align: right; width:95%;"
+																											                   onkeypress="return isNumberKey(event);"
+																											                   disabled="false">
+																										       			   	<a:support event="onchange" 
+																										                         reRender="montoPotencial"
+																										             			      ajaxSingle="true" 
+																										             			      action="#{generarSolicitudReparosAction.obtenerMontoProyecto()}" />																									                   
+																											             		<f:convertNumber type="currency" currencySymbol="" locale="#{globalLocale}"/>																								                   
+																											     	  </h:inputText> 																								
+																										
+																										</td>																								
+																								  </tr>
+																								   <tr valign="top">
+																										<td  align="left" colspan="5">
+																										     <strong> Rut y Nombre de Socios:</strong>
+																										</td>
+																										<td  align="left" colspan="1" width="130px;">
+																										     <strong></strong>
+																										</td>
+																								  </tr>																						  			
+																								  <tr>		
+																										<td  align="left" colspan="4">
+																											<h:inputTextarea id="rutNombresSocios" value="#{generarSolicitudReparosAction.rutNombresSocios}"
+																															rows="2" 
+																															disabled="true"
+																															style="width:97%;"/> 																							
+																										</td>																									
+																										<td  align="center">
+																											<a:commandButton id="idAgregarSocios" value="Agregar" 
+																												              reRender="mpAgregarSocios" 
+																												            oncomplete="#{rich:component('mpAgregarSocios')}.show()"
+																												            ajaxSingle="true"
+																												            >
+																											    </a:commandButton>	
+																										</td>
+																										<td  align="center"> </td>
+																								    </tr>
+																									<tr valign="top">
+																											<td  align="left" colspan="6">
+																											     <strong> Observaciones:</strong>
+																											</td>
+																									
+																									</tr>																							
+																									<tr valign="top">
+																											<td  align="left" colspan="6">
+															         											<h:inputTextarea id="idobservacionesCredito" value="#{generarSolicitudReparosAction.observacionesCredito}" 
+															         											                rows="2" 
+															         											                style="width:99%;"/> 																								     
+																											</td>
+																									</tr>																								
+																								</table>
+																						</rich:panel>
+																						<rich:panel>
+																							<f:facet name="header" >Adjuntar Archvios</f:facet>
+																								<table cellpadding="0" cellspacing="0" border="0" width="100%" >
+																								   <tr valign="top" >
+																										<td width="150px;" colspan="3" align="center">  
+																							    			<h:outputLink value="javascript:void(0);" id="openMpAdjuntarArchivoLC">
+																										       <strong> Adjuntar archivo </strong>
+																										        <rich:componentControl for="mpAdjuntarArchivo" attachTo="openMpAdjuntarArchivoLC" operation="show" event="onclick"/>
+																										    </h:outputLink>
+																										
+																										</td>
+																									</tr>	
+																								   <tr valign="top" >
+																										<td width="500px;" colspan="3" align="left" style="border:1px solid #000000;padding:3px;">
+																										    <a:outputPanel id="archivosListLC">
+																									    	<div class="results" style="height:111px; overflow: auto;">
+																										   		<h:outputText value="No ha Agregado ningun Archivo." 
+																										   		 rendered="#{empty generarSolicitudReparosAction.listaFileUploadedDTOs}"/>
+																									
+																											    <rich:dataTable id="idArchivosAgregadosLC"
+																											                var="_arch"
+																											              value="#{generarSolicitudReparosAction.listaFileUploadedDTOs}"
+																											           rendered="#{not empty generarSolicitudReparosAction.listaFileUploadedDTOs}">
+																											      	
+																											       
+																											        <rich:column>
+																											            <f:facet name="header">Nombre</f:facet>
+																											            <h:outputText value="#{_arch.nombreArchivo}"/>
+																											        </rich:column>
+																											        
+																											        <rich:column styleClass="action">
+																											            <f:facet name="header">Acción</f:facet>
+																														<a:commandButton value="Eliminar" 
+																														                action="#{generarSolicitudReparosAction.eliminarArchivo(_arch)}"
+																														                ajaxSingle="true"
+																										         		              reRender="archivosListLC,idArchivosAgregadosLC" />		
+																							
+																											        </rich:column>
+																										    	  </rich:dataTable>
+																									    	  </div>
+																									    	</a:outputPanel>  
+																										</td>
+																									</tr>
+																							   </table>
+																						</rich:panel>																				
+																					</td>
+																				</tr>
+																			</table>		
+															    	</s:fragment>
+															    	<s:fragment rendered="#{generarSolicitudReparosAction.paginaIngreso == 31 || generarSolicitudReparosAction.paginaIngreso == 32}">
+														    			<table  cellpadding="0" cellspacing="0" border="0" width="100%">
+														    				<tr valign="top">
+																				<td width="300px;" > 
+																					<rich:panel>
+																						<f:facet name="header" ><strong>#{generarSolicitudReparosAction.tituloIngreso}</strong> </f:facet>
+																						<table cellpadding="0" cellspacing="0" border="0" style="height:100px;">
+																							<tr valign="top">
+																								<td width="100px;">Cond.Riesgo</td>
+																								<td width="15px;">
+																									 <h:selectBooleanCheckbox id="idchecbokCRiesgo" value="#{generarSolicitudReparosAction.condicionRiesgo}">
+																									 	<a:support ajaxSingle="true" reRender="idchecbokCRiesgo,idCboCRiesgo,idUsuariosCorreosCCAux,idUsuariosCorreosCC" event="onchange" action="#{generarSolicitudReparosAction.habilitarComboCondicion('CondicionRiesgo')}" />
+																									 </h:selectBooleanCheckbox>
+																								</td>
+																								<td width="185px;">
+																											<a:outputPanel id="idCboCRiesgo">		
+																		         								<h:selectOneMenu value="#{generarSolicitudReparosAction.clsRiesgo}" 
+																		         								                 style="width:100%;"
+																		         								                 disabled="#{generarSolicitudReparosAction.comboCRiesgo}">
+																					                			<s:selectItems value="#{generarSolicitudReparosAction.listaStringClsRiesgos}" 
+																					                			                 var="_criesgo"  
+																					                			               label="#{_criesgo}" 
+																					                			               noSelectionLabel="Seleccionar ..." 
+																					                			               hideNoSelectionLabel="true"/>
+																							                		<a:support event="onchange" 
+																								                         reRender="idCboCRiesgo,idUsuariosCorreosCCAux,idUsuariosCorreosCCAux"
+																								             			      ajaxSingle="true" 
+																								             			      action="#{generarSolicitudReparosAction.obtenerCondicionRiesgo()}" />						                			               
+																					                		    </h:selectOneMenu>	
+																										</a:outputPanel>																						
+																										
+																								</td>
+																							</tr>
+																							
+																							<tr valign="top">
+																								<td width="100px;">Cond.Pago</td>
+																								<td width="15px;">
+																									 <h:selectBooleanCheckbox id="idchecbokCPago" value="#{generarSolicitudReparosAction.condicionPago}">
+																									 	<a:support ajaxSingle="true" reRender="idchecbokCPago,idCboCPago,idUsuariosCorreosCCAux,idUsuariosCorreosCC" event="onchange" action="#{generarSolicitudReparosAction.habilitarComboCondicion('CondicionPago')}" />
+																									 </h:selectBooleanCheckbox>
+																								</td>
+																								<td width="185px;">
+																									   <a:outputPanel id="idCboCPago">
+																	         								<h:selectOneMenu value="#{generarSolicitudReparosAction.cPago}" 
+																	         								                 style="width:100%;"
+																	         								                 disabled="#{generarSolicitudReparosAction.comboCPago}">
+																				                			<s:selectItems value="#{generarSolicitudReparosAction.listaStringCdnPagos}" 
+																				                			                 var="_cp"  
+																				                			               label="#{_cp}" 
+																				                			               noSelectionLabel="Seleccionar ..." 
+																				                			               hideNoSelectionLabel="true"/>
+																				                			              
+																						                		<a:support event="onchange" 
+																							                         reRender="idCboCPago,idUsuariosCorreosCCAux,idUsuariosCorreosCCAux"
+																							             			      ajaxSingle="true" 
+																							             			      action="#{generarSolicitudReparosAction.obtenerCondicionPago()}" />							                			               
+																				                		    </h:selectOneMenu>	
+																			                		   </a:outputPanel>																						
+																								</td>
+																							</tr>																				
+																						</table>
+																					</rich:panel>
+																					<rich:panel>
+																						<f:facet name="header" >Destinatarios</f:facet>
+																						<table cellpadding="0" cellspacing="0" border="0" width="100%">
+																							<tr>
+																								<td colspan="2" > 
+																								  <a:outputPanel id="idUsuariosCorreosCCAux">
+																							    	<div class="results" id="grillaUC" style="height:125px; overflow: auto;">
+																								   		<h:outputText value="No existen usuarios agregado para envio de correo." 
+																								   		   rendered="#{empty generarSolicitudReparosAction.listaUsuarioCorreoagregados}"/>
+																									    <rich:dataTable id="idUsuariosCorreosCC"
+																									                var="_usuarioCorreo"
+																									              value="#{generarSolicitudReparosAction.listaUsuarioCorreoagregados}"
+																									           rendered="#{not empty generarSolicitudReparosAction.listaUsuarioCorreoagregados}"
+																									           style="width:100%">
+																									        <rich:column>
+																									            <f:facet name="header">Usuario</f:facet>
+																									            <h:outputText value="#{_usuarioCorreo.nombre}"/>
+																									        </rich:column>
+																									    </rich:dataTable>
+																								    </div>	
+																								  </a:outputPanel>  
+																								  																							
+																								</td>
+																							</tr>
+																						</table>																					
+																					</rich:panel>																			
+																				</td>
+																				<td width="800px;">
+																					<rich:panel>
+																						<f:facet name="header" >Motivo del Cambio</f:facet>
+																							<table cellpadding="0" cellspacing="0" border="0" width="100%" style="height:100px;">
+																							   <tr valign="top" >
+																									<td width="800px;" align="left" colspan="6">
+																										<h:inputTextarea id="idMotivoRiesgoPago" value="#{generarSolicitudReparosAction.motivoRiesgoPago}" 
+																														rows="4" 
+																														style="width:99%;height:99%"/> 																								
+																									</td>
+																							   </tr>
+																							</table>
+																					</rich:panel>
+																					<rich:panel>
+																						<f:facet name="header" >Adjuntar Archvios</f:facet>
+																							<table cellpadding="0" cellspacing="0" border="0" width="100%" >
+																							   <tr valign="top" >
+																									<td width="150px;" colspan="3" align="center">  
+																						    			<h:outputLink value="javascript:void(0);" id="openMpAdjuntarArchivoCC">
+																									       <strong> Adjuntar archivo </strong>
+																									        <rich:componentControl for="mpAdjuntarArchivoCC" attachTo="openMpAdjuntarArchivoCC" operation="show" event="onclick"/>
+																									    </h:outputLink>																								
+																									</td>
+																								</tr>	
+																							   <tr valign="top" >
+																									<td width="500px;" colspan="3" align="left" style="border:1px solid #000000;padding:3px;">
+																									    <a:outputPanel id="archivosListCC">
+																								    	<div class="results" style="height:111px; overflow: auto;">
+																									   		<h:outputText value="No ha Agregado ningun Archivo." 
+																									   		 rendered="#{empty generarSolicitudReparosAction.listaFileUploadedDTOs}"/>
+																								
+																										    <rich:dataTable id="idArchivosAgregadosCC"
+																										                var="_arch"
+																										              value="#{generarSolicitudReparosAction.listaFileUploadedDTOs}"
+																										           rendered="#{not empty generarSolicitudReparosAction.listaFileUploadedDTOs}">
+																										        <rich:column>
+																										            <f:facet name="header">Nombre</f:facet>
+																										            <h:outputText value="#{_arch.nombreArchivo}"/>
+																										        </rich:column>
+																										        <rich:column styleClass="action">
+																										            <f:facet name="header">Acción</f:facet>
+																													<a:commandButton value="Eliminar" 
+																													                action="#{generarSolicitudReparosAction.eliminarArchivo(_arch)}"
+																													                ajaxSingle="true"
+																									         		              reRender="archivosListCC,idArchivosAgregadosCC" />		
+																						
+																										        </rich:column>
+																									    	  </rich:dataTable>
+																								    	  </div>
+																								    	</a:outputPanel>  
+																									</td>
+																								</tr>
+																						   </table>
+																					</rich:panel>																				
+																				</td>
+																			</tr>
+																		</table>														    		
+															    	</s:fragment>
+															    	<s:fragment rendered="#{generarSolicitudReparosAction.paginaIngreso == 41 || generarSolicitudReparosAction.paginaIngreso == 42 }">
+														    			<table  cellpadding="0" cellspacing="0" border="0" width="100%">
+														    				<tr valign="top">
+																				<td width="300px;" > 
+																					<rich:panel>
+																						<f:facet name="header" ><strong>#{generarSolicitudReparosAction.tituloIngreso}</strong></f:facet>
+																						<table cellpadding="0" cellspacing="0" border="0" style="height:100px;">
+																							<tr valign="top">
+																								<td width="300px;" height="30px;" colspan="3">
+																						    		<a:outputPanel id="panelBloqueoDesbloqueo" >
+																							    		<h:messages  globalOnly="true" styleClass="message"
+																								            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
+																							        </a:outputPanel>																						
+																								
+																								</td>
+																							</tr>	
+																							<tr valign="top">
+																								<td width="300px;" colspan="3"  height="30px;" align="center">
+																								 <h:selectOneRadio id="logicOS1"  
+																									   value="#{generarSolicitudReparosAction.opcionBloqueoDesbloqueo}"
+																									   dir="ltr" disabled="false" layout="lineDirection">
+																									 <f:selectItem itemLabel="Bloqueo" itemValue="41"/>
+																									 <f:selectItem itemLabel="Desbloqueo" itemValue="42"/>
+																					       			   	<a:support event="onchange" 
+																				                         reRender="logicOS1"
+																				             			      ajaxSingle="true" 
+																				             			      action="#{generarSolicitudReparosAction.seleccionOpcionesBloqueoDesbloqueo()}" />	
+		
+																								 </h:selectOneRadio>                                                                                                                                                                                                                                                                                                                                                            
+																								 </td>
+																							 </tr>																					
+																							<tr valign="top">
+																								<td width="300px;" height="10px;" colspan="3"> </td>
+																							</tr>																						
+																							<tr valign="top">
+																								<td width="300px;" colspan="3">
+		
+																								</td>
+																							</tr>																				
+																						</table>
+																					</rich:panel>
+																					<rich:panel>
+																						<f:facet name="header" >Destinatarios</f:facet>
+																						<table cellpadding="0" cellspacing="0" border="0" width="100%">
+																							<tr>
+																								<td colspan="2" height="10px;">&nbsp;</td>
+																							</tr>
+																							<tr>
+																								<td colspan="2" > 
+																								  <a:outputPanel id="idUsuariosCorreosOSAux">
+																							    	<div class="results" id="grillaUC" style="height:125px; overflow: auto;">
+																								   		<h:outputText value="No existen usuarios agregado para envio de correo." 
+																								   		   rendered="#{empty generarSolicitudReparosAction.listaUsuarioCorreoagregados}"/>
+																									    <rich:dataTable id="idUsuariosCorreosOS"
+																									                var="_usuarioCorreo"
+																									              value="#{generarSolicitudReparosAction.listaUsuarioCorreoagregados}"
+																									           rendered="#{not empty generarSolicitudReparosAction.listaUsuarioCorreoagregados}"
+																									           style="width:100%">
+																									        <rich:column>
+																									            <f:facet name="header">Usuario</f:facet>
+																									            <h:outputText value="#{_usuarioCorreo.nombre}"/>
+																									        </rich:column>
+																									    </rich:dataTable>
+																								    </div>	
+																								  </a:outputPanel>  																						
+																								</td>
+																							</tr>
+																						</table>																					
+																					</rich:panel>																			
+																				</td>
+																				<td width="800px;">
+																					<s:fragment rendered="#{generarSolicitudReparosAction.paginaIngreso == 41 || generarSolicitudReparosAction.paginaIngreso == 42}">
+																						<rich:panel>
+																							<f:facet name="header" ><strong>Observaciones</strong></f:facet>
+																								<table cellpadding="0" cellspacing="0" border="0" width="100%" style="height:100px;">
+																								   <tr valign="top" >
+																										<td width="800px;" align="left" colspan="6">
+																											<h:inputTextarea id="idTextoObservaciones" 
+																											                value="#{generarSolicitudReparosAction.observaciones}" 
+																															rows="4" 
+																															style="width:99%;height:99%">
+																										       			   	<a:support event="onchange" 
+																										                         reRender="idTextoObservaciones,idUsuariosCorreosOSAux"
+																										             			      ajaxSingle="true" 
+																										             			      action="#{generarSolicitudReparosAction.obtenerCorreoBloqueDesbloqueo()}" />																														
+																											</h:inputTextarea>				 																								
+																										</td>
+																								   </tr>
+																								</table>
+																						</rich:panel>
+																					</s:fragment>
+																					<rich:panel>
+																						<f:facet name="header" >Adjuntar Archvios</f:facet>
+																							<table cellpadding="0" cellspacing="0" border="0" width="100%" >
+																							   <tr valign="top" >
+																									<td width="150px;" colspan="3" align="center">  
+																						    			<h:outputLink value="javascript:void(0);" id="openMpAdjuntarArchivoOS">
+																									       <strong> Adjuntar archivo </strong>
+																									        <rich:componentControl for="mpAdjuntarArchivoOS" attachTo="openMpAdjuntarArchivoOS" operation="show" event="onclick"/>
+																									    </h:outputLink>																								
+																									</td>
+																								</tr>	
+																							   <tr valign="top" >
+																									<td width="500px;" colspan="3" align="left" style="border:1px solid #000000;padding:3px;">
+																									    <a:outputPanel id="archivosListOS">
+																								    	<div class="results" style="height:111px; overflow: auto;">
+																									   		<h:outputText value="No ha Agregado ningun Archivo." 
+																									   		 rendered="#{empty generarSolicitudReparosAction.listaFileUploadedDTOs}"/>
+																								
+																										    <rich:dataTable id="idArchivosAgregadosOS"
+																										                var="_arch"
+																										              value="#{generarSolicitudReparosAction.listaFileUploadedDTOs}"
+																										           rendered="#{not empty generarSolicitudReparosAction.listaFileUploadedDTOs}">
+																										        <rich:column>
+																										            <f:facet name="header">Nombre</f:facet>
+																										            <h:outputText value="#{_arch.nombreArchivo}"/>
+																										        </rich:column>
+																										        <rich:column styleClass="action">
+																										            <f:facet name="header">Acción</f:facet>
+																													<a:commandButton value="Eliminar" 
+																													                action="#{generarSolicitudReparosAction.eliminarArchivo(_arch)}"
+																													                ajaxSingle="true"
+																									         		              reRender="archivosListOS,idArchivosAgregadosOS" />		
+																						
+																										        </rich:column>
+																									    	  </rich:dataTable>
+																								    	  </div>
+																								    	</a:outputPanel>  
+																									</td>
+																								</tr>
+																						   </table>
+																					</rich:panel>																				
+																				</td>
+																			</tr>
+																		</table>													    			
+															    	</s:fragment>
+															    	<s:fragment rendered="#{generarSolicitudReparosAction.paginaIngreso == 43 || generarSolicitudReparosAction.paginaIngreso == 44}">
+														    			<table  cellpadding="0" cellspacing="0" border="0" width="100%">
+														    				<tr>
+														    					<td colspan="2" width="100%" > 
+																					<s:fragment rendered="#{generarSolicitudReparosAction.paginaIngreso == 43}">
+																						<rich:panel>
+																							<f:facet name="header" ><strong>Datos del Cliente DM </strong></f:facet>
+																								<table cellpadding="0" cellspacing="0" border="0" width="100%" style="height:150px;">
+																								   <tr valign="top" >
+																										<td width="800px;" height="10px;" align="center" colspan="6"> 
+																										    <a:commandButton value="Agregar Cliente DM" 
+																										    				ajaxSingle="true"
+																											              reRender="mpAgregarClienteDMReparo" 
+																											            oncomplete="#{rich:component('mpAgregarClienteDMReparo')}.show()"
+																											            action="#{generarSolicitudReparosAction.crearVariableClienteDM()}">
+																										    </a:commandButton>																									
+																										</td>
+																								   </tr>
+																								   <tr valign="top" >
+																										<td width="800px;" align="left" colspan="6" style="border:1px solid #000000;padding:3px;"> 
+																										 
+																										    <a:outputPanel id="idCreacionDMList">
+																									    	<div class="results" style="height:140px; overflow: auto;" >
+																										   		<h:outputText value="No hay ningun cliente agregado a la lista." 
+																										   		 rendered="#{empty generarSolicitudReparosAction.listaClienteDMs}"/>
+																									
+																											    <rich:dataTable id="idClienteCreacionDM"
+																											                var="_cdm"
+																											              value="#{generarSolicitudReparosAction.listaClienteDMs}"
+																											           rendered="#{not empty generarSolicitudReparosAction.listaClienteDMs}">
+																											        <rich:column>
+																											            <f:facet name="header">Rut</f:facet>
+																											            <h:outputText value="#{_cdm.id.rut}"/>
+																											        </rich:column>
+																											        <rich:column>
+																											            <f:facet name="header">Nombre</f:facet>
+																											            <h:outputText value="#{_cdm.id.nombre}"/>
+																											        </rich:column>
+																											        <rich:column>
+																											            <f:facet name="header">Oficina</f:facet>
+																											            <h:outputText value="#{_cdm.id.oficinaVentas}"/>
+																											        </rich:column>
+																											        <rich:column>
+																											            <f:facet name="header">Zona</f:facet>
+																											            <h:outputText value="#{_cdm.id.zona}"/>
+																											        </rich:column>																									        																									        																									        
+																											        <rich:column>
+																											            <f:facet name="header">Lista Precios</f:facet>
+																											            <h:outputText value="#{_cdm.id.listaPrecio}"/>
+																											        </rich:column>
+																											        <rich:column>
+																											            <f:facet name="header">Sector</f:facet>
+																											            <h:outputText value="#{_cdm.id.sector}"/>
+																											        </rich:column>
+																											        <rich:column>
+																											            <f:facet name="header">Rut V.Telefono</f:facet>
+																											            <h:outputText value="#{_cdm.id.vendTelefono}"/>
+																											        </rich:column>																									        
+																											        <rich:column>
+																											            <f:facet name="header">Rut V.Terreno</f:facet>
+																											            <h:outputText value="#{_cdm.id.vendTerreno}"/>
+																											        </rich:column>																									        
+																											        <rich:column styleClass="action">
+																											            <f:facet name="header">Acción</f:facet>
+																														<a:commandButton value="Eliminar" 
+																														                action="#{generarSolicitudReparosAction.eliminarClienteDM(_cdm)}"
+																														                ajaxSingle="true"
+																										         		              reRender="idCreacionDMList,idClienteCreacionDM" />		
+																							
+																											        </rich:column>
+																										    	  </rich:dataTable>
+																									    	  </div>
+																									    	</a:outputPanel>  																								
+																										
+																										</td>
+																								   </tr>
+																								</table>
+																						</rich:panel>																			
+																					</s:fragment>
+																					<s:fragment rendered="#{generarSolicitudReparosAction.paginaIngreso == 44}">
+																						<rich:panel>
+																							<f:facet name="header" ><strong>Datos de Documentos a Prorrogar</strong> </f:facet>
+																								<table cellpadding="0" cellspacing="0" border="0" width="100%" style="height:100px;">
+																								   <tr valign="top" >
+																										<td width="800px;" height="10px;" align="center" colspan="6"> 
+																										    <a:commandButton value="Agregar Documentos" 
+																										    				ajaxSingle="true"
+																											              reRender="mpConsultarDocumentoProrrogaReparo" 
+																											            oncomplete="#{rich:component('mpConsultarDocumentoProrrogaReparo')}.show()"
+																											            action="#{generarSolicitudReparosAction.obtenerChequeProrroga()}">
+																										    </a:commandButton>																									
+																										</td>
+																								   </tr>
+																								   <tr valign="top" >
+																										<td width="800px;" align="left" colspan="6" style="border:1px solid #000000;padding:3px;"> 
+																										    <a:outputPanel id="idDocumentoProrrogaList">
+																									    	<div class="results" style="height:70px; overflow: auto;" >
+																										   		<h:outputText value="No hay ningun documento para prorrogar en la lista." 
+																										   		 rendered="#{empty generarSolicitudReparosAction.listaDoctoProrrogaAgregados}"/>
+																									
+																											    <rich:dataTable id="idDocumentoProrroga"
+																											                var="_dpa"
+																											              value="#{generarSolicitudReparosAction.listaDoctoProrrogaAgregados}"
+																											           rendered="#{not empty generarSolicitudReparosAction.listaDoctoProrrogaAgregados}">
+																											        <rich:column width="80px;" style="text-align: center;">
+																											            <f:facet name="header">Nro de Docto </f:facet>
+																											            <h:outputText value="#{_dpa.numeroDocto}"/>
+																											        </rich:column>				        
+																											        <rich:column width="80px;" style="text-align: center;">
+																											            <f:facet name="header">Monto</f:facet>
+																											            <h:outputText value="#{_dpa.monto}">
+																											            	<f:convertNumber currencySymbol="$" groupingUsed="#{true}"
+																										  									maxFractionDigits="0" type="currency"/> 																									            
+																											            </h:outputText>
+																											        </rich:column>
+																											        <rich:column width="80px;" style="text-align: center;">
+																											            <f:facet name="header">Venc.Actual</f:facet>
+																											            <h:outputText value="#{_dpa.fechaVencActual}">
+																											            	 <s:convertDateTime type="date" dateStyle="short" pattern="dd/MM/yyyy"/>
+																											            </h:outputText>
+																											        </rich:column>	
+																											        <rich:column width="170px;" style="text-align: center;">
+																											            <f:facet name="header">Venc.Nuevo</f:facet>
+																										                <rich:calendar id="fechaVencimientoNuevo"
+																										                       required="true"
+																										                       ajaxSingle="true"
+																										                       style="width:170px;"
+																										                          value="#{_dpa.fechaVencNuevo}" datePattern="dd/MM/yyyy">
+																										                          <a:support event="onchanged" 
+																										                                     ajaxSingle="true"
+																										                                     reRender="idDocumentoProrrogaList,idDocumentoProrroga,menssajeTexto,mpMensajeGlobal,idUsuariosCorreosOSAux3"
+																										                                     action="#{generarSolicitudReparosAction.verificarFechaVencimientoNuevoMayorFechaActual(_dpa)}"
+																										                                     oncomplete="if (#{generarSolicitudReparosAction.mensajeGlogal != null}) {#{rich:component('mpMensajeGlobal')}.show()}"
+																										                                     />
+																										                 </rich:calendar>         																									            
+																											        </rich:column>
+																											        <ui:remove>	
+																											        <rich:column>
+																											            <f:facet name="header">Motivo</f:facet>
+																															<h:inputText id="menssajeTexto"
+																																		  value="#{_dpa.mensaje}" 
+																														                  style="text-align: left;width:100%;"
+																														                  disabled="false"
+																														                  >
+																														       			   	<a:support event="onchange" 
+																														                         reRender="menssajeTexto"
+																														             			      ajaxSingle="true" 
+																														             			      action="#{generarSolicitudReparosAction.obtenerMensajeGrillaProrroga(_dpa)}"
+																														             			      process="menssajeTexto" />
+																															</h:inputText>	
+																																
+																											        </rich:column>	
+																											        </ui:remove>																								        
+																											        <rich:column width="10px;" style="text-align: center;" styleClass="action">
+																											            <f:facet name="header">Acción</f:facet>
+																														<a:commandButton value="Eliminar" 
+																														                action="#{generarSolicitudReparosAction.eliminarDocumentoProrroga(_dpa)}"
+																														                ajaxSingle="true"
+																										         		              reRender="idDocumentoProrrogaList,idDocumentoProrroga" />		
+																							
+																											        </rich:column>
+																										    	  </rich:dataTable>
+																									    	  </div>
+																									    	</a:outputPanel>  																								
+																										</td>
+																								   </tr>
+																								   <tr valign="top" >
+																										<td width="800px;"  height="20px;" align="left" colspan="6"> 
+																											<strong>Motivo</strong>	 
+																										</td>
+																								   </tr>
+																								   <tr valign="top" >
+																										<td width="800px;" align="left" colspan="6" style="border:1px solid #000000;padding:3px;" height="50px;"> 
+																												<h:inputTextarea id="idMotivoProrroga"
+																															  value="#{generarSolicitudReparosAction.motivoProrroga}" 
+																											                  style="text-align:left; width:98%;"
+																											                  rows="3"
+																											                  disabled="false"
+																											                  
+																											                  >
+																												</h:inputTextarea>	
+																										</td>
+																								   </tr>																						   
+																								   
+																								</table>
+																						</rich:panel>																			
+																					</s:fragment>																			
+														    					</td>
+														    				</tr>
+														    				<tr valign="top">
+																				<td width="300px;" > 
+																					<rich:panel>
+																						<f:facet name="header" >Destinatarios</f:facet>
+																						<table cellpadding="0" cellspacing="0" border="0" width="100%">
+																							<tr>
+																								<td colspan="2" height="10px;">&nbsp;</td>
+																							</tr>
+																							<tr>
+																								<td colspan="2" > 
+																								  <a:outputPanel id="idUsuariosCorreosOSAux3">
+																							    	<div class="results" id="grillaUC" style="height:125px; overflow: auto;">
+																								   		<h:outputText value="No existen usuarios agregado para envio de correo." 
+																								   		   rendered="#{empty generarSolicitudReparosAction.listaUsuarioCorreoagregados}"/>
+																									    <rich:dataTable id="idUsuariosCorreosOS3"
+																									                var="_usuarioCorreo"
+																									              value="#{generarSolicitudReparosAction.listaUsuarioCorreoagregados}"
+																									           rendered="#{not empty generarSolicitudReparosAction.listaUsuarioCorreoagregados}"
+																									           style="width:100%">
+																									        <rich:column>
+																									            <f:facet name="header">Usuario</f:facet>
+																									            <h:outputText value="#{_usuarioCorreo.nombre}"/>
+																									        </rich:column>
+																									    </rich:dataTable>
+																								    </div>	
+																								  </a:outputPanel>  																						
+																								</td>
+																							</tr>
+																						</table>																					
+																					</rich:panel>																			
+																				</td>
+																				<td width="800px;">
+																					<rich:panel>
+																						<f:facet name="header" >Adjuntar Archvios</f:facet>
+																							<table cellpadding="0" cellspacing="0" border="0" width="100%" >
+																							   <tr valign="top" >
+																									<td width="150px;" colspan="3" align="center">  
+																						    			<h:outputLink value="javascript:void(0);" id="openMpAdjuntarArchivoOS1">
+																									       <strong> Adjuntar archivo </strong>
+																									        <rich:componentControl for="mpAdjuntarArchivoOS" attachTo="openMpAdjuntarArchivoOS1" operation="show" event="onclick"/>
+																									    </h:outputLink>																								
+																									
+																									
+																									</td>
+																								</tr>	
+																							   <tr valign="top" >
+																									<td width="500px;" colspan="3" align="left" style="border:1px solid #000000;padding:3px;">
+																									    <a:outputPanel id="archivosListOS2">
+																								    	<div class="results" style="height:111px; overflow: auto;">
+																									   		<h:outputText value="No ha Agregado ningun Archivo." 
+																									   		 rendered="#{empty generarSolicitudReparosAction.listaFileUploadedDTOs}"/>
+																								
+																										    <rich:dataTable id="idArchivosAgregadosOS2"
+																										                var="_arch"
+																										              value="#{generarSolicitudReparosAction.listaFileUploadedDTOs}"
+																										           rendered="#{not empty generarSolicitudReparosAction.listaFileUploadedDTOs}">
+																										        <rich:column>
+																										            <f:facet name="header">Nombre</f:facet>
+																										            <h:outputText value="#{_arch.nombreArchivo}"/>
+																										        </rich:column>
+																										        <rich:column styleClass="action">
+																										            <f:facet name="header">Acción</f:facet>
+																													<a:commandButton value="Eliminar" 
+																													                action="#{generarSolicitudReparosAction.eliminarArchivo(_arch)}"
+																													                ajaxSingle="true"
+																									         		              reRender="archivosListOS,idArchivosAgregadosOS" />		
+																						
+																										        </rich:column>
+																									    	  </rich:dataTable>
+																								    	  </div>
+																								    	</a:outputPanel>  
+																									</td>
+																								</tr>
+																						   </table>
+																					</rich:panel>																				
+																				</td>
+																			</tr>
+																		
+																		</table>													    			
+															    	</s:fragment>
+															
+															</rich:panel>	
+															</a:outputPanel>			    								
+					    								</td>
+					    							</tr>
+					    						</table>							    			
+							    			</rich:tab>
+							    		</rich:tabPanel>
+						    		</rich:panel>
+			    					</s:fragment>
+			    				</a:outputPanel>	
+		    					</td>
+		    				</tr>					
+		    			</table>
+			    	</h:form>
+		    	</rich:panel>
+ 			</rich:tab>
+ 		</rich:tabPanel>
+    	<a:status onstart="abrirModal();" onstop="cerrarModal();"></a:status>
+   		<ui:include src="/layout/modalSckReparo/modalConsultarCuentaCorriente.xhtml" />
+		<ui:include src="/layout/modalSckReparo/modalAdjuntarArchivo.xhtml" />  
+		<ui:include src="/layout/modalSckReparo/modalAgregarCotizacion.xhtml" />		  	
+		<ui:include src="/layout/modalSckReparo/modalIngresoSolicitud.xhtml" />
+		<ui:include src="/layout/modalSckReparo/modalMensajeGlobal.xhtml" />	
+		<ui:include src="/layout/modalSckReparo/modalRevisarConceptoMonto.xhtml" />	
+		<ui:include src="/layout/modalSckReparo/modalIngresoClienteDM.xhtml" />
+		<ui:include src="/layout/modalSckReparo/modalConsultarDocumentoProrroga.xhtml" />			
+		<ui:include src="/layout/modalSckReparo/modalAdjuntarArchivoOS.xhtml" />
+		<ui:include src="/layout/modalSckReparo/modalIngresoObservaciones.xhtml" />
+		<ui:include src="/layout/modalSckReparo/modalAgregarSocios.xhtml" />	
+		<ui:include src="/layout/modalSckReparo/modalAgregarConceptoNegocio.xhtml" />
+		
+		<ui:remove>    	
+			
+			<ui:include src="/layout/modalSck/modalConsultarProductos.xhtml" />
+			<ui:include src="/layout/modalSck/modalAdjuntarArchivoLC.xhtml" />
+			<ui:include src="/layout/modalSck/modalAgregarUsuariosCorreosLC.xhtml" />
+			<ui:include src="/layout/modalSck/modalAdjuntarArchivoCC.xhtml" />
+			<ui:include src="/layout/modalSck/modalAgregarUsuariosCorreosCC.xhtml" />
+			<ui:include src="/layout/modalSck/modalAgregarUsuariosCorreosOS.xhtml" />
+			<ui:include src="/layout/modalSck/modalIngresoClienteDM.xhtml" />
+			<ui:include src="/layout/modalSck/modalRevisarConceptoMonto.xhtml" />
+			
+			<ui:include src="/layout/modalSck/modalConsultarLogs.xhtml" />
+			<ui:include src="/layout/modalSck/modalConsultarHitos.xhtml"/>		
+		</ui:remove>
+    </ui:define>
+ 
+</ui:composition>

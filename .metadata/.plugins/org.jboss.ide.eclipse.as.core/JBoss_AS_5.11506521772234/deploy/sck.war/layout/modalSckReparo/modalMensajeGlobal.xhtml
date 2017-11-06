@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	<rich:modalPanel id="mpMensajeGlobal" autosized="true" width="400" height="100">
+    	 <f:facet name="header">
+            <h:outputText value="Mensaje" style="padding-right:15px;" />
+        </f:facet>
+    	<f:facet name="controls">
+            <h:panelGroup>
+				<h:form>
+					<a:commandLink	ajaxSingle="true" action="#{generarSolicitudReparosAction.limpiaMensajeGlobal}" reRender="frmSeleccion,tiempoEjecMenu,panelMensaje">
+						<h:graphicImage value="img/close.png" styleClass="hidelink"	id="mpMensajeGlobalhidelink" />
+					</a:commandLink>
+					<rich:componentControl for="mpMensajeGlobal"
+						attachTo="mpMensajeGlobalhidelink" operation="hide"
+						event="onclick" 
+						/>
+				</h:form>            
+            </h:panelGroup>
+        </f:facet>
+        <h:form id="frm_mensaje_solicitud">
+		        <h:panelGrid id="escritura" columns="1" cellpadding="0" cellspacing="5" width="100%" style="text-align:center;">
+		        	<h:outputLabel style="font-size:14px; font-weight: bold;" value="#{generarSolicitudReparosAction.mensajeGlogal}" />
+				</h:panelGrid>
+				
+				
+        </h:form>
+    </rich:modalPanel>
+    
+</ui:composition>

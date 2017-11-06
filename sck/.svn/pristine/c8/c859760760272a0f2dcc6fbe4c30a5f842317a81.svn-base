@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/layout/template.xhtml"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:p="http://primefaces.prime.com.tr/ui"
+    >
+    
+
+<ui:define name="body">
+
+    <rich:panel>
+        <f:facet name="header">Detalle De Usuario</f:facet>
+		<div style="float:left; width: 90%">
+		<h:panelGrid cellpadding="0" cellspacing="5" columns="3">
+	       <s:decorate id="usuario" template="/layout/edit.xhtml">
+	       		<ui:define name="label">Usuario</ui:define>
+	      		<h:selectOneMenu value="" required="true">
+	      			<s:selectItems noSelectionLabel="Seleccione Usuario..."/>
+	      		</h:selectOneMenu>
+	        </s:decorate>
+	        <s:decorate id="idUsuario" template="/layout/edit.xhtml">
+	       		<ui:define name="label">Id Usuario</ui:define>
+	        	<h:inputText/>
+	        </s:decorate>
+			<s:decorate id="descripcion" template="/layout/edit.xhtml">
+	       		<ui:define name="label">Descripcion</ui:define>
+	        	<h:inputText/>
+	        </s:decorate>				
+			<s:decorate id="direccionCorreo" template="/layout/edit.xhtml">
+	       		<ui:define name="label">Direccion de Correo</ui:define>
+	        	<h:inputText/>
+	        </s:decorate>
+	        <s:decorate id="cargo" template="/layout/edit.xhtml">
+	       		<ui:define name="label">Cargo</ui:define>
+	        	<h:selectOneMenu value="" required="true">
+	      			<s:selectItems noSelectionLabel="Seleccione Cargo..."/>
+	      		</h:selectOneMenu>
+	        </s:decorate>
+	        <s:decorate id="nivelCargo" template="/layout/edit.xhtml">
+	       		<ui:define name="label">Cargo</ui:define>
+	        	<h:inputText/>
+	        </s:decorate>
+	        <br/>
+	        <br/>
+	        <br/>
+	       	<br/>
+	       	<rich:panel>
+		        <h:panelGrid cellpadding="0" cellspacing="0" columns="3">
+		        	<f:facet name="header">Canal</f:facet>
+		        		 <s:decorate id="kupferXpress" template="/layout/edit.xhtml">
+		       				<h:selectBooleanCheckbox/>Kupfer Xpress
+		        		</s:decorate>
+		        		 <s:decorate id="grandesCuentas" template="/layout/edit.xhtml">
+		       				<h:selectBooleanCheckbox/>Grandes Cuentas
+		        		</s:decorate>
+		        		 <s:decorate id="mixtos" template="/layout/edit.xhtml">
+		       				<h:selectBooleanCheckbox/>Mixtos
+		        		</s:decorate>	
+	        	</h:panelGrid>
+        	</rich:panel>
+		</h:panelGrid>
+        </div>
+        <div id="conceptos" style="float: right; width: 10%">
+        	<rich:panel>
+        		<h:panelGrid cellpadding="0" cellspacing="0" columns="1">
+		        	<f:facet name="header">Conceptos</f:facet><br/>
+		        		<s:decorate>
+		       				<h:selectBooleanCheckbox/>Zona
+		       			</s:decorate>
+		       			<s:decorate>
+		        			<h:selectBooleanCheckbox/>Sucursal
+		        		</s:decorate>
+		        		<s:decorate>
+		        			<h:selectBooleanCheckbox/>Negocio
+		        		</s:decorate>
+		        		<s:decorate>
+		        			<h:selectBooleanCheckbox/>Concepto
+		        		</s:decorate>
+        		
+        		</h:panelGrid>
+        	</rich:panel>
+        </div>
+		<div style="clear:both"/>
+    </rich:panel>
+    <a:outputPanel>
+     		<rich:tabPanel switchType="client" >
+				<rich:tab label="Usuarios Definidos" >
+				
+    			</rich:tab>
+    			<rich:tab label="Perfil Kupfer Express" >
+    			<div style="float: left; width: 40%;">
+    			
+    				<h:panelGrid cellpadding="5" cellspacing="5" columns="3">
+	     				<s:decorate>
+				       		<h:selectBooleanCheckbox/> Generar Solicitudes
+	        			</s:decorate>
+				        <s:decorate>
+				       		<h:selectBooleanCheckbox/> Aprueba Rechaza
+	        			</s:decorate>
+						<s:decorate>
+				       		<h:selectBooleanCheckbox/> Agrega Comentarios
+	        			</s:decorate>			
+						<s:decorate>
+				       		<h:selectBooleanCheckbox/> Ejecutivo Analista
+	        			</s:decorate>
+				        <s:decorate>
+				       		<h:selectBooleanCheckbox/> Analista
+	        			</s:decorate>
+				       <s:decorate>
+				       		<h:selectBooleanCheckbox/> Solo Visualiza
+	        			</s:decorate>
+					</h:panelGrid>
+				</div>
+				<div style="float: right; width: 30%">
+					<rich:panel>
+						<f:facet name="header">Rangos de aprobacion individual</f:facet>
+						<h:panelGrid cellpadding="5" cellspacing="5" columns="2">
+						<s:decorate id="raiDesde" template="/layout/edit.xhtml">
+	       					<ui:define name="label">Desde</ui:define>
+	        				<h:inputText/>
+	        			</s:decorate>
+						<s:decorate id="raiHasta" template="/layout/edit.xhtml">
+	       					<ui:define name="label">Hasta</ui:define>
+	        				<h:inputText/>
+	        			</s:decorate>
+	        			</h:panelGrid>
+					</rich:panel>
+				</div>
+				<div style="float: right; width: 30%">
+					<rich:panel>
+						<f:facet name="header">Rangos de aprobacion compartida</f:facet>
+						<h:panelGrid cellpadding="5" cellspacing="5" columns="2">
+						<s:decorate id="racDesde" template="/layout/edit.xhtml">
+	       					<ui:define name="label">Desde</ui:define>
+	        				<h:inputText/>
+	        			</s:decorate>
+						<s:decorate id="racHasta" template="/layout/edit.xhtml">
+	       					<ui:define name="label">Hasta</ui:define>
+	        				<h:inputText/>
+	        			</s:decorate>
+	        			</h:panelGrid>
+					</rich:panel>
+				</div>
+				<div style="clear: both; width: 100%">
+					<h:panelGrid cellpadding="10" cellspacing="0" columns="4">
+						<rich:panel>
+							<f:facet name="header">Zonas</f:facet>
+							<ui:repeat>
+							</ui:repeat>	
+						</rich:panel>
+						<rich:panel>
+							<f:facet name="header">Sucursales</f:facet>
+							<ui:repeat>
+							</ui:repeat>	
+						</rich:panel>
+						<rich:panel>
+							<f:facet name="header">Negocios</f:facet>
+							<ui:repeat>
+							</ui:repeat>	
+						</rich:panel>
+						<rich:panel>
+							<f:facet name="header">Conceptos</f:facet>
+							<ui:repeat>
+							</ui:repeat>	
+						</rich:panel>
+					</h:panelGrid>
+    			</div>
+    			</rich:tab>
+    			<rich:tab label="Perfil Grandes Cuentas" >
+				
+    			</rich:tab>
+    			<rich:tab label="Perfil Mixtos" >
+				
+    			</rich:tab>
+    	
+    	
+    	</rich:tabPanel>
+    </a:outputPanel>
+    
+	
+
+</ui:define>
+
+</ui:composition>

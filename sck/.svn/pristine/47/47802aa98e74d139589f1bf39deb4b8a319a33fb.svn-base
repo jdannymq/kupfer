@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+      login-required="true">
+
+	 <restrict>#{identity.menu.respuestaSolicitudes == true}</restrict>
+	<begin-conversation join="true" flush-mode="MANUAL"/>
+
+
+	   <navigation from-action="#{respuestaSolicitudAction.salirRespuestaIrListado()}">
+	      <rule if-outcome="devolverListaAprobar">
+	         <end-conversation/>
+	         <redirect view-id="/GenerarSolicitud.xhtml"/>
+	      </rule>
+	      <rule if-outcome="devolverListaEstados">
+	         <end-conversation/>
+	         <redirect view-id="/GenerarSolicitud.xhtml"/>
+	      </rule>
+	   </navigation>
+</page>

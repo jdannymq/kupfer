@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+      no-conversation-view-id="/UsuariosList.xhtml"
+      login-required="true">
+
+	  <restrict>#{identity.menu.editUsuario == true}</restrict>
+
+   <begin-conversation join="true" flush-mode="MANUAL"/>
+
+   <action execute="#{usuariosHome.wire}"/>
+
+   <param name="usuariosFrom"/>
+   <param name="usuariosLogin" value="#{usuariosHome.usuariosLogin}"/>
+
+
+   <navigation from-action="#{usuariosHome.persist}">
+      <rule if-outcome="persisted">
+         <end-conversation/>
+         <redirect view-id="/Usuarios.xhtml"/>
+      </rule>
+   </navigation>
+
+   <navigation from-action="#{usuariosHome.update}">
+      <rule if-outcome="updated">
+         <end-conversation/>
+         <redirect view-id="/Usuarios.xhtml"/>
+      </rule>
+   </navigation>
+
+   <navigation from-action="#{usuariosHome.remove}">
+      <rule if-outcome="removed">
+         <end-conversation/>
+         <redirect view-id="/UsuariosList.xhtml"/>
+      </rule>
+   </navigation>
+
+</page>

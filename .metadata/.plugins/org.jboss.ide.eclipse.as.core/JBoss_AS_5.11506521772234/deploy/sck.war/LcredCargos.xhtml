@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <rich:panel>
+        <f:facet name="header">Detalle de Cargos </f:facet>
+
+			<table>
+				<tr valign="top">
+					<td>
+						 <rich:panel style="height:180px;" >
+         					<f:facet name="header">Descripción de Cargo</f:facet>
+         					
+         					<table cellpadding="0" cellspacing="0" border="0" width="500px;">
+         						<tr> 
+         							<td width="500px;">
+								         <s:decorate id="codCargo" template="/layout/display.xhtml">
+								            <ui:define name="label">Codigo cargo</ui:define>
+								            <h:inputText value="#{lcredCargosHome.instance.codCargo}" disabled="true"/>
+								        </s:decorate>        							
+         							</td>
+         						</tr>
+         						<tr> 
+         							<td>
+								        <s:decorate id="desCargo" template="/layout/display.xhtml">
+								            <ui:define name="label">Descripción cargo</ui:define>
+								            <h:inputText value="#{lcredCargosHome.instance.desCargo}"  disabled="true"/>
+								        </s:decorate>
+									</td>
+								</tr>	
+
+        						<tr> 
+         							<td >
+								        <s:decorate id="nivelCargo" template="/layout/display.xhtml">
+								            <ui:define name="label">Nivel Cargo</ui:define>
+								            <h:inputText value="#{lcredCargosHome.instance.nivelCargo}" disabled="true"/>
+								        </s:decorate>
+									</td>
+								</tr>	
+
+        						<tr> 
+         							<td >
+								        <s:decorate id="nivelSiguiente" template="layout/display.xhtml">
+								            <ui:define name="label">Nivel siguiente</ui:define>
+								            <h:inputText value="#{lcredCargosHome.instance.nivelSiguiente}" disabled="true"/>
+								        </s:decorate>
+									</td>
+								</tr>	
+         					</table>
+         				</rich:panel>		
+					</td>
+					 <td>&nbsp;</td>
+					 <td> 					
+				        <rich:panel style="height:180px;">
+         					<f:facet name="header">Seleccionar Conceptos</f:facet>
+         					<table cellpadding="0" cellspacing="0" border="0">
+         						<tr> 
+         							<td width="125px;"><strong>Zona</strong> </td>
+         							<td width="125px;"><strong>Sucursal</strong> </td>
+         							<td width="125px;"><strong>Negocio</strong> </td>
+         							<td width="125px;"><strong>Concepto</strong> </td>
+         						</tr>
+         						<tr> 
+         							<td width="125px;">
+	         							<strong>
+												 <h:inputText value="NO" rendered="#{lcredCargosHome.instance.detalleZona == 'N'}" disabled="true"/>
+												 <h:inputText value="SI" rendered="#{lcredCargosHome.instance.detalleZona == 'S'}" disabled="true"/>	         							
+	         							</strong>
+         							</td>
+         							<td width="125px;"><strong>
+												 <h:inputText value="NO" rendered="#{lcredCargosHome.instance.detalleSucursal == 'N'}" disabled="true"/>
+												 <h:inputText value="SI" rendered="#{lcredCargosHome.instance.detalleSucursal == 'S'}" disabled="true"/>	         							
+         							</strong></td>
+         							<td width="125px;"><strong>
+												 <h:inputText value="NO" rendered="#{lcredCargosHome.instance.detalleNegocio == 'N'}" disabled="true"/>
+												 <h:inputText value="SI" rendered="#{lcredCargosHome.instance.detalleNegocio == 'S'}" disabled="true"/>	         							
+         							</strong></td>
+         							<td width="125px;"><strong>
+												 <h:inputText value="NO" rendered="#{lcredCargosHome.instance.detalleConcepto == 'N'}" disabled="true"/>
+												 <h:inputText value="SI" rendered="#{lcredCargosHome.instance.detalleConcepto == 'S'}" disabled="true"/>	         							
+         							</strong></td>
+         						</tr>         						
+         						
+         					</table>
+         				</rich:panel>					
+					</td>
+				</tr>
+
+			</table>
+    <div style="clear:both"/>
+	    <div class="actionButtons">
+	        <s:button view="/LcredCargosEdit.xhtml"
+	                    id="edit"
+	                 value="Editar"/>
+	
+	        <s:button view="/#{empty lcredCargosFrom ? 'LcredCargosList' : lcredCargosFrom}.xhtml"
+	                    id="done"
+	                 value="Volver"/>
+	    </div>    
+    </rich:panel>
+
+
+
+</ui:define>
+
+</ui:composition>

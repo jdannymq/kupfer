@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:p="http://primefaces.prime.com.tr/ui"
+    template="layout/template.xhtml">
+	
+	<ui:define name="body">
+	<div class="divTitular"><h1>Rangos de Medición</h1></div>
+	
+			<h:form id="frm_medicion_canal_rango">
+				<s:button view="/GenerarSolicitud.xhtml" propagation="none" value="Volver" ></s:button>
+				
+				<h:messages id="messagesEsp" globalOnly="false" styleClass="message"
+		            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
+		            rendered="#{showGlobalMessages != 'false'}" />
+		            
+				<a:commandButton value="Agregar Rango Medición" ajaxSingle="true" action="#{medicionCanalRangoAction.initGuardarMedicionCanalRango()}" 
+					reRender="frm_medicionCanalRango_model" oncomplete="#{rich:component('mpMedicionCanalRango')}.show();" />
+				
+				<rich:panel id="rpMedicionCanalRango">
+					<f:facet name="label">Mediciones</f:facet>
+						<rich:extendedDataTable id="dtmedicionCanalRango" value="#{mantenedorMaestroAction_medicionCanalRango}" var="_medCanRango" noDataLabel="No se encuentran rangos de mediciones " >
+							
+							<f:facet name="header">Codigo</f:facet>
+							<rich:column sortBy="#{_medCanRango.systemId}" label="codigo"  width="30%;" style="text-align: center;">
+								<f:facet name="header">Codigo</f:facet>
+								<h:outputText value="#{_medCanRango.systemId}" ></h:outputText>
+							</rich:column>
+							<rich:column filterBy="#{_medCanRango.medicion.descripcion}" sortBy="#{_medCanRango.medicion.descripcion}" label="Año" width="30%;" style="text-align: center;">
+								<f:facet name="header">Medición</f:facet>
+								<h:outputText value="#{_medCanRango.medicion.descripcion}" />
+							</rich:column>
+							<rich:column filterBy="#{_medCanRango.canal.descripcion}" sortBy="#{_medCanRango.canal.descripcion}" label="Año" width="30%;" style="text-align: center;">
+								<f:facet name="header">Canal</f:facet>
+								<h:outputText value="#{_medCanRango.canal.descripcion}" />
+							</rich:column>
+							<rich:column filterBy="#{_medCanRango.tiempoMontoType.nombre}" sortBy="#{_medCanRango.tiempoMontoType.nombre}" label="Año" width="30%;" style="text-align: center;">
+								<f:facet name="header">Tipo</f:facet>
+								<h:outputText value="#{_medCanRango.tiempoMontoType.nombre}" />
+							</rich:column>
+							<rich:column filterBy="#{_medCanRango.valorInicial}" sortBy="#{_medCanRango.valorInicial}" label="Año" width="30%;" style="text-align: center;">
+								<f:facet name="header">Valor Inicial</f:facet>
+								<h:outputText value="#{_medCanRango.valorInicial}" />
+							</rich:column>							
+							<rich:column filterBy="#{_medCanRango.valorFinal}" sortBy="#{_medCanRango.valorFinal}" label="Año" width="30%;" style="text-align: center;">
+								<f:facet name="header">Valor Final</f:facet>
+								<h:outputText value="#{_medCanRango.valorFinal}" />
+							</rich:column>								
+							<rich:column sortBy="#{_medCanRango.disabled}" label="Activo" width="30%;" style="text-align: center;">
+								<f:facet name="header">Activo</f:facet>
+								<h:outputText value="#{_medCanRango.disabled ? 'No':'Si'}" />
+							</rich:column>
+							<rich:column  width="30%;" style="text-align: center;">
+							<f:facet name="header">Acción</f:facet>
+								<a:commandLink value="Editar" ajaxSingle="true" action="#{medicionCanalRangoAction.editMedicionCanalRango(_medCanRango)}" 
+									oncomplete="#{rich:component('mpMedicionCanalRango')}.show();" reRender="frm_medicionCanalRango_model" />
+								#{'/'}
+								<a:commandLink value="Desactivar" rendered="#{!_mediciones.disabled}" ajaxSingle="true" action="#{medicionCanalRangoAction.cambiarActivoMedicionCanalRango(true,_mediciones)}" 
+									reRender="rpMedicionCanalRango" />
+								<a:commandLink value="Activar" rendered="#{_mediciones.disabled}" ajaxSingle="true" action="#{medicionCanalRangoAction.cambiarActivoMedicionCanalRango(false,_mediciones)}" 
+									reRender="rpMedicionCanalRango" />
+							</rich:column>								
+						</rich:extendedDataTable>
+				</rich:panel>
+			</h:form>
+		 <a:status onstart="abrirModal();" onstop="cerrarModal();"></a:status>	
+		<ui:include src="/layout/modalSck/modalMedicionCanalRango.xhtml" />  
+	</ui:define>
+</ui:composition>
+

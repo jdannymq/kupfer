@@ -1,0 +1,13 @@
+package org.domain.sck.utils.comparators;
+
+import java.util.Comparator;
+
+import org.domain.sck.dto.UsuarioNivelServicioDTO;
+
+public class UsuarioNivelServicioComparator implements Comparator<UsuarioNivelServicioDTO> {
+	  
+	public int compare(UsuarioNivelServicioDTO dt1, UsuarioNivelServicioDTO dt2) {
+	
+       return dt1.getNombre().toLowerCase().compareTo(dt2.getNombre().toLowerCase());
+    }
+}

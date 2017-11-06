@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	
+	
+	<rich:modalPanel id="mpSolicitudUsuariosGlobal" autosized="true" width="900">
+		<f:facet name="header">
+			<h:outputText value="Consulta de Usuarios para (Aprobar o Rechazar)"	style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:form>
+					<a:commandLink>
+						<h:graphicImage value="img/close.png" styleClass="hidelink"	id="mpSolicitudUsuariosGloballink" />
+					</a:commandLink>
+					<rich:componentControl for="mpSolicitudUsuariosGlobal"
+						attachTo="mpSolicitudUsuariosGloballink" operation="hide"
+						event="onclick" />
+				</h:form>
+			</h:panelGroup>
+		</f:facet>
+		<h:form id = "frm_solicitud_usuario_derivado_global">
+	    <a:outputPanel id="datos">
+		<rich:panel>
+			<f:facet name="header"><h:outputText value="Información de Solicitud"	style="padding-right:15px;" /></f:facet>	
+				<table cellpadding="0" cellspacing="0" width="100%">
+					<tr valign="top">
+						<td>N°</td>
+						<td>Nombre</td>
+						<td>Estado</td>
+					</tr>
+					<tr valign="top">
+						<td>
+						<h:inputText id="idNumSolicitud" 
+								value="#{generarSolicitudAction.solicitudAux.idSolictud}" 
+					          required="false"  
+						       maxlength="10"
+						       size="10" 
+						       disabled="true"/>						
+						</td>
+						<td>
+						<h:inputText id="idNombreSolicitud" 
+									value="#{generarSolicitudAction.solicitudAux.razonSocial}" 
+						          required="false"  
+							       maxlength="120"
+							       size="50" 
+							       disabled="true"/>						
+						</td>
+						<td>
+						<h:inputText id="idEstadoSolicitud" 
+									value="#{generarSolicitudAction.solicitudAux.estado}" 
+						          required="false"  
+							       maxlength="120"
+							       size="50" 
+							       disabled="true" />						
+						</td>
+					</tr>				
+				</table>
+		</rich:panel>
+
+
+		<rich:panel>
+				<f:facet name="header"><h:outputText value="Usuarios Asignados para de Analisis "	
+				                       style="padding-right:15px;" 
+				                       rendered="#{generarSolicitudAction.solicitudHitos.codEstadoDerivada == 'B'}" />
+									   <h:outputText value="Usuarios Asignados para Aprobación"	
+				                       style="padding-right:15px;" 
+				                       rendered="#{generarSolicitudAction.solicitudHitos.codEstadoDerivada == 'SA'}" />
+				</f:facet>
+				<a:outputPanel id="grillaUsuariosDerivadas">
+		    	<div class="results" id="grillaUsuarioAsigandos" style="height:250px; overflow: auto;">
+			   		<h:outputText value="No existe ningun usuario asigando ha esta solicitud en esta solicitud." 
+			   		           rendered="#{empty globalHitosLogdService.listUsuariosDerivados}"/>
+				    <rich:dataTable id="idlistaUsuarioAsignados"
+				                var="_bbb"
+				              value="#{globalHitosLogdService.listUsuariosDerivados}"
+				           rendered="#{not empty globalHitosLogdService.listUsuariosDerivados}">
+				        <rich:column>
+				            <f:facet name="header">Usuario</f:facet>
+				            <h:outputText value="#{_bbb.usuario.nombre}"/>
+				        </rich:column>
+				        <rich:column>
+				            <f:facet name="header">Fecha - Hora</f:facet>
+				            <h:outputText value="#{_bbb.fechaHora}">
+				            	<s:convertDateTime pattern="dd-MM-yyyy HH:mm" />
+				            </h:outputText>
+				        </rich:column>
+				        <rich:column width="50px;">
+				            <f:facet name="header">Obligatorios</f:facet>
+				            <h:outputText value="Obligatorio" rendered="#{_bbb.confirmacionObligatoria == true}" />
+				            <h:outputText value="No Obligatorio" rendered="#{_bbb.confirmacionObligatoria == false}" />
+				        </rich:column>
+				        <rich:column style="text-align:center;">
+				            <f:facet name="header">Situación Actual</f:facet>
+							 <table cellpadding="0" cellspacing="0" width="100%" align="center">
+							 	<tr valign="top">
+							 		<td align="center" width="50px;"> 
+										<s:fragment rendered="#{_bbb.estado.codEstado == 'B' or  _bbb.estado.codEstado == 'SA' }">
+											<!-- en espera  -->	
+											<img src="./img/esperaIcon_tcolor.png" title="En Espera..."/>								
+										</s:fragment>
+										
+										<s:fragment rendered="#{_bbb.estado.codEstado == 'AP'}">
+											<!-- condirmada  -->
+											<img src="./img/true.png" title="Aprobada"  />
+										</s:fragment>
+										<s:fragment rendered="#{_bbb.estado.codEstado == 'RP'}">
+											<!-- No Confirmada  -->
+											<img src="./img/false.png" title="Rechazada"/>
+										</s:fragment>
+							 		</td>
+							 		<td width="10px;" align="left"> 
+							 			<rich:separator width="2" height="14" style="color:#2B00FF;" />
+							 		</td>
+							 		<td align="left">
+							        	<s:fragment rendered="#{_bbb.estado.codEstado == 'SA'}">
+								            <s:fragment rendered="#{_bbb.estado.codEstado == 'SA'}">
+								            	<h:outputText value="Pendiente de aprobación o rechazo de la solicitud"/>
+								            </s:fragment>	
+								            <s:fragment rendered="#{_bbb.estado.codEstado != 'SA'}">
+								            	<h:outputText value="#{_bbb.estado.desEstado}"/>
+								            </s:fragment>	
+							        	</s:fragment> 
+							        	<s:fragment rendered="#{_bbb.estado.codEstado == 'B'}">
+								            <s:fragment rendered="#{_bbb.estado.codEstado == 'B'}">
+								            	<h:outputText value="Pendiente de analisis de la solicitud"/>
+								            </s:fragment>	
+								            <s:fragment rendered="#{_bbb.estado.codEstado != 'B'}">
+								            	<h:outputText value="#{_bbb.estado.desEstado}"/>
+								            </s:fragment>					        	
+							        	</s:fragment> 
+							        	<s:fragment rendered="#{_bbb.estado.codEstado != 'B' and _bbb.estado.codEstado != 'SA'}">
+							        		<s:fragment rendered="#{_bbb.codEstadoDerivada == 'B'}">
+							        			<h:outputText value="Analizada"/>
+							        		</s:fragment>
+							        		<s:fragment rendered="#{_bbb.codEstadoDerivada != 'B' or _bbb.codEstadoDerivada == null }">
+							        			<h:outputText value="#{_bbb.estado.desEstado}"/>
+							        		</s:fragment>
+							        	</s:fragment> 								 		
+							 		</td>
+							 	</tr>
+							 </table>
+				        </rich:column>	
+				       
+				        <rich:column width="50px;" style="text-align:center;" rendered="#{generarSolicitudAction.usuarioCargoAux.administrador == true}">
+				            <f:facet name="header">Acción Admin.</f:facet>
+				            
+							 <h:selectOneRadio id="logicOS1"  
+								   value="#{_bbb.apruebaRechazo}"
+								   dir="ltr" disabled="true" layout="lineDirection">
+								    <f:selectItem itemLabel="Aprobar" itemValue="Aprobar"/>
+								    <f:selectItem itemLabel="Rechazar" itemValue="Rechazar"/>
+							 </h:selectOneRadio>    
+				        </rich:column>	
+				        <rich:column width="50px;" style="text-align:center;">
+				            <f:facet name="header">Autorizado</f:facet>
+				            <h:outputText value="#{_bbb.usernameAutorizacion}" rendered="#{_bbb.usernameAutorizacion != null}" />
+				            <h:outputText value="" rendered="#{_bbb.usernameAutorizacion == null}" />
+				        </rich:column>	
+				        			        
+				    </rich:dataTable>
+			    </div>
+				</a:outputPanel>
+		</rich:panel>
+		<ui:remove>
+		<rich:panel rendered="#{generarSolicitudAction.usuarioCargoAux.administrador == true}">
+			<f:facet name="header"><h:outputText value="Observaciones del Autorizador"	style="padding-right:15px;" /></f:facet>	
+				<table cellpadding="0" cellspacing="0" width="100%">
+					<tr valign="top" height="30px;">
+						<td>
+							<h:inputTextarea id="idTextoObservacionesAutorizador" 
+							                value="#{generarSolicitudAction.observacionesAutirzador}" 
+											rows="4" 
+											style="width:99%;height:99%" 
+											disabled="#{generarSolicitudAction.habilitaBotonApruebaToRechazarAdmin}"
+											/>
+					             			      																												
+						</td>
+					</tr>
+					<tr valign="top">
+						<td width="100%" align="center">
+							<a:commandButton value="Aprobar / Rechazar" 
+						                   reRender="panelmensajeAutorizador,mpConsultarHitos,mpMensajeGlobalRespuestaAdmin,escrituraHitos,mpSolicitudUsuariosGlobal" 
+						                   oncomplete="if (#{generarSolicitudAction.mensajeGlogal != null}) {#{rich:component('mpMensajeGlobalRespuestaAdmin')}.show()} "
+						                   action="#{generarSolicitudAction.aprobarToRechazarPorAdministrador(generarSolicitudAction.solicitudAux.idSolictud,globalHitosLogdService.listUsuariosDerivados)}"
+						                   ajaxSingle="true" process="idTextoObservacionesAutorizador,idlistaUsuarioAsignados"
+						                   disabled="#{generarSolicitudAction.habilitaBotonApruebaToRechazarAdmin}"
+						                  />							
+						</td>
+					</tr>				
+					<tr valign="top">
+						<td width="100%" align="left">
+					    		<a:outputPanel id="panelmensajeAutorizador" >
+						    		<h:messages  globalOnly="true" styleClass="message" errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
+						        </a:outputPanel>	
+						
+						</td>
+					</tr>					
+				
+				
+				
+				</table>
+		</rich:panel>
+		</ui:remove>
+	 </a:outputPanel>
+   	</h:form>
+
+	</rich:modalPanel>
+	
+</ui:composition>

@@ -1,0 +1,248 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    template="/layout/template.xhtml">
+
+    <ui:define name="body">
+    	<table cellpadding="0" cellspacing="0" border="0" align="center" >
+    	<tr>
+    		<td height="100px;">
+    		    <rich:panel rendered="#{pantallaSeleccionAction.habilitarMenu == 1}">
+	    			<rich:panel style="width:500px;" >
+		    		<f:facet name="header">¿Qué proceso desea ejecutar?</f:facet>
+		    		<h:form id="frmSeleccion1" >
+		    			<table cellpadding="2" cellspacing="2" border="0" align="center" >
+		    				<tr>
+		    					<td width="20px;" > 1.- </td>
+		    					<td>
+		    						<s:link view="/GenerarSolicitud.xhtml" 
+		    						       value="Generar Solicitudes." 
+		    						      	  id="SolicitudGenerar1Id"
+								includePageParams="false"
+				     				  propagation="none"/> 
+		    					</td>
+		    				</tr>
+		    				<tr>
+		    					<td width="20px;" > 2.- </td>
+		    					<td>
+		    						<s:link view="/ListadosSolicitudesEstadosDevolucion.xhtml" 
+		    						       value="Respuesta solicitud." 
+		    						      	  id="solicitudRespuesta1Id"
+								includePageParams="false"
+				     				  propagation="none"/> 
+		    					</td>
+		    				</tr>    				
+		    				<tr>
+		    					<td width="20px;" > 3.- </td>
+		    					<td>
+		    						<s:link view="/ListadosSolicitudesEstados.xhtml" 
+		    						       value="Estado solicitud." 
+		    						      	  id="solicitudEstado1Id"
+								includePageParams="false"
+				     				  propagation="none"/> 
+		    					</td>
+		    				</tr>  		    				
+		    			</table>
+		
+			    	</h:form>
+		    	</rich:panel>
+	    	</rich:panel>
+    		<rich:panel rendered="#{pantallaSeleccionAction.habilitarMenu == 2}">
+	    			<rich:panel style="width:500px;" >
+		    		<f:facet name="header">¿Qué proceso desea ejecutar?</f:facet>
+		    		<h:form id="frmSeleccion2" >
+		    			<table cellpadding="2" cellspacing="2" border="0" align="center" >
+		    				<tr>
+		    					<td width="20px;" > 1.- </td>
+		    					<td>
+		    						<s:link view="/GenerarSolicitud.xhtml" 
+		    						       value="Generar Solicitudes." 
+		    						      	  id="SolicitudGenerar2Id"
+								includePageParams="false"
+				     				  propagation="none"/> 
+		    					</td>
+		    				</tr>
+		    				<tr>
+		    					<td width="20px;"> 2.- </td>
+		    					<td>
+		    						<s:link view="/ListadosSolicitudes.xhtml" 
+		    						       value="Aporbar Solicitudes." 
+		    						      	  id="SolicitudAporbar2Id"
+								includePageParams="false"
+				     				  propagation="none"/> 
+		    					</td>
+		    				</tr>
+		    				<tr>
+		    					<td width="20px;" > 3.- </td>
+		    					<td>
+		    						<s:link view="/GenerarSolicitud.xhtml" 
+		    						       value="Analizar Solicitudes." 
+		    						      	  id="solicitudAnalizar2Id"
+								includePageParams="false"
+				     				  propagation="none"/> 
+		    					</td>
+		    				</tr>    				
+		    				<tr>
+		    					<td width="20px;" > 4.- </td>
+		    					<td>
+		    						<s:link view="/GenerarSolicitud.xhtml" 
+		    						       value="Comentar Solicitudes." 
+		    						      	  id="solicitudComentar2Id"
+								includePageParams="false"
+				     				  propagation="none"/> 
+		    					</td>
+		    				</tr>  		
+
+		    				<tr>
+		    					<td width="20px;" > 5.- </td>
+		    					<td>
+		    						<s:link view="/GenerarSolicitud.xhtml" 
+		    						       value="Visualizar Solicitudes." 
+		    						      	  id="SolicitudVisualizar2Id"
+								includePageParams="false"
+				     				  propagation="none"/> 
+		    					</td>
+		    				</tr>    				
+		    				<tr>
+		    					<td width="20px;" > 6.- </td>
+		    					<td>
+		    						<s:link view="/ListadosSolicitudesEstadosDevolucion.xhtml" 
+		    						       value="Respuesta Solicitudes." 
+		    						      	  id="solicitudRespuesta2Id"
+								includePageParams="false"
+				     				  propagation="none"/> 
+		    					</td>
+		    				</tr>    				
+		    				<tr>
+		    					<td width="20px;" > 7.- </td>
+		    					<td>
+		    						<s:link view="/ListadosSolicitudesEstados.xhtml" 
+		    						       value="Estado Solicitudes." 
+		    						      	  id="solicitudEstado2Id"
+								includePageParams="false"
+				     				  propagation="none"/> 
+		    					</td>
+		    				</tr>  		    				
+		    			</table>
+		
+			    	</h:form>
+		    	</rich:panel>
+	    	</rich:panel>	    	
+    		<rich:panel rendered="#{pantallaSeleccionAction.habilitarMenu == 3}">
+	    			<rich:panel style="width:500px;" >
+		    		<f:facet name="header">¿Qué proceso desea ejecutar?</f:facet>
+		    		<h:form id="frmSeleccion3" >
+			    		<table cellpadding="2" cellspacing="2" border="0" align="center" >
+			    			<a:repeat id="menuDimanico"
+			    			          value="#{pantallaSeleccionAction.listaUsuarioTipos}"
+			    			          var="_var">
+			    			
+				    				<s:fragment rendered="#{_var.tipoUsuario.idTipo == 1}">
+					    				<tr>
+					    					<td width="20px;" > #{' - '}  </td>
+					    					<td>
+					    						<s:link view="/GenerarSolicitud.xhtml" 
+					    						       value="Generar Solicitudes." 
+					    						      	  id="SolicitudGenerar3Id"
+											includePageParams="false"
+							     				  propagation="none"/> 
+					    					</td>
+					    				</tr>							
+				    				</s:fragment>
+				    				<s:fragment rendered="#{_var.tipoUsuario.idTipo == 2}">
+					    				<tr>
+					    					<td width="20px;" > #{' - '}  </td>
+					    					<td>
+									            <s:link view="/ListadosSolicitudes.xhtml"
+									                   value="Aprobar Solicitudes."
+									             propagation="none"
+									             includePageParams="false"
+									                      id="solicitudListadoAprobar" />
+					    					
+					    					</td>
+					    				</tr>							
+				    				</s:fragment>		    			
+				    				<s:fragment rendered="#{_var.tipoUsuario.idTipo == 3}">
+					    				<tr>
+					    					<td width="20px;" > #{' - '}  </td>
+					    					<td>
+					    						<s:link view="/GenerarSolicitud.xhtml" 
+					    						       value="Analizar Solicitudes." 
+					    						      	  id="solicitudAnalizar3Id"
+											includePageParams="false"
+							     				  propagation="none"/> 
+								    		</td>
+					    				</tr>							
+				    				</s:fragment>			    			
+				    				<s:fragment rendered="#{_var.tipoUsuario.idTipo == 4}">
+					    				<tr>
+					    					<td width="20px;" > #{' - '}  </td>
+					    					<td>
+					    						<s:link view="/GenerarSolicitud.xhtml" 
+					    						       value="Comentar Solicitudes." 
+					    						      	  id="solicitudComentar3Id"
+											includePageParams="false"
+							     				  propagation="none"/> 
+								    		</td>
+					    				</tr>							
+				    				</s:fragment>		    			
+				    				<s:fragment rendered="#{_var.tipoUsuario.idTipo == 5}">
+					    				<tr>
+					    					<td width="20px;" > #{' - '}  </td>
+					    					<td>
+					    						<s:link view="/GenerarSolicitud.xhtml" 
+					    						       value="Visualizar Solicitudes." 
+					    						      	  id="SolicitudVisualizar3Id"
+											includePageParams="false"
+							     				  propagation="none"/> 
+								    		</td>
+					    				</tr>							
+				    				</s:fragment>	
+				    				<s:fragment rendered="#{_var.tipoUsuario.idTipo == 6}">
+					    				<tr>
+					    					<td width="20px;" > #{' - '}  </td>
+					    					<td>
+						     				  
+									            <s:link view="/ListadosSolicitudesEstadosDevolucion.xhtml"
+									                   value="Respuesta Solicitudes."
+									             propagation="none"
+									             includePageParams="false"
+									                      id="solicitudListado" />
+
+								    		</td>
+					    				</tr>							
+				    				</s:fragment>	
+				    				<s:fragment rendered="#{_var.tipoUsuario.idTipo == 7}">
+					    				<tr>
+					    					<td width="20px;" > #{' - '}  </td>
+					    					<td>
+					    						<s:link view="/ListadosSolicitudesEstados.xhtml" 
+					    						       value="Estado Solicitudes." 
+					    						      	  id="solicitudEstado3Id"
+											includePageParams="false"
+							     				  propagation="none"/> 
+								    		</td>
+					    				</tr>							
+				    				</s:fragment>				    				
+				    							    						    			
+			    			</a:repeat>
+			    		</table>
+			    	</h:form>
+		    	</rich:panel>
+	    	</rich:panel>	    	
+	    	
+	    	
+	    	
+    		</td>
+    	</tr>
+
+	  </table>
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,579 @@
+package org.domain.sck.session.action;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+
+import org.domain.sck.base.GlobalHitosLogdService;
+import org.domain.sck.base.GlobalService;
+import org.domain.sck.dto.CPagoDTO;
+import org.domain.sck.dto.MatrizResposabilidadDTO;
+import org.domain.sck.dto.SolicitudDTO;
+import org.domain.sck.dto.UsuarioSegurDTO;
+import org.domain.sck.entity.LcredEstado;
+import org.domain.sck.entity.LcredUsuarioNivelEnc;
+import org.domain.sck.entity.MatrizDetalleResponsabilidad;
+import org.domain.sck.entity.MatrizUsuarioResponsable;
+import org.domain.sck.entity.SolicitudHitos;
+import org.domain.sck.entity.SolicitudLogs;
+import org.domain.sck.entity.SolicitudUsuarioDerivada;
+import org.domain.sck.entity.Sucursal;
+import org.domain.sck.entity.UsuarioCargo;
+import org.domain.sck.entity.Usuariosegur;
+import org.domain.sck.session.service.intranetsap.IntranetSapService;
+import org.domain.sck.session.service.scoring.ScoringService;
+import org.jboss.remoting.transport.multiplex.MasterServerSocket;
+import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.Create;
+import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.Logger;
+import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Scope;
+import org.jboss.seam.faces.FacesMessages;
+import org.jboss.seam.international.StatusMessage.Severity;
+import org.jboss.seam.log.Log;
+
+
+@Name("matrizResponsabilidadAction")
+@Scope(ScopeType.CONVERSATION)
+public class MatrizResponsabilidadAction {
+	
+
+	@Logger
+	Log log;
+
+	@In(value="#{entityManager}")
+	EntityManager entityManager;
+	
+	
+	@In IntranetSapService intranetSapService;
+	
+	@In ScoringService scoringService;
+	
+	@In GlobalService globalService;
+	
+	@In GlobalHitosLogdService globalHitosLogdService;
+	
+	@In(value="#{identity.usuarioCargo}", scope = ScopeType.SESSION)
+	private UsuarioCargo usuarioCargoAux;
+	
+	@In(value="#{identity.usuarioLogueado}", scope = ScopeType.SESSION)
+	private Usuariosegur usuarioLogueado;
+	
+		
+	@In(value="#{identity.lcredUsuarioNivelEnc}", scope = ScopeType.SESSION)
+	private LcredUsuarioNivelEnc lcredUsuarioNivelEnc;
+	
+	@In(value="#{identity.usuarioSegur}", scope = ScopeType.SESSION)
+	private UsuarioSegurDTO usuarioSegur;
+	
+	
+	private List<Sucursal> listaSucursals;
+	private List<Sucursal> listaSucursalsSeleccionados;
+	
+	private List<Usuariosegur> listaUsuariosegurs;
+	private List<Usuariosegur> listaUsuariosegursSeleccionados;
+
+	private String tsListaResposabilidades;
+	private String tsListaSubResposabilidades;
+	
+
+	private List<SolicitudDTO> listaTodasSolicitudesDto;
+	private List<CPagoDTO> listaCPagoDTOs;
+	private List<LcredEstado> listaEstados;
+	private List<String> listaUsuarios;
+	private List<String> listaTiposSolicitudes;
+	private List<String> listaFormaPago;
+
+	private String usuarioFilter; 
+	private String tipoFilter;
+	private String fpagos;
+	private List<SolicitudUsuarioDerivada> listUsuariosDerivados;
+	private List<MatrizResposabilidadDTO> listaGeneralResponsabilidades;
+
+	
+   
+	@Create
+	public void init(){
+		try{
+		
+			if(lcredUsuarioNivelEnc != null){
+				sacarUsuarios();
+			    sacarSucursales();
+			    listaGeneralResponsabilidades = scoringService.getListaMatrizResponsabilidades();
+				if(listaGeneralResponsabilidades != null && listaGeneralResponsabilidades.size() > 0){
+					listaUsuarios = new ArrayList<String>();
+					for(MatrizResposabilidadDTO mr : listaGeneralResponsabilidades){
+						if(mr != null && mr.getMatrizUsuarioResp() != null){
+							listaUsuarios.add(mr.getNombreUsuario());
+						}
+					}
+				}
+				if(listaUsuarios != null){
+					Collections.sort(listaUsuarios);
+				}
+			}		    		
+ 	   }catch (Exception e) {
+		log.error("error al sacar las solictudes de usuario logeado #0", e.getMessage());
+	   }
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void sacarUsuarios(){
+		try{
+    		List<Usuariosegur> lista = (List<Usuariosegur>)entityManager
+				.createQuery("select u from Usuariosegur u where u.alias <> null and u.nombre <> null  order by u.nombre")
+				.getResultList();
+    		
+    		if(lista != null){
+    			listaUsuariosegurs = new ArrayList<Usuariosegur>(0);
+    			for(Usuariosegur usuario : lista){
+    				if(usuario != null && !usuario.getAlias().equals("") && !usuario.getAlias().equals("xxxx") && !usuario.getAlias().equals("xxxxxx") ){
+    					if(usuario.getNombre() != null && !usuario.getNombre().equals("")){
+	    					if(!listaUsuariosegurs.contains(usuario)){
+	    						listaUsuariosegurs.add(usuario);
+	    					}
+    					}
+    				}
+    			}
+    		}			
+		}catch (Exception e) {
+			log.error("Error, al sacar los datos de usuarios #0", e.getMessage());
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void sacarSucursales(){
+		try{
+			listaSucursals = (List<Sucursal>)entityManager.createQuery("select suc from Sucursal suc " +
+					" where suc.codigo in ('C212','C246','N103','N206','S133','S148','S224','C115'," +
+					"                      'C227','N101','N142','N209','S118','S145','S221','S243','C138','TDS1') order by suc.descripcion asc ").getResultList();
+		}catch (Exception e) {
+			log.error("Error, al sacar la lista de sucursales #0", e.getMessage());
+		}		
+	}
+	public boolean validarParametros(){
+		try{
+			
+			if(this.listaUsuariosegursSeleccionados == null  && this.listaSucursalsSeleccionados == null){
+				FacesMessages.instance().add(Severity.INFO,"Debe selccionar la información a relacionar.");
+				return false;				
+			}
+
+			if(this.listaUsuariosegursSeleccionados == null){
+				FacesMessages.instance().add(Severity.INFO,"Debe seleccionar a lo menos un usuario.");
+				return false;				
+			}else{
+				if(this.listaUsuariosegursSeleccionados.size() == 0){
+					FacesMessages.instance().add(Severity.INFO,"Debe seleccionar a lo menos un usuario.");
+					return false;						
+				}
+			}
+
+			if(this.listaSucursalsSeleccionados == null){
+				FacesMessages.instance().add(Severity.INFO,"Debe selccionar a lo menos una sucursal.");
+				return false;				
+			}else{
+				if(this.listaSucursalsSeleccionados.size() == 0){
+					FacesMessages.instance().add(Severity.INFO,"Debe selccionar a lo menos una sucursal.");
+					return false;				
+				}
+			}
+		}catch (Exception e) {
+			log.error("Error, al validar los parametros #0 ", e.getMessage());
+		}
+		return true;
+	}
+
+	public void guardarInformacion(){
+		if(validarParametros()){
+			try{
+				for(Usuariosegur user : listaUsuariosegursSeleccionados){
+					if(user != null){
+						boolean existe = scoringService.getConsultaUsuarioEnLaMatrizResponsabilidades(user);
+						if(existe == false){
+							MatrizUsuarioResponsable mur = new MatrizUsuarioResponsable();
+							mur.setUsuariosegur(user);
+							mur.setFechaIngreso(new Date());
+							mur.setUsuarioIngreso(usuarioLogueado);
+							mur.setDisabled(false);
+							mur = scoringService.persistMatrizUsuarioResponsable(mur);
+							if(mur != null){
+							   for(Sucursal sucu : listaSucursalsSeleccionados){
+								   boolean existeSucu = scoringService.getConsultaLaMatrizDetalleResponsabilidadesSucursal(mur, sucu);
+								   if(existeSucu == false){
+									   MatrizDetalleResponsabilidad mdr = new MatrizDetalleResponsabilidad();
+									   mdr.setMatrizUsuarioResponsable(mur);
+									   mdr.setSucursal(sucu);
+									   mdr.setFechaIngreso(new Date());
+									   mdr.setUsuarioIngreso(usuarioLogueado);
+									   mdr.setDisabled(false);
+									   mdr = scoringService.persistMatrizDetalleResponsable(mdr);
+									   if(mdr != null){
+										   log.debug(" mdr.getSystemId(): #0", mdr.getSystemId());
+									   }else{
+										   log.error("error, al ingresar la informacion de detalle del sucursal "+ sucu.getDescripcion()); 
+									   }
+								   }
+							   }
+							}else{
+								log.error("error, al ingresar la informacion de cabecera del usuario "+ user.getAlias());
+							}
+						}else{
+							   MatrizUsuarioResponsable mur = scoringService.getMatrizUsuarioResponsable(user);
+							   if(mur != null){
+								   for(Sucursal sucu : listaSucursalsSeleccionados){
+									   boolean existeSucu = scoringService.getConsultaLaMatrizDetalleResponsabilidadesSucursal(mur, sucu);
+									   if(existeSucu == false){
+										   MatrizDetalleResponsabilidad mdr = new MatrizDetalleResponsabilidad();
+										   mdr.setMatrizUsuarioResponsable(mur);
+										   mdr.setSucursal(sucu);
+										   mdr.setFechaIngreso(new Date());
+										   mdr.setUsuarioIngreso(usuarioLogueado);
+										   mdr.setDisabled(false);
+										   mdr = scoringService.persistMatrizDetalleResponsable(mdr);
+										   if(mdr != null){
+											   log.debug(" mdr.getSystemId(): #0", mdr.getSystemId());
+										   }else{
+											   log.error("error, al ingresar la informacion de detalle del sucursal "+ sucu.getDescripcion()); 
+										   }
+									   }else{
+										   log.debug("ya existe la sucursal ingresada la descripcion es : "+ sucu.getDescripcion());
+									   }
+								   }
+							   }else{
+								  log.debug("no existe el usuario ingresado " + user.getAlias()); 
+							   }
+						}
+					}
+				}
+			}catch (Exception e) {
+				log.error("error, al ingresar la informacion del usuarios y sus responsabilidades", e.getMessage());
+			}
+		}
+		limpiarParametos();
+		consultarGrilla();
+	}
+	public void consultarGrilla(){
+		listaGeneralResponsabilidades = new ArrayList<MatrizResposabilidadDTO>();
+		listaGeneralResponsabilidades = scoringService.getListaMatrizResponsabilidades();
+		if(listaGeneralResponsabilidades != null && listaGeneralResponsabilidades.size() > 0){
+			listaUsuarios = new ArrayList<String>();
+			for(MatrizResposabilidadDTO mr : listaGeneralResponsabilidades){
+				if(mr != null && mr.getMatrizUsuarioResp() != null){
+					listaUsuarios.add(mr.getNombreUsuario());
+				}
+			}
+		}
+		if(listaUsuarios != null){
+			Collections.sort(listaUsuarios);
+		}
+	}
+
+	public void limpiarParametos(){
+		this.listaUsuariosegursSeleccionados = new ArrayList<Usuariosegur>();
+		this.listaSucursalsSeleccionados = new ArrayList<Sucursal>();
+		this.listaGeneralResponsabilidades = new ArrayList<MatrizResposabilidadDTO>();
+		this.setTsListaResposabilidades(null);
+		
+	}
+	
+	public boolean evaluarFechaSolicitud(Long idSolicitud, String codigoEstado){
+		boolean  cambiar = false;
+		try{
+			Long numeroDias = scoringService.getSolicitudDiaReparoMaximo();
+			SolicitudHitos hitoEstado = null;
+			List<SolicitudHitos> listaSolicitudesHitos = scoringService.getSolicitudHitos(idSolicitud);
+			if(listaSolicitudesHitos != null){
+				for(SolicitudHitos sh: listaSolicitudesHitos){
+					if(sh != null && sh.getCodigoEstado().equals(codigoEstado)){
+						hitoEstado = sh;
+						break;
+					}
+				}
+			}
+			
+			/*
+			 * recordatorio : 1 = Domingo, 2 = Lunes, 3 = Martes, 4 = Miercoles, 5 = Jueves, 6 = Viernes, 7 = Sabado
+			 * */
+			if(hitoEstado != null && numeroDias != null){
+				log.info("fecha hito : #0, dias ha evaluar #1", hitoEstado.getFechaHora(), numeroDias);
+
+				SimpleDateFormat formatoDeFecha = new SimpleDateFormat("dd/MM/yyyy");
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(hitoEstado.getFechaHora());
+				log.info("Fecha hitos base de datos : #0", formatoDeFecha.format(cal.getTime()));
+				log.info("Calendar.DAY_OF_WEEK Hitos : #0",cal.get(Calendar.DAY_OF_WEEK));
+				Long valorHito = cal.getTimeInMillis();
+				cal.add(Calendar.DATE, numeroDias.intValue());
+				log.info("Fecha hitos + dias : #0", formatoDeFecha.format(cal.getTime()));
+				log.info("Calendar.DAY_OF_WEEK Hitos + Dias: #0",cal.get(Calendar.DAY_OF_WEEK));
+				
+				
+				
+				Calendar calActual = Calendar.getInstance();
+				calActual.setTime(new Date());
+				log.info("Calendar.DAY_OF_WEEK Actual: #0",calActual.get(Calendar.DAY_OF_WEEK));
+				log.info("Fecha Fecha Actual : #0", formatoDeFecha.format(calActual.getTime()));
+				
+				/*evaluacion final*/
+				Long valor1 = cal.getTimeInMillis();
+				Long valor2 = calActual.getTimeInMillis();
+				log.info("valorHito: #0",valorHito);
+				log.info("valor1 + dias : #0",valor1);
+				log.info("valor2 Actual: #0",valor2);
+				
+				if(valor2 > valor1){
+					cambiar = true;
+					log.info("se cambia el estado DE pasarlo a NC");
+				}else if((valorHito <= valor2) && (valor2 <= valor1)){
+					log.info("se habilitar link para reparar la solicitud");
+					cambiar = false;
+				}else{
+					
+				}
+			}
+		}catch (Exception e) {
+			log.error("Error al evaluar de la fecha de devulucion #0", e.getMessage());
+		}
+		
+	    return cambiar;
+	}
+	
+    public Sucursal obtenerObjetoSucursal(String codigo){
+		Sucursal suc = null;
+		if(listaSucursals != null && codigo != null){
+			for(Sucursal s: listaSucursals){
+				if(s.getCodigo().equals(codigo)){
+					suc= s;
+					break;
+				}
+			}
+		}
+		return suc;
+	}
+
+	public void limpiarVariblesUsuarioDerevida(){
+		this.listUsuariosDerivados = null;
+	
+	}
+	
+	public void eliminarMatrizDetalleResponsabilidad(MatrizDetalleResponsabilidad mdr){
+		try{
+			if(mdr != null){
+				entityManager.remove(mdr);
+				entityManager.flush();
+				listaGeneralResponsabilidades = new ArrayList<MatrizResposabilidadDTO>();
+			}
+		}catch (Exception e) {
+			log.error("error, al eliminar la sucursal seleccionada ", mdr.getSucursal().getDescripcion());
+		}
+		listaGeneralResponsabilidades = scoringService.getListaMatrizResponsabilidades();
+		if(listaGeneralResponsabilidades != null && listaGeneralResponsabilidades.size() > 0){
+			listaUsuarios = new ArrayList<String>();
+			for(MatrizResposabilidadDTO mr : listaGeneralResponsabilidades){
+				if(mr != null && mr.getMatrizUsuarioResp() != null){
+					listaUsuarios.add(mr.getNombreUsuario());
+				}
+			}
+		}
+		if(listaUsuarios != null){
+			Collections.sort(listaUsuarios);
+		}
+	}
+	
+
+	/*gets y Sets*/
+	public List<CPagoDTO> getListaCPagoDTOs() {
+		return listaCPagoDTOs;
+	}
+
+	public void setListaCPagoDTOs(List<CPagoDTO> listaCPagoDTOs) {
+		this.listaCPagoDTOs = listaCPagoDTOs;
+	}
+
+
+	public List<SolicitudDTO> getListaTodasSolicitudesDto() {
+		return listaTodasSolicitudesDto;
+	}
+
+
+	public void setListaTodasSolicitudesDto(
+			List<SolicitudDTO> listaTodasSolicitudesDto) {
+		this.listaTodasSolicitudesDto = listaTodasSolicitudesDto;
+	}
+
+
+	public List<Sucursal> getListaSucursals() {
+		return listaSucursals;
+	}
+
+
+	public void setListaSucursals(List<Sucursal> listaSucursals) {
+		this.listaSucursals = listaSucursals;
+	}
+
+
+	public List<LcredEstado> getListaEstados() {
+		return listaEstados;
+	}
+
+
+	public void setListaEstados(List<LcredEstado> listaEstados) {
+		this.listaEstados = listaEstados;
+	}
+
+
+
+
+
+	public List<String> getListaUsuarios() {
+		return listaUsuarios;
+	}
+
+
+	public void setListaUsuarios(List<String> listaUsuarios) {
+		this.listaUsuarios = listaUsuarios;
+	}
+
+
+	public List<String> getListaTiposSolicitudes() {
+		return listaTiposSolicitudes;
+	}
+
+
+	public void setListaTiposSolicitudes(List<String> listaTiposSolicitudes) {
+		this.listaTiposSolicitudes = listaTiposSolicitudes;
+	}
+
+
+	public List<String> getListaFormaPago() {
+		return listaFormaPago;
+	}
+
+
+	public void setListaFormaPago(List<String> listaFormaPago) {
+		this.listaFormaPago = listaFormaPago;
+	}
+
+
+
+
+	public String getUsuarioFilter() {
+		return usuarioFilter;
+	}
+
+
+
+
+	public void setUsuarioFilter(String usuarioFilter) {
+		this.usuarioFilter = usuarioFilter;
+	}
+
+
+
+
+	public String getTipoFilter() {
+		return tipoFilter;
+	}
+
+
+
+
+	public void setTipoFilter(String tipoFilter) {
+		this.tipoFilter = tipoFilter;
+	}
+
+
+
+
+	public String getFpagos() {
+		return fpagos;
+	}
+
+
+
+
+	public List<SolicitudUsuarioDerivada> getListUsuariosDerivados() {
+		return listUsuariosDerivados;
+	}
+
+	public void setListUsuariosDerivados(
+			List<SolicitudUsuarioDerivada> listUsuariosDerivados) {
+		this.listUsuariosDerivados = listUsuariosDerivados;
+	}
+
+
+	public void setFpagos(String fpagos) {
+		this.fpagos = fpagos;
+	}
+
+	public UsuarioCargo getUsuarioCargoAux() {
+		return usuarioCargoAux;
+	}
+
+	public void setUsuarioCargoAux(UsuarioCargo usuarioCargoAux) {
+		this.usuarioCargoAux = usuarioCargoAux;
+	}
+
+	public List<Usuariosegur> getListaUsuariosegurs() {
+		return listaUsuariosegurs;
+	}
+
+	public void setListaUsuariosegurs(List<Usuariosegur> listaUsuariosegurs) {
+		this.listaUsuariosegurs = listaUsuariosegurs;
+	}
+
+	public List<Sucursal> getListaSucursalsSeleccionados() {
+		return listaSucursalsSeleccionados;
+	}
+
+	public void setListaSucursalsSeleccionados(
+			List<Sucursal> listaSucursalsSeleccionados) {
+		this.listaSucursalsSeleccionados = listaSucursalsSeleccionados;
+	}
+
+
+	public List<Usuariosegur> getListaUsuariosegursSeleccionados() {
+		return listaUsuariosegursSeleccionados;
+	}
+
+	public void setListaUsuariosegursSeleccionados(
+			List<Usuariosegur> listaUsuariosegursSeleccionados) {
+		this.listaUsuariosegursSeleccionados = listaUsuariosegursSeleccionados;
+	}
+
+	public List<MatrizResposabilidadDTO> getListaGeneralResponsabilidades() {
+		return listaGeneralResponsabilidades;
+	}
+
+	public void setListaGeneralResponsabilidades(
+			List<MatrizResposabilidadDTO> listaGeneralResponsabilidades) {
+		this.listaGeneralResponsabilidades = listaGeneralResponsabilidades;
+	}
+
+	public String getTsListaResposabilidades() {
+		return tsListaResposabilidades;
+	}
+
+	public void setTsListaResposabilidades(String tsListaResposabilidades) {
+		this.tsListaResposabilidades = tsListaResposabilidades;
+	}
+
+	public String getTsListaSubResposabilidades() {
+		return tsListaSubResposabilidades;
+	}
+
+	public void setTsListaSubResposabilidades(String tsListaSubResposabilidades) {
+		this.tsListaSubResposabilidades = tsListaSubResposabilidades;
+	}
+
+	
+	
+
+}

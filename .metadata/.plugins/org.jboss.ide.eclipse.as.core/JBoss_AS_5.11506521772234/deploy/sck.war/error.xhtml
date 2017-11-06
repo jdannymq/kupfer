@@ -1,0 +1,27 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    template="layout/template.xhtml">
+
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+      <title>Sistema SCK - Error</title>
+   </head>
+   <body>
+   
+	    <ui:param name="showGlobalMessages" value="false"/>
+        <h1>Error</h1>
+        <p>Ha ocurrido un error</p>
+        <h:messages id="errorMessage" styleClass="message"/>
+        <s:link value="Volver a Tu Sitio Sistema SCK" view="/home.xhtml" /><br/>
+
+	
+
+	</body>
+</html>
+</ui:composition>

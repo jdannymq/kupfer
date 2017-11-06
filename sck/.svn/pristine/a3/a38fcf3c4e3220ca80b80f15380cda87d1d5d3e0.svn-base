@@ -1,0 +1,143 @@
+package org.domain.sck.entity;
+
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.domain.sck.entity.emuns.ArchivoAdjuntoType;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
+
+@Entity
+@Table(name = "ArchivoAdjunto")
+public class ArchivoAdjunto {
+	
+	private long systemId;
+	private String url;
+	private String nombreAdjunto;
+	private String ubicacion;
+	private LcredSolicitud solicitud;
+	private ArchivoAdjuntoType tipo;
+	private Usuariosegur usuario;
+	private Date fechaCreacion;
+
+	
+	public ArchivoAdjunto() {}
+	
+	public ArchivoAdjunto(long systemId, String url,String nombreAdjunto,  LcredSolicitud solicitud, String ubicacion, ArchivoAdjuntoType tipo, Usuariosegur usuario, Date fechaCreacion) {
+		this.systemId = systemId;
+		this.url = url;
+		this.nombreAdjunto = nombreAdjunto;
+		this.solicitud = solicitud;
+		this.ubicacion = ubicacion;
+		this.tipo = tipo;
+		this.usuario = usuario;
+		this.fechaCreacion = fechaCreacion;
+	}
+	
+	@Id
+	@GenericGenerator(name="archivoAdjuntoSequenceGenerator", strategy = "org.hibernate.id.enhanced.TableGenerator",
+	    parameters = {
+			@Parameter(name = "table_name", value = "hibernate_sequences"),
+			@Parameter(name = "segment_value", value = "SEQ_ARCHIVO_ADJUNTO"), 
+	        @Parameter(name = "initial_value", value = "1"),
+	        @Parameter(name = "increment_size", value = "1")
+	    }
+	)
+	@GeneratedValue(generator = "archivoAdjuntoSequenceGenerator")
+	@Column(name = "system_id", unique = true, nullable = false, precision = 18, scale = 0,columnDefinition = "numeric(18,0)")
+	public long getSystemId() {
+		return systemId;
+	}
+	
+	public void setSystemId(long systemId) {
+		this.systemId = systemId;
+	}
+	
+	@Column(name = "url", nullable = false, length = 1000)
+	@NotNull
+	@Length(max = 1000)
+	public String getUrl() {
+		return url;
+	}
+	
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	@Column(name = "nombreAdjunto", nullable = false, length = 1000)
+	public String getNombreAdjunto() {
+		return nombreAdjunto;
+	}
+	
+	public void setNombreAdjunto(String nombreAdjunto) {
+		this.nombreAdjunto = nombreAdjunto;
+	}
+	
+	@Column(name = "ubicacion", nullable = true, length = 1000)
+	public String getUbicacion() {
+		return ubicacion;
+	}
+	
+	public void setUbicacion(String ubicacion) {
+		this.ubicacion = ubicacion;
+	}
+	
+	
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumns(value = {@JoinColumn(name = "solicitud_id", referencedColumnName="num_solicitud", columnDefinition = "numeric(18,0)"),
+			              @JoinColumn(name = "fecha_solicitud", referencedColumnName = "fec_solicitud")
+	                     }
+	             )
+	public LcredSolicitud getSolicitud() {
+		return solicitud;
+	}
+	
+	public void setSolicitud(LcredSolicitud solicitud) {
+		this.solicitud = solicitud;
+	}
+
+	@Column(name = "tipo")
+	public ArchivoAdjuntoType getTipo() {
+		return tipo;
+	}
+	
+	public void setTipo(ArchivoAdjuntoType tipo) {
+		this.tipo = tipo;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "usuario_id", nullable = true)
+	public Usuariosegur getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuariosegur usuario) {
+		this.usuario = usuario;
+	}
+	
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "fecha_creacion", nullable = true)	
+	public Date getFechaCreacion() {
+		return this.fechaCreacion;
+	}
+	public void setFechaCreacion(Date fechaCreacion) {
+		this.fechaCreacion = fechaCreacion;
+	}
+
+
+}

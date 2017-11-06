@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="lcredMotivoRechazoSearch" styleClass="edit">
+        <rich:simpleTogglePanel label="Filtro de Búsqueda de Motivo de Rechazo" switchType="ajax">
+			 <h:panelGrid cellpadding="0" cellspacing="0" columns="3">
+
+	            <s:decorate template="/layout/display.xhtml">
+	                <ui:define name="label">Descripción Rechazo</ui:define>
+	                <h:inputText id="desRechazo" value="#{lcredMotivoRechazoList.lcredMotivoRechazo.desRechazo}"/>
+	            </s:decorate>
+	
+	            <s:decorate template="/layout/display.xhtml">
+	                <ui:define name="label">Ind Borrado</ui:define>
+	                <h:inputText id="indBorrado" value="#{lcredMotivoRechazoList.lcredMotivoRechazo.indBorrado}"/>
+	            </s:decorate>
+	
+	            <s:decorate template="/layout/display.xhtml">
+	                <ui:define name="label"></ui:define>
+	                <h:selectOneRadio id="logic" value="#{lcredMotivoRechazoList.restrictionLogicOperator}" styleClass="radio">
+	                    <f:selectItem itemLabel="Todos" itemValue="and"/>
+	                    <f:selectItem itemLabel="Cualquiera" itemValue="or"/>
+	                </h:selectOneRadio>
+	            </s:decorate>
+			</h:panelGrid>
+	        <div class="actionButtons">
+	            <h:commandButton id="search" value="Buscar" title="Buscar" action="/LcredMotivoRechazoList.xhtml"/>
+	            <s:button id="reset" value="Limpiar"  title="Limpiar" includePageParams="false"/>
+	        </div>
+        </rich:simpleTogglePanel>
+
+
+    </h:form>
+	<br/>
+    <rich:panel>
+        <f:facet name="header">Resultados (#{empty lcredMotivoRechazoList.resultList ? 0 : (lcredMotivoRechazoList.paginated ? lcredMotivoRechazoList.resultCount : lcredMotivoRechazoList.resultList.size)})</f:facet>
+    <div class="results" id="lcredMotivoRechazoList">
+
+    <h:outputText value="La búsqueda no produjo resultados." rendered="#{empty lcredMotivoRechazoList.resultList}"/>
+
+    <rich:dataTable id="lcredMotivoRechazoList"
+                var="_lcredMotivoRechazo"
+              value="#{lcredMotivoRechazoList.resultList}"
+           rendered="#{not empty lcredMotivoRechazoList.resultList}">
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="/layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{lcredMotivoRechazoList}"/>
+                    <ui:param name="propertyLabel" value="Codigo Rechazo"/>
+                    <ui:param name="propertyPath" value="lcredMotivoRechazo.codRechazo"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_lcredMotivoRechazo.codRechazo}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="/layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{lcredMotivoRechazoList}"/>
+                    <ui:param name="propertyLabel" value="Descripción Rechazo"/>
+                    <ui:param name="propertyPath" value="lcredMotivoRechazo.desRechazo"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_lcredMotivoRechazo.desRechazo}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="/layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{lcredMotivoRechazoList}"/>
+                    <ui:param name="propertyLabel" value="Ind borrado"/>
+                    <ui:param name="propertyPath" value="lcredMotivoRechazo.indBorrado"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_lcredMotivoRechazo.indBorrado}"/>
+        </h:column>
+        <rich:column styleClass="action">
+            <f:facet name="header">Acción</f:facet>
+            <s:link view="/#{empty from ? 'LcredMotivoRechazo' : from}.xhtml"
+                   value="#{empty from ? 'Ver' : 'Seleccionar'}"
+             propagation="#{empty from ? 'none' : 'default'}"
+                      id="lcredMotivoRechazoViewId">
+                <f:param name="lcredMotivoRechazoCodRechazo"
+                        value="#{_lcredMotivoRechazo.codRechazo}"/>
+            </s:link>
+            #{' '}
+            <s:link view="/LcredMotivoRechazoEdit.xhtml"
+                   value="Editar"
+             propagation="none"
+                      id="lcredMotivoRechazoEdit"
+                rendered="#{empty from}">
+                <f:param name="lcredMotivoRechazoCodRechazo"
+                        value="#{_lcredMotivoRechazo.codRechazo}"/>
+            </s:link>
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+
+    <div class="tableControl">
+
+        <s:link view="/LcredMotivoRechazoList.xhtml"
+            rendered="#{lcredMotivoRechazoList.previousExists}"
+               value="#{messages.left}#{messages.left} Primera Página"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link view="/LcredMotivoRechazoList.xhtml"
+            rendered="#{lcredMotivoRechazoList.previousExists}"
+               value="#{messages.left} Página Anterior"
+                  id="previousPage">
+            <f:param name="firstResult"
+                    value="#{lcredMotivoRechazoList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link view="/LcredMotivoRechazoList.xhtml"
+            rendered="#{lcredMotivoRechazoList.nextExists}"
+               value="Siguiente Página #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult"
+                    value="#{lcredMotivoRechazoList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link view="/LcredMotivoRechazoList.xhtml"
+            rendered="#{lcredMotivoRechazoList.nextExists}"
+               value="Ultima Página #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult"
+                    value="#{lcredMotivoRechazoList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+
+    <s:div styleClass="actionButtons" rendered="#{empty from}">
+        <s:button view="/LcredMotivoRechazoEdit.xhtml"
+                    id="create"
+           propagation="none"
+                 value="Crear Motivo Rechazo">
+            <f:param name="lcredMotivoRechazoCodRechazo"/>
+        </s:button>
+    </s:div>
+
+</ui:define>
+
+</ui:composition>

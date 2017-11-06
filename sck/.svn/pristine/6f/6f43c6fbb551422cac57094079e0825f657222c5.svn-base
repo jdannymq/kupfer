@@ -1,0 +1,1116 @@
+package org.domain.sck.session.action;
+
+import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+
+import org.domain.sck.base.GlobalHitosLogdService;
+import org.domain.sck.dto.CPagoDTO;
+import org.domain.sck.dto.SolicitudDTO;
+import org.domain.sck.entity.LcredCargos;
+import org.domain.sck.entity.LcredEstado;
+import org.domain.sck.entity.LcredPerfiles;
+import org.domain.sck.entity.LcredSolicitud;
+import org.domain.sck.entity.LcredUsuarioNivelEnc;
+import org.domain.sck.entity.SolicitudHitos;
+import org.domain.sck.entity.SolicitudLogs;
+import org.domain.sck.entity.Sucursal;
+import org.domain.sck.session.service.intranetsap.IntranetSapService;
+import org.domain.sck.session.service.scoring.ScoringService;
+import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.Create;
+import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.Logger;
+import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Scope;
+import org.jboss.seam.log.Log;
+
+@Name("listadosSolicitudesAction")
+@Scope(ScopeType.CONVERSATION)
+public class ListadosSolicitudesAction implements Serializable {
+
+	@Logger
+	Log log;
+
+	@In(value = "#{entityManager}")
+	EntityManager entityManager;
+
+	@In
+	IntranetSapService intranetSapService;
+
+	@In
+	ScoringService scoringService;
+
+	@In
+	GlobalHitosLogdService globalHitosLogdService;
+
+	@In(value = "#{identity.lcredUsuarioNivelEnc}", scope = ScopeType.SESSION)
+	private LcredUsuarioNivelEnc lcredUsuarioNivelEnc;
+
+	private List<SolicitudDTO> listaSolicitudesDto;
+	private List<SolicitudDTO> listaSolicitudesPendientesAprobarDto;
+	private List<SolicitudDTO> listaSolicitudesPendientesAnalizarDto;
+	private List<SolicitudDTO> listaMisSolicitudesDto;
+	private List<SolicitudDTO> listaTodasSolicitudesDto;
+	private List<Sucursal> listaSucursals;
+	private List<CPagoDTO> listaCPagoDTOs;
+	private List<LcredEstado> listaEstados;
+
+	@SuppressWarnings("unchecked")
+	@Create
+	public void init() {
+		Sucursal suc = null;
+
+		try {
+
+			if (lcredUsuarioNivelEnc != null) {
+				sacarSucursales();
+				sacarCPago();
+				sacarEstadosSolicitudes();
+				List<LcredSolicitud> listaSolictudIngresdas = (List<LcredSolicitud>) entityManager
+						.createQuery(
+								"Select s from LcredSolicitud s "
+										+ " Where s.estado in ('I','E','N')  "
+										+ " order by s.id.numSolicitud desc")
+						// .setParameter("estadoAux", estadoAux)
+						// .setParameter("emisor",lcredUsuarioNivelEnc.getId().getIdUsuario())
+						.getResultList();
+
+				if (listaSolictudIngresdas != null) {
+					listaSolicitudesDto = new ArrayList<SolicitudDTO>(0);
+
+					for (LcredSolicitud sol : listaSolictudIngresdas) {
+
+						SolicitudDTO nuevo = new SolicitudDTO();
+						nuevo.setIdSolictud(sol.getId().getNumSolicitud());
+						nuevo.setRut(sol.getRutCliente());
+						nuevo.setRazonSocial(sol.getNomCliente());
+						nuevo.setEmisor(sol.getCodEmisor());
+						nuevo.setDespTipoSolictud(sol.getSubTiposol());
+						nuevo.setFechaSalida(sol.getFecSalida());
+						nuevo.setUsuarioProceso(sol.getUsuarioActual());
+						nuevo.setTipoSolicitud(sol.getTipTiposol());
+						nuevo.setCanal(sol.getCanal());
+
+						if (sol.getId().getFecSolicitud() != null
+								&& sol.getHraSolicitud() != null) {
+
+							/* rescatar la fecha */
+							SimpleDateFormat sdf = new SimpleDateFormat(
+									"dd/MM/yyyy");
+							String fecha = sdf.format(sol.getId()
+									.getFecSolicitud());
+
+							/* rescatar la hora */
+							SimpleDateFormat sdh = new SimpleDateFormat("HH:mm");
+							String hora = sdh.format(sol.getHraSolicitud());
+
+							/* fecha y hora */
+							log.debug(" Fecha String:" + fecha);
+							log.debug(" hora String :" + hora);
+
+							DateFormat formatoFecha = new SimpleDateFormat(
+									"dd/MM/yyyy HH:mm");
+							try {
+								Date d = formatoFecha.parse(fecha + " " + hora);
+								nuevo.setFechaEmision(d);
+								nuevo.setHoraEmision(sol.getHraSolicitud());
+							} catch (Exception e) {
+								throw new Exception(e);
+							}
+						}
+
+						if (sol.getEstado() != null) {
+							LcredEstado estado = obtenerObjetoLcredEstado(sol
+									.getEstado());
+							if (estado != null) {
+								nuevo.setCodigoEstado(estado.getCodEstado());
+								nuevo.setEstado(estado.getDesEstado());
+							}
+
+							if (sol.getEstado().equals("I")) {
+								LcredPerfiles perfil = scoringService
+										.obtenerPerfil("3");
+								if (perfil != null) {
+									nuevo.setProceso(perfil.getDesPerfil());
+								}
+							}
+						}
+
+						if (sol.getSucursalEmisor() != null) {
+							log.debug(" codigo de sucursal  :"
+									+ sol.getSucursalEmisor());
+							suc = obtenerObjetoSucursal(sol.getSucursalEmisor());
+							if (suc != null) {
+								nuevo.setSucursal(suc.getDescripcion());
+							} else {
+								nuevo.setSucursal(sol.getSucursalEmisor());
+							}
+
+						}
+
+						if (sol.getConPago() != null) {
+							log.debug("condicion de pago  :"
+									+ sol.getConPago());
+							CPagoDTO obj = obtenerObjetoCPago(sol.getConPago());
+							if (obj != null) {
+								nuevo.setCondicionPago(obj.getDescripcion());
+							} else {
+								nuevo.setCondicionPago(sol.getConPago());
+							}
+
+						}
+
+						if (sol.getMontoAsegurado() != null) {
+							nuevo.setMontoAsegurado(sol.getMontoAsegurado()
+									.doubleValue());
+						} else {
+							nuevo.setMontoAsegurado((double) 0);
+						}
+
+						if (sol.getMonto() != null) {
+							nuevo.setMonto(sol.getMonto().doubleValue());
+						} else {
+							nuevo.setMonto((double) 0);
+						}
+
+						if (sol.getRiesgoKupfer() != null) {
+							nuevo.setMontoRiegoKupfer(sol.getRiesgoKupfer()
+									.doubleValue());
+						} else {
+							nuevo.setMontoRiegoKupfer((double) 0);
+						}
+
+						if (sol.getEvaluar() != null) {
+							nuevo.setEvaluar(sol.getEvaluar());
+						} else {
+							nuevo.setEvaluar(false);
+						}
+						if (sol.getAnalizar() != null) {
+							nuevo.setAnalizar(sol.getAnalizar());
+						} else {
+							nuevo.setAnalizar(false);
+						}
+
+						if (nuevo.getCodigoEstado() != null) {
+							if (nuevo.getCodigoEstado().equals("I")) {
+								nuevo.setControlador(1);
+							} else if (nuevo.getCodigoEstado().equals("E")
+									|| nuevo.getCodigoEstado().equals("N")) {
+								if (lcredUsuarioNivelEnc.getId().getIdUsuario()
+										.equals(sol.getUsuarioActual())) {
+									nuevo.setControlador(1);
+								} else {
+									LcredCargos cargo = scoringService
+											.getCargo(lcredUsuarioNivelEnc
+													.getId().getCargo());
+									if (cargo != null
+											&& cargo.getNivelCargo() == 10) {
+										nuevo.setControlador(1);
+									} else {
+										nuevo.setControlador(2);
+									}
+								}
+							} else if (!nuevo.getCodigoEstado().equals("I")
+									&& !nuevo.getCodigoEstado().equals("E")
+									&& !nuevo.getCodigoEstado().equals("N")) {
+								nuevo.setControlador(3);
+							}
+						}
+						listaSolicitudesDto.add(nuevo);
+						nuevo = null;
+					}
+
+				}
+				/************Solicitudes pendientes para aprobar **********************/
+				if (lcredUsuarioNivelEnc != null) {
+					sacarSucursales();
+					sacarCPago();
+					sacarEstadosSolicitudes();
+					List<LcredSolicitud> listaSolictudesAprobar = (List<LcredSolicitud>) entityManager
+							//Cambiar query para obtener las solicitudes pendientes para aprobar
+							.createQuery(
+									"Select s from LcredSolicitud s "
+											+ " Where s.estado in ('I','E','N')  "
+											+ " order by s.id.numSolicitud desc")
+							// .setParameter("estadoAux", estadoAux)
+							// .setParameter("emisor",lcredUsuarioNivelEnc.getId().getIdUsuario())
+							.getResultList();
+
+					if (listaSolictudesAprobar != null) {
+						listaSolicitudesPendientesAprobarDto = new ArrayList<SolicitudDTO>(
+								0);
+
+						for (LcredSolicitud sol : listaSolictudesAprobar) {
+
+							SolicitudDTO nuevo = new SolicitudDTO();
+							nuevo.setIdSolictud(sol.getId().getNumSolicitud());
+							nuevo.setRut(sol.getRutCliente());
+							nuevo.setRazonSocial(sol.getNomCliente());
+							nuevo.setEmisor(sol.getCodEmisor());
+							nuevo.setDespTipoSolictud(sol.getSubTiposol());
+							nuevo.setFechaSalida(sol.getFecSalida());
+							nuevo.setUsuarioProceso(sol.getUsuarioActual());
+							nuevo.setTipoSolicitud(sol.getTipTiposol());
+							nuevo.setCanal(sol.getCanal());
+
+							if (sol.getId().getFecSolicitud() != null
+									&& sol.getHraSolicitud() != null) {
+
+								/* rescatar la fecha */
+								SimpleDateFormat sdf = new SimpleDateFormat(
+										"dd/MM/yyyy");
+								String fecha = sdf.format(sol.getId()
+										.getFecSolicitud());
+
+								/* rescatar la hora */
+								SimpleDateFormat sdh = new SimpleDateFormat(
+										"HH:mm");
+								String hora = sdh.format(sol.getHraSolicitud());
+
+								/* fecha y hora */
+								log.debug(" Fecha String:" + fecha);
+								log.debug(" hora String :" + hora);
+
+								DateFormat formatoFecha = new SimpleDateFormat(
+										"dd/MM/yyyy HH:mm");
+								try {
+									Date d = formatoFecha.parse(fecha + " "
+											+ hora);
+									nuevo.setFechaEmision(d);
+									nuevo.setHoraEmision(sol.getHraSolicitud());
+								} catch (Exception e) {
+									throw new Exception(e);
+								}
+							}
+
+							if (sol.getEstado() != null) {
+								LcredEstado estado = obtenerObjetoLcredEstado(sol
+										.getEstado());
+								if (estado != null) {
+									nuevo.setCodigoEstado(estado.getCodEstado());
+									nuevo.setEstado(estado.getDesEstado());
+								}
+
+								if (sol.getEstado().equals("I")) {
+									LcredPerfiles perfil = scoringService
+											.obtenerPerfil("3");
+									if (perfil != null) {
+										nuevo.setProceso(perfil.getDesPerfil());
+									}
+								}
+							}
+
+							if (sol.getSucursalEmisor() != null) {
+								log.debug(" codigo de sucursal  :"
+										+ sol.getSucursalEmisor());
+								suc = obtenerObjetoSucursal(sol
+										.getSucursalEmisor());
+								if (suc != null) {
+									nuevo.setSucursal(suc.getDescripcion());
+								} else {
+									nuevo.setSucursal(sol.getSucursalEmisor());
+								}
+
+							}
+
+							if (sol.getConPago() != null) {
+								log.debug("condicion de pago  :"
+										+ sol.getConPago());
+								CPagoDTO obj = obtenerObjetoCPago(sol
+										.getConPago());
+								if (obj != null) {
+									nuevo.setCondicionPago(obj.getDescripcion());
+								} else {
+									nuevo.setCondicionPago(sol.getConPago());
+								}
+
+							}
+
+							if (sol.getMontoAsegurado() != null) {
+								nuevo.setMontoAsegurado(sol.getMontoAsegurado()
+										.doubleValue());
+							} else {
+								nuevo.setMontoAsegurado((double) 0);
+							}
+
+							if (sol.getMonto() != null) {
+								nuevo.setMonto(sol.getMonto().doubleValue());
+							} else {
+								nuevo.setMonto((double) 0);
+							}
+
+							if (sol.getRiesgoKupfer() != null) {
+								nuevo.setMontoRiegoKupfer(sol.getRiesgoKupfer()
+										.doubleValue());
+							} else {
+								nuevo.setMontoRiegoKupfer((double) 0);
+							}
+
+							if (sol.getEvaluar() != null) {
+								nuevo.setEvaluar(sol.getEvaluar());
+							} else {
+								nuevo.setEvaluar(false);
+							}
+							if (sol.getAnalizar() != null) {
+								nuevo.setAnalizar(sol.getAnalizar());
+							} else {
+								nuevo.setAnalizar(false);
+							}
+
+							if (nuevo.getCodigoEstado() != null) {
+								if (nuevo.getCodigoEstado().equals("I")) {
+									nuevo.setControlador(1);
+								} else if (nuevo.getCodigoEstado().equals("E")
+										|| nuevo.getCodigoEstado().equals("N")) {
+									if (lcredUsuarioNivelEnc.getId()
+											.getIdUsuario()
+											.equals(sol.getUsuarioActual())) {
+										nuevo.setControlador(1);
+									} else {
+										LcredCargos cargo = scoringService
+												.getCargo(lcredUsuarioNivelEnc
+														.getId().getCargo());
+										if (cargo != null
+												&& cargo.getNivelCargo() == 10) {
+											nuevo.setControlador(1);
+										} else {
+											nuevo.setControlador(2);
+										}
+									}
+								} else if (!nuevo.getCodigoEstado().equals("I")
+										&& !nuevo.getCodigoEstado().equals("E")
+										&& !nuevo.getCodigoEstado().equals("N")) {
+									nuevo.setControlador(3);
+								}
+							}
+							listaSolicitudesPendientesAprobarDto.add(nuevo);
+							nuevo = null;
+						}
+
+					}
+
+				}
+				
+				/************Solicitudes pendientes para Analizar **********************/
+				if (lcredUsuarioNivelEnc != null) {
+					sacarSucursales();
+					sacarCPago();
+					sacarEstadosSolicitudes();
+					List<LcredSolicitud> listaSolicitudesAnalizar = (List<LcredSolicitud>) entityManager
+							//Cambiar query para obtener las solicitudes pendientes para aprobar
+							.createQuery(
+									"Select s from LcredSolicitud s "
+											+ " Where s.estado in ('I','E','N')  "
+											+ " order by s.id.numSolicitud desc")
+							// .setParameter("estadoAux", estadoAux)
+							// .setParameter("emisor",lcredUsuarioNivelEnc.getId().getIdUsuario())
+							.getResultList();
+
+					if (listaSolicitudesAnalizar != null) {
+						listaSolicitudesPendientesAnalizarDto = new ArrayList<SolicitudDTO>(
+								0);
+
+						for (LcredSolicitud sol : listaSolicitudesAnalizar) {
+
+							SolicitudDTO nuevo = new SolicitudDTO();
+							nuevo.setIdSolictud(sol.getId().getNumSolicitud());
+							nuevo.setRut(sol.getRutCliente());
+							nuevo.setRazonSocial(sol.getNomCliente());
+							nuevo.setEmisor(sol.getCodEmisor());
+							nuevo.setDespTipoSolictud(sol.getSubTiposol());
+							nuevo.setFechaSalida(sol.getFecSalida());
+							nuevo.setUsuarioProceso(sol.getUsuarioActual());
+							nuevo.setTipoSolicitud(sol.getTipTiposol());
+							nuevo.setCanal(sol.getCanal());
+
+							if (sol.getId().getFecSolicitud() != null
+									&& sol.getHraSolicitud() != null) {
+
+								/* rescatar la fecha */
+								SimpleDateFormat sdf = new SimpleDateFormat(
+										"dd/MM/yyyy");
+								String fecha = sdf.format(sol.getId()
+										.getFecSolicitud());
+
+								/* rescatar la hora */
+								SimpleDateFormat sdh = new SimpleDateFormat(
+										"HH:mm");
+								String hora = sdh.format(sol.getHraSolicitud());
+
+								/* fecha y hora */
+								log.debug(" Fecha String:" + fecha);
+								log.debug(" hora String :" + hora);
+
+								DateFormat formatoFecha = new SimpleDateFormat(
+										"dd/MM/yyyy HH:mm");
+								try {
+									Date d = formatoFecha.parse(fecha + " "
+											+ hora);
+									nuevo.setFechaEmision(d);
+									nuevo.setHoraEmision(sol.getHraSolicitud());
+								} catch (Exception e) {
+									throw new Exception(e);
+								}
+							}
+
+							if (sol.getEstado() != null) {
+								LcredEstado estado = obtenerObjetoLcredEstado(sol
+										.getEstado());
+								if (estado != null) {
+									nuevo.setCodigoEstado(estado.getCodEstado());
+									nuevo.setEstado(estado.getDesEstado());
+								}
+
+								if (sol.getEstado().equals("I")) {
+									LcredPerfiles perfil = scoringService
+											.obtenerPerfil("3");
+									if (perfil != null) {
+										nuevo.setProceso(perfil.getDesPerfil());
+									}
+								}
+							}
+
+							if (sol.getSucursalEmisor() != null) {
+								log.debug(" codigo de sucursal  :"
+										+ sol.getSucursalEmisor());
+								suc = obtenerObjetoSucursal(sol
+										.getSucursalEmisor());
+								if (suc != null) {
+									nuevo.setSucursal(suc.getDescripcion());
+								} else {
+									nuevo.setSucursal(sol.getSucursalEmisor());
+								}
+
+							}
+
+							if (sol.getConPago() != null) {
+								log.debug("condicion de pago  :"
+										+ sol.getConPago());
+								CPagoDTO obj = obtenerObjetoCPago(sol
+										.getConPago());
+								if (obj != null) {
+									nuevo.setCondicionPago(obj.getDescripcion());
+								} else {
+									nuevo.setCondicionPago(sol.getConPago());
+								}
+
+							}
+
+							if (sol.getMontoAsegurado() != null) {
+								nuevo.setMontoAsegurado(sol.getMontoAsegurado()
+										.doubleValue());
+							} else {
+								nuevo.setMontoAsegurado((double) 0);
+							}
+
+							if (sol.getMonto() != null) {
+								nuevo.setMonto(sol.getMonto().doubleValue());
+							} else {
+								nuevo.setMonto((double) 0);
+							}
+
+							if (sol.getRiesgoKupfer() != null) {
+								nuevo.setMontoRiegoKupfer(sol.getRiesgoKupfer()
+										.doubleValue());
+							} else {
+								nuevo.setMontoRiegoKupfer((double) 0);
+							}
+
+							if (sol.getEvaluar() != null) {
+								nuevo.setEvaluar(sol.getEvaluar());
+							} else {
+								nuevo.setEvaluar(false);
+							}
+							if (sol.getAnalizar() != null) {
+								nuevo.setAnalizar(sol.getAnalizar());
+							} else {
+								nuevo.setAnalizar(false);
+							}
+
+							if (nuevo.getCodigoEstado() != null) {
+								if (nuevo.getCodigoEstado().equals("I")) {
+									nuevo.setControlador(1);
+								} else if (nuevo.getCodigoEstado().equals("E")
+										|| nuevo.getCodigoEstado().equals("N")) {
+									if (lcredUsuarioNivelEnc.getId()
+											.getIdUsuario()
+											.equals(sol.getUsuarioActual())) {
+										nuevo.setControlador(1);
+									} else {
+										LcredCargos cargo = scoringService
+												.getCargo(lcredUsuarioNivelEnc
+														.getId().getCargo());
+										if (cargo != null
+												&& cargo.getNivelCargo() == 10) {
+											nuevo.setControlador(1);
+										} else {
+											nuevo.setControlador(2);
+										}
+									}
+								} else if (!nuevo.getCodigoEstado().equals("I")
+										&& !nuevo.getCodigoEstado().equals("E")
+										&& !nuevo.getCodigoEstado().equals("N")) {
+									nuevo.setControlador(3);
+								}
+							}
+							listaSolicitudesPendientesAnalizarDto.add(nuevo);
+							nuevo = null;
+						}
+
+					}
+
+				}
+				
+				/************Mis solicitudes **********************/
+				if (lcredUsuarioNivelEnc != null) {
+					sacarSucursales();
+					sacarCPago();
+					sacarEstadosSolicitudes();
+					List<LcredSolicitud> listaMisSolicitudes = (List<LcredSolicitud>) entityManager
+							//Cambiar query para obtener las solicitudes de acuerdo al usuario
+							.createQuery(
+									"Select s from LcredSolicitud s "
+											+ " Where s.estado in ('I','E','N')  "
+											+ " order by s.id.numSolicitud desc")
+							// .setParameter("estadoAux", estadoAux)
+							// .setParameter("emisor",lcredUsuarioNivelEnc.getId().getIdUsuario())
+							.getResultList();
+
+					if (listaMisSolicitudes != null) {
+						listaMisSolicitudesDto = new ArrayList<SolicitudDTO>(
+								0);
+
+						for (LcredSolicitud sol : listaMisSolicitudes) {
+
+							SolicitudDTO nuevo = new SolicitudDTO();
+							nuevo.setIdSolictud(sol.getId().getNumSolicitud());
+							nuevo.setRut(sol.getRutCliente());
+							nuevo.setRazonSocial(sol.getNomCliente());
+							nuevo.setEmisor(sol.getCodEmisor());
+							nuevo.setDespTipoSolictud(sol.getSubTiposol());
+							nuevo.setFechaSalida(sol.getFecSalida());
+							nuevo.setUsuarioProceso(sol.getUsuarioActual());
+							nuevo.setTipoSolicitud(sol.getTipTiposol());
+							nuevo.setCanal(sol.getCanal());
+
+							if (sol.getId().getFecSolicitud() != null
+									&& sol.getHraSolicitud() != null) {
+
+								/* rescatar la fecha */
+								SimpleDateFormat sdf = new SimpleDateFormat(
+										"dd/MM/yyyy");
+								String fecha = sdf.format(sol.getId()
+										.getFecSolicitud());
+
+								/* rescatar la hora */
+								SimpleDateFormat sdh = new SimpleDateFormat(
+										"HH:mm");
+								String hora = sdh.format(sol.getHraSolicitud());
+
+								/* fecha y hora */
+								log.debug(" Fecha String:" + fecha);
+								log.debug(" hora String :" + hora);
+
+								DateFormat formatoFecha = new SimpleDateFormat(
+										"dd/MM/yyyy HH:mm");
+								try {
+									Date d = formatoFecha.parse(fecha + " "
+											+ hora);
+									nuevo.setFechaEmision(d);
+									nuevo.setHoraEmision(sol.getHraSolicitud());
+								} catch (Exception e) {
+									throw new Exception(e);
+								}
+							}
+
+							if (sol.getEstado() != null) {
+								LcredEstado estado = obtenerObjetoLcredEstado(sol
+										.getEstado());
+								if (estado != null) {
+									nuevo.setCodigoEstado(estado.getCodEstado());
+									nuevo.setEstado(estado.getDesEstado());
+								}
+
+								if (sol.getEstado().equals("I")) {
+									LcredPerfiles perfil = scoringService
+											.obtenerPerfil("3");
+									if (perfil != null) {
+										nuevo.setProceso(perfil.getDesPerfil());
+									}
+								}
+							}
+
+							if (sol.getSucursalEmisor() != null) {
+								log.debug(" codigo de sucursal  :"
+										+ sol.getSucursalEmisor());
+								suc = obtenerObjetoSucursal(sol
+										.getSucursalEmisor());
+								if (suc != null) {
+									nuevo.setSucursal(suc.getDescripcion());
+								} else {
+									nuevo.setSucursal(sol.getSucursalEmisor());
+								}
+
+							}
+
+							if (sol.getConPago() != null) {
+								log.debug("condicion de pago  :"
+										+ sol.getConPago());
+								CPagoDTO obj = obtenerObjetoCPago(sol
+										.getConPago());
+								if (obj != null) {
+									nuevo.setCondicionPago(obj.getDescripcion());
+								} else {
+									nuevo.setCondicionPago(sol.getConPago());
+								}
+
+							}
+
+							if (sol.getMontoAsegurado() != null) {
+								nuevo.setMontoAsegurado(sol.getMontoAsegurado()
+										.doubleValue());
+							} else {
+								nuevo.setMontoAsegurado((double) 0);
+							}
+
+							if (sol.getMonto() != null) {
+								nuevo.setMonto(sol.getMonto().doubleValue());
+							} else {
+								nuevo.setMonto((double) 0);
+							}
+
+							if (sol.getRiesgoKupfer() != null) {
+								nuevo.setMontoRiegoKupfer(sol.getRiesgoKupfer()
+										.doubleValue());
+							} else {
+								nuevo.setMontoRiegoKupfer((double) 0);
+							}
+
+							if (sol.getEvaluar() != null) {
+								nuevo.setEvaluar(sol.getEvaluar());
+							} else {
+								nuevo.setEvaluar(false);
+							}
+							if (sol.getAnalizar() != null) {
+								nuevo.setAnalizar(sol.getAnalizar());
+							} else {
+								nuevo.setAnalizar(false);
+							}
+
+							if (nuevo.getCodigoEstado() != null) {
+								if (nuevo.getCodigoEstado().equals("I")) {
+									nuevo.setControlador(1);
+								} else if (nuevo.getCodigoEstado().equals("E")
+										|| nuevo.getCodigoEstado().equals("N")) {
+									if (lcredUsuarioNivelEnc.getId()
+											.getIdUsuario()
+											.equals(sol.getUsuarioActual())) {
+										nuevo.setControlador(1);
+									} else {
+										LcredCargos cargo = scoringService
+												.getCargo(lcredUsuarioNivelEnc
+														.getId().getCargo());
+										if (cargo != null
+												&& cargo.getNivelCargo() == 10) {
+											nuevo.setControlador(1);
+										} else {
+											nuevo.setControlador(2);
+										}
+									}
+								} else if (!nuevo.getCodigoEstado().equals("I")
+										&& !nuevo.getCodigoEstado().equals("E")
+										&& !nuevo.getCodigoEstado().equals("N")) {
+									nuevo.setControlador(3);
+								}
+							}
+							listaMisSolicitudesDto.add(nuevo);
+							nuevo = null;
+						}
+
+					}
+
+				}
+				
+				/************Todas las solicitudes **********************/
+				if (lcredUsuarioNivelEnc != null) {
+					sacarSucursales();
+					sacarCPago();
+					sacarEstadosSolicitudes();
+					List<LcredSolicitud> listaTodasSolicitudes = (List<LcredSolicitud>) entityManager
+							//Cambiar query para obtener las solicitudes de acuerdo al usuario
+							.createQuery(
+									"Select s from LcredSolicitud s "
+											+ " Where s.estado in ('I','E','N')  "
+											+ " order by s.id.numSolicitud desc")
+							// .setParameter("estadoAux", estadoAux)
+							// .setParameter("emisor",lcredUsuarioNivelEnc.getId().getIdUsuario())
+							.getResultList();
+
+					if (listaTodasSolicitudes != null) {
+						listaTodasSolicitudesDto = new ArrayList<SolicitudDTO>(
+								0);
+
+						for (LcredSolicitud sol : listaTodasSolicitudes) {
+
+							SolicitudDTO nuevo = new SolicitudDTO();
+							nuevo.setIdSolictud(sol.getId().getNumSolicitud());
+							nuevo.setRut(sol.getRutCliente());
+							nuevo.setRazonSocial(sol.getNomCliente());
+							nuevo.setEmisor(sol.getCodEmisor());
+							nuevo.setDespTipoSolictud(sol.getSubTiposol());
+							nuevo.setFechaSalida(sol.getFecSalida());
+							nuevo.setUsuarioProceso(sol.getUsuarioActual());
+							nuevo.setTipoSolicitud(sol.getTipTiposol());
+							nuevo.setCanal(sol.getCanal());
+
+							if (sol.getId().getFecSolicitud() != null
+									&& sol.getHraSolicitud() != null) {
+
+								/* rescatar la fecha */
+								SimpleDateFormat sdf = new SimpleDateFormat(
+										"dd/MM/yyyy");
+								String fecha = sdf.format(sol.getId()
+										.getFecSolicitud());
+
+								/* rescatar la hora */
+								SimpleDateFormat sdh = new SimpleDateFormat(
+										"HH:mm");
+								String hora = sdh.format(sol.getHraSolicitud());
+
+								/* fecha y hora */
+								log.debug(" Fecha String:" + fecha);
+								log.debug(" hora String :" + hora);
+
+								DateFormat formatoFecha = new SimpleDateFormat(
+										"dd/MM/yyyy HH:mm");
+								try {
+									Date d = formatoFecha.parse(fecha + " "
+											+ hora);
+									nuevo.setFechaEmision(d);
+									nuevo.setHoraEmision(sol.getHraSolicitud());
+								} catch (Exception e) {
+									throw new Exception(e);
+								}
+							}
+
+							if (sol.getEstado() != null) {
+								LcredEstado estado = obtenerObjetoLcredEstado(sol
+										.getEstado());
+								if (estado != null) {
+									nuevo.setCodigoEstado(estado.getCodEstado());
+									nuevo.setEstado(estado.getDesEstado());
+								}
+
+								if (sol.getEstado().equals("I")) {
+									LcredPerfiles perfil = scoringService
+											.obtenerPerfil("3");
+									if (perfil != null) {
+										nuevo.setProceso(perfil.getDesPerfil());
+									}
+								}
+							}
+
+							if (sol.getSucursalEmisor() != null) {
+								log.debug(" codigo de sucursal  :"
+										+ sol.getSucursalEmisor());
+								suc = obtenerObjetoSucursal(sol
+										.getSucursalEmisor());
+								if (suc != null) {
+									nuevo.setSucursal(suc.getDescripcion());
+								} else {
+									nuevo.setSucursal(sol.getSucursalEmisor());
+								}
+
+							}
+
+							if (sol.getConPago() != null) {
+								log.debug("condicion de pago  :"
+										+ sol.getConPago());
+								CPagoDTO obj = obtenerObjetoCPago(sol
+										.getConPago());
+								if (obj != null) {
+									nuevo.setCondicionPago(obj.getDescripcion());
+								} else {
+									nuevo.setCondicionPago(sol.getConPago());
+								}
+
+							}
+
+							if (sol.getMontoAsegurado() != null) {
+								nuevo.setMontoAsegurado(sol.getMontoAsegurado()
+										.doubleValue());
+							} else {
+								nuevo.setMontoAsegurado((double) 0);
+							}
+
+							if (sol.getMonto() != null) {
+								nuevo.setMonto(sol.getMonto().doubleValue());
+							} else {
+								nuevo.setMonto((double) 0);
+							}
+
+							if (sol.getRiesgoKupfer() != null) {
+								nuevo.setMontoRiegoKupfer(sol.getRiesgoKupfer()
+										.doubleValue());
+							} else {
+								nuevo.setMontoRiegoKupfer((double) 0);
+							}
+
+							if (sol.getEvaluar() != null) {
+								nuevo.setEvaluar(sol.getEvaluar());
+							} else {
+								nuevo.setEvaluar(false);
+							}
+							if (sol.getAnalizar() != null) {
+								nuevo.setAnalizar(sol.getAnalizar());
+							} else {
+								nuevo.setAnalizar(false);
+							}
+
+							if (nuevo.getCodigoEstado() != null) {
+								if (nuevo.getCodigoEstado().equals("I")) {
+									nuevo.setControlador(1);
+								} else if (nuevo.getCodigoEstado().equals("E")
+										|| nuevo.getCodigoEstado().equals("N")) {
+									if (lcredUsuarioNivelEnc.getId()
+											.getIdUsuario()
+											.equals(sol.getUsuarioActual())) {
+										nuevo.setControlador(1);
+									} else {
+										LcredCargos cargo = scoringService
+												.getCargo(lcredUsuarioNivelEnc
+														.getId().getCargo());
+										if (cargo != null
+												&& cargo.getNivelCargo() == 10) {
+											nuevo.setControlador(1);
+										} else {
+											nuevo.setControlador(2);
+										}
+									}
+								} else if (!nuevo.getCodigoEstado().equals("I")
+										&& !nuevo.getCodigoEstado().equals("E")
+										&& !nuevo.getCodigoEstado().equals("N")) {
+									nuevo.setControlador(3);
+								}
+							}
+							listaTodasSolicitudesDto.add(nuevo);
+							nuevo = null;
+						}
+
+					}
+
+				}
+				
+			}
+		} catch (Exception e) {
+			log.error("error al sacar las solictudes de usuario logeado #0",
+					e.getMessage());
+		}
+
+	}
+
+	@SuppressWarnings("unchecked")
+	public void sacarSucursales() {
+		try {
+			listaSucursals = (List<Sucursal>) entityManager.createQuery(
+					"select suc from Sucursal suc ").getResultList();
+		} catch (Exception e) {
+			log.error("Error, al sacar la lista de sucursales #0",
+					e.getMessage());
+		}
+	}
+
+	public Sucursal obtenerObjetoSucursal(String codigo) {
+		Sucursal suc = null;
+		if (listaSucursals != null && codigo != null) {
+			for (Sucursal s : listaSucursals) {
+				if (s.getCodigo().equals(codigo)) {
+					suc = s;
+					break;
+				}
+			}
+		}
+		return suc;
+	}
+
+	public void sacarCPago() {
+		try {
+			listaCPagoDTOs = intranetSapService.getCondicionPago();
+		} catch (Exception e) {
+			log.error("Error, al sacar la lista de condiciones de pagos #0",
+					e.getMessage());
+		}
+	}
+
+	public CPagoDTO obtenerObjetoCPago(String codigo) {
+		CPagoDTO obj = null;
+		if (listaCPagoDTOs != null && codigo != null) {
+			for (CPagoDTO s : listaCPagoDTOs) {
+				if (s.getCodigo().equals(codigo)) {
+					obj = s;
+					break;
+				}
+			}
+		}
+		return obj;
+	}
+
+	public void sacarEstadosSolicitudes() {
+		try {
+			listaEstados = scoringService.obtenerEstados();
+		} catch (Exception e) {
+			log.error("Error, al sacar la lista de estados de pagos #0",
+					e.getMessage());
+		}
+	}
+
+	public LcredEstado obtenerObjetoLcredEstado(String codigo) {
+		LcredEstado obj = null;
+		if (listaEstados != null && codigo != null) {
+			for (LcredEstado s : listaEstados) {
+				if (s.getCodEstado().equals(codigo)) {
+					obj = s;
+					break;
+				}
+			}
+		}
+		return obj;
+	}
+
+	public void sacarLogSolicitud(SolicitudDTO sol) {
+		try {
+			if (sol != null) {
+				globalHitosLogdService.setSolicitud(sol);
+				List<SolicitudLogs> listaSolicitudesLogs = scoringService
+						.getSolicitudLogs(sol.getIdSolictud());
+				if (listaSolicitudesLogs != null) {
+					globalHitosLogdService.setListaLogs(listaSolicitudesLogs);
+				}
+			}
+		} catch (Exception e) {
+			log.error("Error, al desplegar los datos de la solicitud",
+					e.getMessage());
+		}
+
+	}
+
+	public void sacarLogHitos(SolicitudDTO sol) {
+		try {
+			if (sol != null) {
+				globalHitosLogdService.setSolicitud(sol);
+
+				List<SolicitudHitos> listaSolicitudesHitos = scoringService
+						.getSolicitudHitos(sol.getIdSolictud());
+				if (listaSolicitudesHitos != null) {
+					globalHitosLogdService.setListaHitos(listaSolicitudesHitos);
+				}
+			}
+
+		} catch (Exception e) {
+			log.error("Error, al desplegar los datos de la solicitud",
+					e.getMessage());
+		}
+
+	}
+
+	/* gets y Sets */
+
+	public List<SolicitudDTO> getListaSolicitudesDto() {
+		return listaSolicitudesDto;
+	}
+
+	public void setListaSolicitudesDto(List<SolicitudDTO> listaSolicitudesDto) {
+		this.listaSolicitudesDto = listaSolicitudesDto;
+	}
+
+
+	public List<SolicitudDTO> getListaSolicitudesPendientesAprobarDto() {
+		return listaSolicitudesPendientesAprobarDto;
+	}
+
+	public void setListaSolicitudesPendientesAprobarDto(
+			List<SolicitudDTO> listaSolicitudesPendientesAprobarDto) {
+		this.listaSolicitudesPendientesAprobarDto = listaSolicitudesPendientesAprobarDto;
+	}
+
+	public List<SolicitudDTO> getListaSolicitudesPendientesAnalizarDto() {
+		return listaSolicitudesPendientesAnalizarDto;
+	}
+
+	public void setListaSolicitudesPendientesAnalizarDto(
+			List<SolicitudDTO> listaSolicitudesPendientesAnalizarDto) {
+		this.listaSolicitudesPendientesAnalizarDto = listaSolicitudesPendientesAnalizarDto;
+	}
+
+	
+	public List<SolicitudDTO> getListaMisSolicitudesDto() {
+		return listaMisSolicitudesDto;
+	}
+
+	public void setListaMisSolicitudesDto(List<SolicitudDTO> listaMisSolicitudesDto) {
+		this.listaMisSolicitudesDto = listaMisSolicitudesDto;
+	}
+
+	public List<SolicitudDTO> getListaTodasSolicitudesDto() {
+		return listaTodasSolicitudesDto;
+	}
+
+	public void setListaTodasSolicitudesDto(
+			List<SolicitudDTO> listaTodasSolicitudesDto) {
+		this.listaTodasSolicitudesDto = listaTodasSolicitudesDto;
+	}
+
+	public List<CPagoDTO> getListaCPagoDTOs() {
+		return listaCPagoDTOs;
+	}
+
+	public void setListaCPagoDTOs(List<CPagoDTO> listaCPagoDTOs) {
+		this.listaCPagoDTOs = listaCPagoDTOs;
+	}
+	
+	
+	private String tsListaAnalista;
+	private String tsListaAprobacion;
+	private String tsListaMisSolicitudes;
+	private String tsListaTodasSolicitudes;
+	
+	public String getTsListaAnalista() {
+		return tsListaAnalista;
+	}
+	
+	public void setTsListaAnalista(String tsListaAnalista) {
+		this.tsListaAnalista = tsListaAnalista;
+	}
+
+	public String getTsListaAprobacion() {
+		return tsListaAprobacion;
+	}
+
+	public void setTsListaAprobacion(String tsListaAprobacion) {
+		this.tsListaAprobacion = tsListaAprobacion;
+	}
+
+	public String getTsListaMisSolicitudes() {
+		return tsListaMisSolicitudes;
+	}
+
+	public void setTsListaMisSolicitudes(String tsListaMisSolicitudes) {
+		this.tsListaMisSolicitudes = tsListaMisSolicitudes;
+	}
+
+	public String getTsListaTodasSolicitudes() {
+		return tsListaTodasSolicitudes;
+	}
+
+	public void setTsListaTodasSolicitudes(String tsListaTodasSolicitudes) {
+		this.tsListaTodasSolicitudes = tsListaTodasSolicitudes;
+	}
+	
+	
+}

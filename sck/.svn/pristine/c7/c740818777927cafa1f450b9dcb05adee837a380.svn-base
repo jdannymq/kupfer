@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Persistence deployment descriptor for dev profile -->
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" 
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd" 
+             version="1.0">
+             
+   <persistence-unit name="sck" transaction-type="JTA">
+      <provider>org.hibernate.ejb.HibernatePersistence</provider>
+      <jta-data-source>java:/sckDatasourceSck</jta-data-source>
+      <properties>
+      	 <property name="jboss.entity.manager.factory.jndi.name" value="java:/sck"/>
+          <property name="hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect"/>
+         <property name="hibernate.hbm2ddl.auto" value="update"/>
+         <!--property name="hibernate.show_sql" value="true"/-->
+         <!-- Only relevant if Seam is loading the persistence unit (Java SE bootstrap) -->
+         <property name="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.JBossTransactionManagerLookup"/>
+      </properties>
+   </persistence-unit>
+
+   <persistence-unit name="IntranetSAPSck" transaction-type="JTA">
+      <provider>org.hibernate.ejb.HibernatePersistence</provider>
+      <jta-data-source>java:/IntranetSAPDataSourceSck</jta-data-source>
+      <properties>
+      	 <property name="jboss.entity.manager.factory.jndi.name" value="java:/IntranetSAPSck"/>
+         <property name="hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect"/>
+         <!-- property name="hibernate.hbm2ddl.auto" value="update"/-->
+         <!-- property name="hibernate.show_sql" value="true"/-->
+         <!-- Only relevant if Seam is loading the persistence unit (Java SE bootstrap) -->
+         <property name="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.JBossTransactionManagerLookup"/>
+      </properties>
+   </persistence-unit>   
+   
+   <persistence-unit name="SegurSck" transaction-type="JTA">
+      <provider>org.hibernate.ejb.HibernatePersistence</provider>
+      <jta-data-source>java:/SEGURDataSourceSck</jta-data-source>
+      <properties>
+      	 <property name="jboss.entity.manager.factory.jndi.name" value="java:/SegurSck"/>
+         <property name="hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect"/>
+         <!-- property name="hibernate.hbm2ddl.auto" value="update"/-->
+         <!-- property name="hibernate.show_sql" value="true"/-->
+         <!-- Only relevant if Seam is loading the persistence unit (Java SE bootstrap) -->
+         <property name="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.JBossTransactionManagerLookup"/>
+      </properties>
+   </persistence-unit>   
+      
+     
+</persistence>

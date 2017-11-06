@@ -1,0 +1,684 @@
+<p:document xmlns:p="http://jboss.com/products/seam/pdf"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:h="http://java.sun.com/jsf/html"
+	title="PDF Perfil de Riesgo" orientation="landscape" > 
+
+	<p:font name="courier" style="NORMAL" size="9">
+		<p:paragraph>
+			Rut Cliente:		#{perfilRiesgoAction.clienteTarget.rut}
+			Nombre cliente: 	#{perfilRiesgoAction.clienteTarget.nomFantasia}
+			fechaImpresion: 	#{perfilRiesgoAction.Fecha_Actual()}
+		</p:paragraph>	
+	</p:font>
+	<p:html>
+		<s:fragment rendered="#{not empty perfilRiesgoAction.listSolicitudSCKTarget}">
+			<br />
+			<br />
+			<h3>Solicitudes SCK</h3>
+			<br/>
+			
+			<table style="font-size: 9px;" width="90%" border="1" class="Tablas">
+			 	<tr>
+			    	<td colspan="2"><strong>Solicitudes SCK</strong></td>
+			 	</tr>
+			 	<tr>
+			    	<td colspan="2"></td>
+			 	</tr>
+			 	<tr>
+			    	<td width="96">N�mero Solicitud</td>
+			    	<td width="88">fecha Solicitud</td>
+			 	</tr>
+				
+				<ui:repeat value="#{perfilRiesgoAction.listSolicitudSCKTarget}" var="_sol">
+				<tr>
+				    <td> <h:outputText value="#{_sol.solicitudSCK}" > </h:outputText></td>
+			    	<td> <h:outputText value="#{_sol.fechaSCK}" ><f:convertDateTime pattern="dd/MM/yyyy"/> </h:outputText></td>
+			 	</tr>
+				</ui:repeat>
+			</table>
+		</s:fragment>
+		<s:fragment rendered="#{not empty perfilRiesgoAction.listaExcelCot}">
+			<br />
+			<h3>Cotizaciones - pedidos</h3>
+			<br/>
+			<table style="font-size: 9px;" width="90%" border="1" class="Tablas">
+			  <tr>
+			    <td colspan="6"><strong>Cotizaciones - Pedidos</strong></td>
+			  </tr>
+			  <tr>
+			    <td colspan="6"></td>
+			  </tr>
+			 	<tr>
+			    <td width="96">N�mero Cotizaci�n / Pedido</td>
+			    <td width="88">Nombre Negocio</td>
+			    <td width="88">Monto</td>
+			    <td width="88">Margen</td>
+			    <td width="88">Margen Producto en Proceso</td>
+			    <td width="88">Forma Pago</td>
+			 	</tr>
+				<ui:repeat value="#{perfilRiesgoAction.listaExcelCot}" var="_ex">
+				<tr>
+					<td>#{_ex.numCot}</td>
+					<td>#{_ex.nomNegocio}</td>
+				    <td><h:outputText value="#{_ex.monto}"><f:convertNumber locale="#{globalLocale}" type="number"/></h:outputText></td>
+				    <td>#{_ex.margen}</td>
+				    <td>#{_ex.margenProc}</td>
+				    <td>#{_ex.fPago}</td>
+			</tr>
+			</ui:repeat>
+			<tr>
+				<td>
+					Total Montos
+				</td>
+				<td colspan="5">
+					<h:outputText value="#{perfilRiesgoAction.montoTotalCP}"><f:convertNumber locale="#{globalLocale}" type="currency" currencySymbol="$ "/></h:outputText>
+				</td>
+			</tr>
+			</table>
+			<br />
+			
+		</s:fragment>
+		
+		<s:fragment rendered="#{not empty perfilRiesgoAction.dicomIngresados}">
+			<br/>
+			<h3>Dicom</h3>
+			<br/>
+			<table style="font-size: 9px;" width="90%" border="1" class="Tablas">
+			  <tr>
+			    <td colspan="7"><strong>Dicom</strong></td>
+			  </tr>
+			  <tr>
+			    <td colspan="7"></td>
+			  </tr>
+			 	<tr>
+			    <td width="96">Tipo</td>
+			    <td width="88">Rut</td>
+			    <td width="141">Descripci�n</td>
+			    <td width="142">Deuda</td>
+			    <td width="141">morosidad</td>
+			    <td width="64">Multas</td>
+			    <td width="44">protesto</td>
+			 	</tr>
+				<ui:repeat value="#{perfilRiesgoAction.dicomIngresados}" var="_dicom">
+				<tr>
+				    <td>#{_dicom.tipo}</td>
+				    <td>#{_dicom.rut}</td>
+				    <td>#{_dicom.descripcion}</td>
+				    <td><h:outputText value="#{_dicom.deudaLab}">
+				    		<f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/>
+				    	</h:outputText>
+				    </td>
+				    <td><h:outputText value="#{_dicom.morosidad}" >
+				   			<f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/>
+				   		</h:outputText>
+				   	</td>
+				    <td><h:outputText value="#{_dicom.multas}"> 
+				    		<f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/>
+				    	</h:outputText>
+				    </td>
+				    <td><h:outputText value="#{_dicom.protesto}" >
+				    		<f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/>
+				    	</h:outputText>
+				    </td>
+				</tr>
+			</ui:repeat>
+			</table>
+			<br />
+		</s:fragment>
+		
+		<s:fragment rendered="#{not empty perfilRiesgo_SBIF}">
+			<br/>
+			<br/>
+			<h3>Boletas / Deudas Sbif</h3>
+			<br/>
+			<table style="font-size: 9px;" width="90%" border="1" class="Tablas">
+			  <tr>
+			    <td colspan="6"><strong>Boletas / Deudas Sbif</strong></td>
+			  </tr>
+			  <tr>
+			    <td colspan="6"></td>
+			  </tr>
+			 	<tr>
+			    <td width="96">Mes</td>
+			    <td width="88">Monto Boleta</td>
+			    <td width="141">Monto D.C.D al Dia</td>
+			    <td width="142">Monto D.C.D Morosa</td>
+			    <td width="141">Monto D.C.I Al Dia</td>
+			    <td width="64">Monto D.C.I Morosa</td>
+			    
+			 	</tr>
+				<ui:repeat value="#{perfilRiesgo_SBIF}" var="_Sbif">
+				<tr>
+				    <td> <h:outputText value="#{_Sbif.mes}" ><f:convertDateTime pattern="MMMM" locale="#{globalLocale}" /> </h:outputText></td>
+				    <td> <h:outputText value="#{_Sbif.montoBoleta}">
+				    		<f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}" />
+				    	</h:outputText>
+				    </td>	
+				    <td><h:outputText value="#{_Sbif.montoDeudaDirAlDia}">
+				    		<f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}" />
+				    	</h:outputText>
+				    </td>
+				    <td><h:outputText value="#{_Sbif.montoDeudaDirMorosa}">
+				    		<f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}" />
+				    	</h:outputText>
+				    </td>
+				    <td><h:outputText value="#{_Sbif.montoDeudaInAlDia}">
+				    		<f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}" />
+				    	</h:outputText></td>
+				    <td><h:outputText value="#{_Sbif.montoDeudaInMorosa}">
+				    		<f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}" />
+				    	</h:outputText>
+				    </td>
+				    
+				</tr>
+			</ui:repeat>
+			</table>
+		</s:fragment>
+		
+		</p:html>
+			<p:newPage />	
+		<p:html>
+		<s:fragment>
+			<br/>
+			<h3>Flujo de Pago</h3>
+			<br/>
+					
+		<table style="font-size: 9px;" border="1" class="dr-table rich-table">
+			<tr class="dr-table-header rich-table-header">
+				<th class="dr-table-headercell rich-table-headercell" > #{' '} </th>
+				<th class="dr-table-headercell rich-table-headercell" > Inicial </th>
+				<th class="dr-table-headercell rich-table-headercell" > Moroso o protestado </th>
+				<ui:repeat value="#{perfilRiesgoAction.flujoMeses}" var="_mes">
+					<th class="dr-table-headercell rich-table-headercell" > 
+						<h:outputText value="#{_mes}" >
+							<s:convertDateTime  pattern="MMMM-yy" locale="#{globalLocale}"  />
+						</h:outputText>
+					</th>
+				</ui:repeat>
+			</tr>
+			<tr class="dr-table-row rich-table-row dr-table-firstrow rich-table-firstrow">
+				<td class="dr-table-cell rich-table-cell"><b>Deuda actual facturada</b></td>
+				<td class="dr-table-cell rich-table-cell">
+					<h:outputText value="#{perfilRiesgoAction.flujoDeudaTotal}" >
+						<f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}" />
+					</h:outputText>
+				</td>
+				<td colspan="#{perfilRiesgoAction.flujoMeses.size()+1}" class="dr-table-cell rich-table-cell" style="background-color: grey;"> #{' '}</td>
+			</tr>
+			<tr class="dr-table-row rich-table-row">
+				<td class="dr-table-cell rich-table-cell"><b>Pedidos en proceso</b></td>
+				<td class="dr-table-cell rich-table-cell">
+					<h:outputText value="#{perfilRiesgoAction.flujoPedidoProceso}" >
+						<f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}" />
+					</h:outputText>
+				</td>
+				<td colspan="#{perfilRiesgoAction.flujoMeses.size()+1}" class="dr-table-cell rich-table-cell" style="background-color: grey;"> #{' '}</td>
+			</tr>
+			<tr class="dr-table-row rich-table-row">
+				<td class="dr-table-cell rich-table-cell"><b>Saldo Acreedores</b></td>
+				<td class="dr-table-cell rich-table-cell">
+					<h:outputText value="#{perfilRiesgoAction.flujoTotalSaldo}" >
+						<f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}" />
+					</h:outputText>
+				</td>
+				<td colspan="#{perfilRiesgoAction.flujoMeses.size()+1}" class="dr-table-cell rich-table-cell" style="background-color: grey;"> #{' '}</td>
+			</tr>
+			<tr class="dr-table-row rich-table-row">
+				<td class="dr-table-cell rich-table-cell"><b>Vencimientos CxC</b></td>
+				<td class="dr-table-cell rich-table-cell" style="background-color: grey;"> #{' '} </td>
+				<td class="dr-table-cell rich-table-cell">
+					<h:outputText value="#{perfilRiesgoAction.perfilRiesgoTarget.deudaCxC}" >
+						<f:convertNumber type="currency" currencySymbol="$ " />
+					</h:outputText>
+				</td>
+				<ui:repeat value="#{perfilRiesgoAction.flujoListaDeudaCxc}" var="_cxc">
+					<td class="dr-table-cell rich-table-cell">
+						<h:outputText value="#{_cxc.total}" >
+							<f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}" />
+						</h:outputText>
+					</td>
+				</ui:repeat>
+			</tr>
+			<tr class="dr-table-row rich-table-row">
+				<td class="dr-table-cell rich-table-cell"><b>Vencimientos Documentos</b></td>
+				<td class="dr-table-cell rich-table-cell" style="background-color: grey;"> #{' '} </td>
+				<td class="dr-table-cell rich-table-cell">
+					<h:outputText value="#{perfilRiesgoAction.perfilRiesgoTarget.deudaDcto}" >
+						<f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}" />
+					</h:outputText>
+				</td>
+				<ui:repeat value="#{perfilRiesgoAction.flujoListaDeudaDcto}" var="_dcto">
+					<td class="dr-table-cell rich-table-cell">
+						<h:outputText value="#{_dcto.total}" >
+							<f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}" />
+						</h:outputText>
+					</td>
+				</ui:repeat>
+			</tr>
+			<tr class="dr-table-row rich-table-row">
+				<td class="dr-table-cell rich-table-cell"><b>Vencimientos Pedidos en proceso</b></td>
+				<td class="dr-table-cell rich-table-cell" style="background-color: grey;" colspan="2"> #{' '} </td>
+				<ui:repeat value="#{perfilRiesgoAction.flujoPagosProcesosPendientes}" var="_pago">
+					<td class="dr-table-cell rich-table-cell">
+						<h:outputText value="#{_pago.deuda}" >
+							<f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}" />
+						</h:outputText>
+					</td>
+				</ui:repeat>
+			</tr>
+			<ui:repeat value="#{perfilRiesgoAction.perfilRiesgoTarget.cotizacionPedidosAsList}" var="_cp">
+				<tr class="dr-table-row rich-table-row" >
+					<td class="dr-table-cell rich-table-cell" height="15" colspan="#{perfilRiesgoAction.flujoMeses.size()+3}">#{' '}</td>
+				</tr>
+				<tr class="dr-table-row rich-table-row">
+					<td class="dr-table-cell rich-table-cell"><b>#{_cp.tipo} #{' '} #{_cp.NCotiPed}</b></td>
+					<td class="dr-table-cell rich-table-cell">
+						<h:outputText value="#{_cp.total}" >
+							<f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}" />
+						</h:outputText>
+					 </td>
+					<td colspan="#{perfilRiesgoAction.flujoMeses.size()+2}" class="dr-table-cell rich-table-cell" style="background-color: grey;"> #{' '}</td>
+				</tr>
+				<tr class="dr-table-row rich-table-row">
+					<td class="dr-table-cell rich-table-cell"><b>Pagos</b></td>
+					<td class="dr-table-cell rich-table-cell"  style="background-color: grey;" colspan="2"> #{' '} </td>
+					<ui:repeat value="#{_cp.flujoDeudaList}" var="_pagoList">
+						<td class="dr-table-cell rich-table-cell">
+							<h:outputText value="#{_pagoList.deuda}" >
+								<f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}" />
+							</h:outputText>
+						</td>
+					</ui:repeat>
+				</tr>
+			</ui:repeat>
+			<tr class="dr-table-row rich-table-row" >
+				<td class="dr-table-cell rich-table-cell" height="15" colspan="#{perfilRiesgoAction.flujoMeses.size()+3}">#{' '}</td>
+			</tr>
+			<tr class="dr-table-row rich-table-row">
+				<td class="dr-table-cell rich-table-cell"><b>Entrega</b></td>
+				<td class="dr-table-cell rich-table-cell" colspan="2" style="background-color: grey;"></td>
+				<ui:repeat value="#{perfilRiesgoAction.entregaFacturacionMensualList}" var="_entrega">
+					<td class="dr-table-cell rich-table-cell">
+						<h:outputText value="#{_entrega.comentarioEntrega}"  />
+					</td>
+				</ui:repeat>
+			</tr>
+			<tr class="dr-table-row rich-table-row">
+				<td class="dr-table-cell rich-table-cell"><b>Facturación</b></td>
+				<td class="dr-table-cell rich-table-cell" colspan="2" style="background-color: grey;"></td>
+				<ui:repeat value="#{perfilRiesgoAction.entregaFacturacionMensualList}" var="_texto">
+					<td class="dr-table-cell rich-table-cell">
+						<h:outputText value="#{_texto.comentarioFacturacion}" />
+					</td>
+				</ui:repeat>
+			</tr>
+			<tr class="dr-table-row rich-table-row" >
+				<td class="dr-table-cell rich-table-cell" height="15" colspan="#{perfilRiesgoAction.flujoMeses.size()+3}">#{' '}</td>
+			</tr>
+			<tr class="dr-table-row rich-table-row">
+				<td class="dr-table-cell rich-table-cell"><b>Peak de Crédito</b></td>
+				<td class="dr-table-cell rich-table-cell">
+					<h:outputText value="#{perfilRiesgoAction.flujoPeakCreditoTotal}" >
+						<f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}" />
+					</h:outputText> 
+				</td>
+				<td class="dr-table-cell rich-table-cell"> 
+					<h:outputText value="#{perfilRiesgoAction.flujoPeakCreditoMoroso}" >
+						<f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}" />
+					</h:outputText>  
+				</td>
+				<ui:repeat value="#{perfilRiesgoAction.flujoListaPeakCreditoMensual}" var="_peak">
+					<td class="dr-table-cell rich-table-cell">
+						<h:outputText value="#{_peak.deuda}" >
+							<f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}" />
+						</h:outputText> 
+					</td>
+				</ui:repeat>
+			</tr>
+			<tr class="dr-table-row rich-table-row">
+				<td class="dr-table-cell rich-table-cell"><b>Monto Asegurado</b></td>
+				<td class="dr-table-cell rich-table-cell"> 
+					<h:outputText value="#{perfilRiesgoAction.flujoMontoSeguro}" >
+						<f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}" />
+					</h:outputText>
+				</td>
+				<td class="dr-table-cell rich-table-cell">
+					<h:outputText value="#{perfilRiesgoAction.flujoMontoSeguro}" >
+						<f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}" />
+					</h:outputText>
+				</td>
+				<ui:repeat value="#{perfilRiesgoAction.flujoMeses}" var="_mes">
+					<td class="dr-table-cell rich-table-cell">
+						<h:outputText value="#{perfilRiesgoAction.flujoMontoSeguro}" >
+							<f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}" />
+						</h:outputText>
+					</td>
+				</ui:repeat>
+			</tr>
+			<tr class="dr-table-row rich-table-row">
+				<td class="dr-table-cell rich-table-cell"><b>Riesgo KH</b></td>
+				<td class="dr-table-cell rich-table-cell">
+					<h:outputText value="#{perfilRiesgoAction.flujoRiesgoTotal}" >
+						<f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}" />
+					</h:outputText> 
+				</td>
+				<td class="dr-table-cell rich-table-cell">
+					<h:outputText value="#{perfilRiesgoAction.flujoRiesgoMoroso}" >
+						<f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}" />
+					</h:outputText>
+				</td>
+				<ui:repeat value="#{perfilRiesgoAction.flujoListaRiesgoKH}" var="_riesgo">
+					<td class="dr-table-cell rich-table-cell">
+						<h:outputText value="#{_riesgo.deuda}" >
+							<f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}" />
+						</h:outputText>
+					</td>
+				</ui:repeat>
+			</tr>
+		</table>
+		</s:fragment>
+		
+	
+	<!-- Salto Pagina********************************** -->
+		<s:fragment rendered="#{perfilRiesgo_CxC ne null}">
+			<br/>
+			<h3>Cuentas por cobrar</h3>
+			<br/>
+		
+			<table style="font-size: 9px;" width="90%" border="1" class="Tablas">
+			  <tr>
+			    <td colspan="5"><strong>Cuentas por cobrar por rango:	Por Vencer</strong></td>
+			  </tr>
+			  <tr>
+			    <td colspan="5"></td>
+			  </tr>
+			 	<tr>
+			    <td width="96">AD &gt;90</td>
+			    <td width="88">AD 61-90</td>
+			    <td width="141">AD 31-60</td>
+			    <td width="142">AD 0-30</td>
+			    <td width="141">Total</td>
+			 	</tr>
+				<ui:repeat value="#{perfilRiesgo_CxC}" var="_cxcLocal">
+				<tr>
+				    <td><h:outputText value="#{_cxcLocal.porVencerMayor90Dias}"><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+				    <td><h:outputText value="#{_cxcLocal.porVencer61a90Dias}"><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+				    <td><h:outputText value="#{_cxcLocal.porVencer31a60Dias}"><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+				    <td><h:outputText value="#{_cxcLocal.porVencer0a30Dias}"><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+				    <td><h:outputText value="#{_cxcLocal.totalPorVencer}"><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+				</tr>
+			</ui:repeat>
+			</table>
+			<br />
+			<table style="font-size: 9px;" width="90%" border="1" class="Tablas">
+			  <tr>
+			    <td colspan="5"><strong>Cuentas por cobrar por rango:	Vencidos</strong></td>
+			  </tr>
+			  <tr>
+			    <td colspan="5"></td>
+			  </tr>
+			 	<tr>
+			    <td width="96">VC 0-30</td>
+			    <td width="88">VC 31-60</td>
+			    <td width="141">VC 61-90</td>
+			    <td width="142">VC &gt;90</td>
+			    <td width="141">Total</td>
+			 	</tr>
+				<ui:repeat value="#{perfilRiesgo_CxC}" var="_cxcLocal">
+				<tr>
+					<td><h:outputText value="#{_cxcLocal.vencido0a30Dias}"><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"  /></h:outputText></td>
+				    <td><h:outputText value="#{_cxcLocal.vencido31a60Dias}"><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}" /></h:outputText></td>
+				    <td><h:outputText value="#{_cxcLocal.vencido61a90Dias}"><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}" /></h:outputText></td>
+				    <td><h:outputText value="#{_cxcLocal.vencidoMayor90Dias}"><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}" /></h:outputText></td>
+				    <td><h:outputText value="#{_cxcLocal.totalVencido}"><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}" /></h:outputText></td>
+				</tr>
+			</ui:repeat>
+			</table>
+			<br />
+		
+		<table style="font-size: 9px;" width="90%" border="1" class="Tablas">
+		  <tr>
+		    <td colspan="5"><strong>Cuentas por cobrar por rango:	SaldoAcreedor</strong></td>
+		  </tr>
+		  <tr>
+		    <td colspan="5"></td>
+		  </tr>
+		 	<tr>
+		    <td width="96">AB 0-30</td>
+		    <td width="88">AB 31-60</td>
+		    <td width="141">AB 61-90</td>
+		    <td width="142">AB &gt;90</td>
+		    <td width="141">Total</td>
+		 	</tr>
+			<ui:repeat value="#{perfilRiesgo_CxC}" var="_cxcLocal">
+			<tr>
+			    <td><h:outputText value="#{_cxcLocal.abonos0a30Dias}"><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+			    <td><h:outputText value="#{_cxcLocal.abonos31a60Dias}"><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+			    <td><h:outputText value="#{_cxcLocal.abonos61a90Dias}"><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+			    <td><h:outputText value="#{_cxcLocal.abonosMasDe90Dias}"><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+			    <td><h:outputText value="#{_cxcLocal.totalAbonos}"><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+			</tr>
+		</ui:repeat>
+		</table>
+		<br />
+		</s:fragment>
+		
+		<s:fragment rendered="#{not empty perfilRiesgo_vencEmpresas}">
+		<table style="font-size: 9px;" width="90%" border="1" class="Tablas">
+		  <tr>
+		    <td colspan="11"><strong>Cuentas por cobrar por negocio</strong></td>
+		  </tr>
+		  <tr>
+		    <td colspan="11"></td>
+		  </tr>
+		 	<tr>
+		    <td width="96">Rango Vencimiento</td>
+		    <td width="88">Aceros</td>
+		    <td width="141">Cables</td>
+		    <td width="142">Dpi</td>
+		    <td width="141">Emsesa</td>
+		    <td width="96">Ferro</td>
+		    <td width="88">Kab</td>
+		    <td width="141">KDS</td>
+		    <td width="142">Servicios Kupfer</td>
+		    <td width="141">Soluciones</td>
+		    <td width="141">Varios</td>
+		 	</tr>
+			<ui:repeat value="#{perfilRiesgo_vencEmpresas}" var="_cxcNegocioLocal">
+			<tr>
+			    <td><h:outputText value="#{_cxcNegocioLocal.tipo}"><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+			    <td><h:outputText value="#{_cxcNegocioLocal.aceros}"><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+			    <td><h:outputText value="#{_cxcNegocioLocal.cables}"><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+			    <td><h:outputText value="#{_cxcNegocioLocal.dpi}"><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+			    <td><h:outputText value="#{_cxcNegocioLocal.emsesa}"><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+			    <td><h:outputText value="#{_cxcNegocioLocal.ferro}"><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+			    <td><h:outputText value="#{_cxcNegocioLocal.kab}"><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+			    <td><h:outputText value="#{_cxcNegocioLocal.kds}"><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+			    <td><h:outputText value="#{_cxcNegocioLocal.svcKupfer}"><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+			    <td><h:outputText value="#{_cxcNegocioLocal.soluciones}"><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+			    <td><h:outputText value="#{_cxcNegocioLocal.varios}"><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+			</tr>
+		</ui:repeat>
+		</table>
+		<br/>
+		</s:fragment>
+		
+		<s:fragment rendered="#{not empty perfilRiesgo_comprasPorAnho}">
+			<br/>
+			<h3>ComprasAnuales</h3>
+			<br/>
+			<table style="font-size: 7px;" width="90%" border="1" class="Tablas">
+			  <tr>
+			    <td colspan="13"><strong>Compras Anuales</strong></td>
+			  </tr>
+			  <tr>
+			    <td colspan="13"></td>
+			  </tr>
+			 	<tr>
+				    <td width="96">Año</td>
+				    <td width="88">Aceros</td>
+				    <td width="141">Cables</td>
+				    <td width="142">Dpi</td>
+				    <td width="141">Emsesa</td>
+				    <td width="96">Ferro</td>
+				    <td width="88">Kab</td>
+				    <td width="141">KDS</td>
+				    <td width="142">Servicios Kupfer</td>
+				    <td width="141">Soluciones</td>
+				    <td width="141">Varios</td>
+				    <td width="141">Compra total</td>
+				    <td width="141">Pagos</td>
+			 	</tr>
+				<ui:repeat value="#{perfilRiesgo_comprasPorAnho}" var="_anho">
+					<tr>
+					    <td><h:outputText value="#{_anho.anho}"/></td>
+					    <td><h:outputText value="#{_anho.aceros*1.19}"><f:convertNumber locale="#{globalLocale}" type="currency" currencySymbol="$ " /></h:outputText></td>
+					    <td><h:outputText value="#{_anho.cables*1.19}"><f:convertNumber locale="#{globalLocale}" type="currency" currencySymbol="$ " /></h:outputText></td>
+					    <td><h:outputText value="#{_anho.dpi*1.19}"><f:convertNumber locale="#{globalLocale}" type="currency" currencySymbol="$ " /></h:outputText></td>
+					    <td><h:outputText value="#{_anho.emsesa*1.19}"><f:convertNumber locale="#{globalLocale}" type="currency" currencySymbol="$ " /></h:outputText></td>
+					    <td><h:outputText value="#{_anho.ferro*1.19}"><f:convertNumber locale="#{globalLocale}" type="currency" currencySymbol="$ " /></h:outputText></td>
+					    <td><h:outputText value="#{_anho.kab*1.19}"><f:convertNumber locale="#{globalLocale}" type="currency" currencySymbol="$ " /></h:outputText></td>
+					    <td><h:outputText value="#{_anho.kds*1.19}"><f:convertNumber locale="#{globalLocale}" type="currency" currencySymbol="$ " /></h:outputText></td>
+					    <td><h:outputText value="#{_anho.svcKupfer*1.19}"><f:convertNumber locale="#{globalLocale}" type="currency" currencySymbol="$ " /></h:outputText></td>
+					    <td><h:outputText value="#{_anho.soluciones*1.19}"><f:convertNumber locale="#{globalLocale}" type="currency" currencySymbol="$ " /></h:outputText></td>
+					    <td><h:outputText value="#{_anho.varios*1.19}"><f:convertNumber locale="#{globalLocale}" type="currency" currencySymbol="$ " /></h:outputText></td>
+					    <td><h:outputText value="#{_anho.totalAnual*1.19}"><f:convertNumber locale="#{globalLocale}" type="currency" currencySymbol="$ " /></h:outputText></td>
+					    <td><h:outputText value="#{_anho.totalPagos*1.19}"><f:convertNumber locale="#{globalLocale}" type="currency" currencySymbol="$ " /></h:outputText></td>
+					</tr>
+				</ui:repeat>
+			</table>
+			<br/>
+		</s:fragment>
+	<s:fragment rendered="#{not empty perfilRiesgoAction.comprasList}">
+		<h3>Compras Ultimos 12 meses</h3>
+		<br/>
+		<table style="font-size: 7px;" width="90%" border="1" class="Tablas">
+		  <tr>
+		    <td colspan="14"><strong>Compras Ultimos 12 meses</strong></td>
+		  </tr>
+		  <tr>
+		    <td colspan="14"></td>
+		  </tr>
+		 	<tr>
+				<td width="96">Mes</td> 	
+			    <td width="96"><h:outputText value="#{perfilRiesgoAction.mesesList.get(0)}" /></td>
+			    <td width="96"><h:outputText value="#{perfilRiesgoAction.mesesList.get(1)}" /></td>
+			    <td width="96"><h:outputText value="#{perfilRiesgoAction.mesesList.get(2)}" /></td>
+			    <td width="96"><h:outputText value="#{perfilRiesgoAction.mesesList.get(3)}" /></td>
+			    <td width="96"><h:outputText value="#{perfilRiesgoAction.mesesList.get(4)}" /></td>
+			    <td width="96"><h:outputText value="#{perfilRiesgoAction.mesesList.get(5)}" /></td>
+			    <td width="96"><h:outputText value="#{perfilRiesgoAction.mesesList.get(6)}" /></td>
+			    <td width="96"><h:outputText value="#{perfilRiesgoAction.mesesList.get(7)}" /></td>
+			    <td width="96"><h:outputText value="#{perfilRiesgoAction.mesesList.get(8)}" /></td>
+			    <td width="96"><h:outputText value="#{perfilRiesgoAction.mesesList.get(9)}" /></td>
+			    <td width="96"><h:outputText value="#{perfilRiesgoAction.mesesList.get(10)}" /></td>
+			    <td width="96"><h:outputText value="#{perfilRiesgoAction.mesesList.get(11)}" /></td>
+			    <td width="96"><h:outputText value="Totales" /></td>
+				</tr>
+				<tr>
+				<ui:repeat value="#{perfilRiesgoAction.comprasList}" var="_compras">
+				<td width="96"><h:outputText value="#{_compras.tipo}" /></td> 	
+			    <td width="96"><h:outputText value="#{_compras.monto1*1.19}" ><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+			    <td width="96"><h:outputText value="#{_compras.monto2*1.19}" ><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+			    <td width="96"><h:outputText value="#{_compras.monto3*1.19}" ><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+			    <td width="96"><h:outputText value="#{_compras.monto4*1.19}" ><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+			    <td width="96"><h:outputText value="#{_compras.monto5*1.19}" ><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+			    <td width="96"><h:outputText value="#{_compras.monto6*1.19}" ><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+			    <td width="96"><h:outputText value="#{_compras.monto7*1.19}" ><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+			    <td width="96"><h:outputText value="#{_compras.monto8*1.19}" ><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+			    <td width="96"><h:outputText value="#{_compras.monto9*1.19}" ><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+			    <td width="96"><h:outputText value="#{_compras.monto10*1.19}" ><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+			    <td width="96"><h:outputText value="#{_compras.monto11*1.19}" ><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+			    <td width="96"><h:outputText value="#{_compras.monto12*1.19}" ><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+			    <td width="96"><h:outputText value="#{_compras.total}" ><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+			    </ui:repeat>
+				</tr>
+				
+			</table>	
+		</s:fragment>
+	
+
+		<s:fragment rendered="#{not empty perfilRiesgo_protestoSapList}">
+		<br/>
+		<h3>Protestos Historicos</h3>
+		<br/>
+		<table style="font-size: 9px;" width="90%" border="1" class="Tablas">
+		  <tr>
+		    <td colspan="4"><strong>Protestos Historicos</strong></td>
+		  </tr>
+		  <tr>
+		    <td colspan="4"></td>
+		  </tr>
+		 	<tr>
+			    <td width="96">Ano</td>
+			    <td width="88">N�mero Protestos</td>
+			    <td width="141">Monto Protestos</td>
+			    <td width="142">promedio D�as Aclaraci�n</td>
+			</tr>
+			<ui:repeat value="#{perfilRiesgo_protestoSapList}" var="_prot">
+				<tr>
+				    <td>#{_prot.anho}</td>
+				    <td>#{_prot.numeroProtestos}</td>
+				    <td><h:outputText value="#{_prot.montoProtestos}"><f:convertNumber type="currency" currencySymbol="$ " locale="#{globalLocale}"/></h:outputText></td>
+				    <td>#{_prot.diasAclaracionProtesto}</td>  
+				</tr>
+			</ui:repeat>
+		</table>
+		</s:fragment>
+		
+		<s:fragment rendered="#{perfilRiesgo_ScoringList ne null}">
+			<br/>
+			<h3>Antecedentes Financieros</h3>
+			<br /> 
+			<table style="font-size: 9px;" width="90%" border="1" class="Tablas">
+			  <tr>
+			    <td colspan="6"><strong>Antecedentes Financieros</strong></td>
+			  </tr>
+			  <tr>
+			    <td colspan="6"></td>
+			  </tr>
+			 	<tr>
+				    <td width="96">Indicador</td>
+				    <td width="141"><h:outputText value="#{perfilRiesgoAction.aniosScoringList.get(0)}" /></td>
+				    <td width="141"><h:outputText value="#{perfilRiesgoAction.aniosScoringList.get(1)}" /></td>
+				    <td width="141"><h:outputText value="#{perfilRiesgoAction.aniosScoringList.get(2)}" /></td>	  
+				   	<td width="141"><h:outputText value="#{perfilRiesgoAction.aniosScoringList.get(3)}" /></td>
+				   	<td width="141"><h:outputText value="#{perfilRiesgoAction.aniosScoringList.get(4)}" /></td>
+				</tr>
+				
+				<ui:repeat value="#{perfilRiesgo_ScoringList}" var="_scr">
+				<tr>
+				    <td><h:outputText value="#{_scr.indicador}" /></td>
+				    <td>
+				    	<h:outputText value="#{_scr.montoAnhoPrevio4}" rendered="#{!_scr.decimal and _scr.montoAnhoPrevio4 ne null}"><f:convertNumber type="currency" currencySymbol="" locale="#{globalLocale}"/></h:outputText>
+						<h:outputText value="#{_scr.montoAnhoPrevio4Dec}" rendered="#{_scr.decimal and _scr.montoAnhoPrevio4Dec ne null}"><f:convertNumber minFractionDigits="2" maxFractionDigits="2"/></h:outputText>	    
+				    	
+				    </td>
+				    <td>
+				    	<h:outputText value="#{_scr.montoAnhoPrevio3}" rendered="#{!_scr.decimal and _scr.montoAnhoPrevio3 ne null}"><f:convertNumber type="currency" currencySymbol="" locale="#{globalLocale}"/></h:outputText>
+					    <h:outputText value="#{_scr.montoAnhoPrevio3Dec}" rendered="#{_scr.decimal and _scr.montoAnhoPrevio3Dec ne null}"><f:convertNumber minFractionDigits="2" maxFractionDigits="2"/></h:outputText>
+					    
+				    </td>
+				    <td>
+				    	<h:outputText value="#{_scr.montoAnhoPrevio2}" rendered="#{!_scr.decimal and _scr.montoAnhoPrevio2 ne null}"><f:convertNumber type="currency" currencySymbol="" locale="#{globalLocale}"/></h:outputText>
+					    <h:outputText value="#{_scr.montoAnhoPrevio2Dec}" rendered="#{_scr.decimal and _scr.montoAnhoPrevio2Dec ne null}"><f:convertNumber minFractionDigits="2" maxFractionDigits="2"/></h:outputText>
+						
+				    </td>
+				    <td>
+				   		<h:outputText value="#{_scr.montoAnhoPrevio1}" rendered="#{!_scr.decimal and _scr.montoAnhoPrevio1 ne null}"><f:convertNumber type="currency" currencySymbol="" locale="#{globalLocale}"/></h:outputText>
+					    <h:outputText value="#{_scr.montoAnhoPrevio1Dec}" rendered="#{_scr.decimal and _scr.montoAnhoPrevio1Dec ne null}"><f:convertNumber minFractionDigits="2" maxFractionDigits="2"/></h:outputText>
+					    
+				    </td>
+				    <td>
+				    	<h:outputText value="#{_scr.montoAnhoActual}" rendered="#{!_scr.decimal and _scr.montoAnhoActual ne null}" ><f:convertNumber type="currency" currencySymbol="" locale="#{globalLocale}"/></h:outputText>
+					    <h:outputText value="#{_scr.montoAnhoActualDec}" rendered="#{_scr.decimal and _scr.montoAnhoActualDec ne null}"><f:convertNumber minFractionDigits="2" maxFractionDigits="2"/></h:outputText>
+					    
+				    </td>
+				</tr>
+			</ui:repeat>
+			</table>
+		</s:fragment>
+	</p:html>
+</p:document>

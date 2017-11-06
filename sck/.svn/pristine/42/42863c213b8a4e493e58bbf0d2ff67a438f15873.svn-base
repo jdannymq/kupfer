@@ -1,0 +1,140 @@
+package ldap;
+
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+
+import javax.naming.AuthenticationException;
+import javax.naming.Context;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.BasicAttribute;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.ModificationItem;
+import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
+import javax.naming.ldap.InitialLdapContext;
+import javax.naming.ldap.LdapContext;
+
+import org.jboss.logging.Logger;
+import org.jfree.util.Log;
+
+/**
+ * 
+ * @author Alvaro Ruiz
+ */
+public class ConexionLDAP {
+	/**
+	 * Constantes con los parametros de conexion del Active Directory
+	 */
+	// private static final String DOMAIN = "DC=kupfer,DC=kupfer,DC=cl";
+	private static final String URLDC = "ldap://10.1.19.42:389/";
+	private static final String USERNAME = "service_kup";
+	private static final String USERPASSWORD = "MaterK2009";
+
+	private Logger LOG = Logger.getLogger(ConexionLDAP.class);
+
+	/**
+	 * @param args
+	 *            the command line arguments
+	 * @return
+	 */
+	public ConexionLDAP() {
+	}
+
+	private Hashtable config() {
+
+		Hashtable ldapEnv = new Hashtable();
+
+		ldapEnv.put(Context.INITIAL_CONTEXT_FACTORY,
+				"com.sun.jndi.ldap.LdapCtxFactory");
+
+		ldapEnv.put(Context.SECURITY_AUTHENTICATION, "simple");
+		ldapEnv.put(Context.SECURITY_PRINCIPAL, USERNAME);
+		ldapEnv.put(Context.SECURITY_CREDENTIALS, USERPASSWORD);
+		ldapEnv.put(Context.PROVIDER_URL, URLDC);
+
+		return ldapEnv;
+
+	}
+	
+	
+	
+	
+	public boolean autentificar(String user) {
+		
+		LOG.debug("Autentificando usuario");
+		LOG.debug(user);
+		boolean valido = false;
+		String searchBase = "OU=Users Kupfer,DC=kupfer,DC=kupfer,DC=cl";
+		//grupo = "CN=".concat(grupo).concat(",CN=Users").concat(",DC=kupfer,DC=kupfer,DC=cl");
+		String objAttribs[] = { "cn", "distinguishedName", "memberOf" };
+		// Variable que almacenara los usuarios encontrados en el LDAP
+
+		try {
+			LdapContext ctx = new InitialLdapContext(config(), null);
+			SearchControls srchInfo = new SearchControls();
+			SearchResult dirObject = null;
+			srchInfo.setSearchScope(SearchControls.SUBTREE_SCOPE);
+			srchInfo.setReturningAttributes(objAttribs);
+			String filtros = "(&(sAMAccountName=" + user + ")(objectclass=user))";
+			NamingEnumeration<SearchResult> dirObjects = ctx.search(searchBase,
+					filtros, srchInfo);
+
+			while (dirObjects != null && dirObjects.hasMoreElements()) {
+				dirObject = (SearchResult) dirObjects.next();
+				break;
+			}
+			if (dirObject == null ) {
+				LOG.debug("Usuario no encontrado");
+			} else {	
+				Log.debug(dirObject);
+				LOG.debug("Usuario Encontrado. Intentando autentificar...");
+				String userCN = dirObject.getNameInNamespace();
+				LOG.debug("logueando usuario");
+				try {
+					// Logearse con el usuario y clave
+					Hashtable envUser = new Hashtable();;
+					envUser.put(Context.INITIAL_CONTEXT_FACTORY,
+					"com.sun.jndi.ldap.LdapCtxFactory");
+					envUser.put(Context.SECURITY_AUTHENTICATION, "simple");
+					envUser.put(Context.PROVIDER_URL, URLDC);
+					envUser.put(Context.SECURITY_PRINCIPAL, userCN);
+					//envUser.put(Context.SECURITY_CREDENTIALS, pass);
+					LdapContext ctxUser = new InitialLdapContext(envUser, null);
+					LOG.debug("Usuario: " + user + " valido");
+					valido = true;
+					//valido = isMemberOfADGroup(grupo, userCN, ctx);
+					ctxUser.close();
+				} catch (AuthenticationException ae) {
+					LOG.error("Ocurrió un error al intentar autenticar al usuario '"+ user + "'");
+					ae.printStackTrace();
+				} catch (NamingException e) {
+					LOG.error("Error al autentificar el usuario");
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			LOG.error(ex.getMessage());
+		}
+		return valido;
+	}	
+	public boolean isMemberOfADGroup(String dnADGroup, String dnADUser, LdapContext ctx) {
+		try {
+			DirContext lookedContext = (DirContext) (ctx.lookup(dnADGroup));
+			Attribute attrs = lookedContext.getAttributes("").get("member");
+			for (int i = 0; i < attrs.size(); i++) {
+				String foundMember = (String) attrs.get(i);
+				if (foundMember.equals(dnADUser)) {
+					LOG.debug("Usuario pertenece al grupo");
+					return true;
+				}
+			}
+		} catch (NamingException ex) {
+			LOG.error("El usuario no pertenece al grupo");
+		}
+		return false;
+	}
+}

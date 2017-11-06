@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	<rich:modalPanel id="mpRechazaSolicitudDerivada" autosized="true" width="400" height="100">
+    	 <f:facet name="header">
+            <h:outputText value="Rechazar Solicitud" style="padding-right:15px;" />
+        </f:facet>
+    	<f:facet name="controls">
+            <h:panelGroup>
+               	<h:graphicImage value="img/close.png" styleClass="hidelink" id="mpRechazaSolicitudDerivadahidelink" />
+                <rich:componentControl for="mpRechazaSolicitudDerivada" attachTo="mpRechazaSolicitudDerivadahidelink"
+                   	operation="hide" event="onclick" />
+            </h:panelGroup>
+        </f:facet>
+        <h:form id="frm_recharzar_derivada">
+	        <h:panelGrid id="escrituraAprobar" columns="1" cellpadding="0" cellspacing="5" width="100%" style="text-align:center;">
+	        	<h:outputLabel value="¿Está seguro de rechazar la solicitud seleccionada.?" style="font-size:14px; font-weight: bold;" />
+			</h:panelGrid>
+			<table cellpadding="0" cellspacing="0" width="100%">
+				<tr>
+					<td align="center">
+						<s:fragment rendered="#{respuestaSolicitudAction.habilitarCheckEnvio() == true}">
+							<h:selectBooleanCheckbox id="enviacorreoRechazo" value="#{respuestaSolicitudAction.wvarEnviaCorreo}" />
+							<label>¿Envía el Correo?</label>
+						</s:fragment>
+				        <h:panelGrid id="ingresar" columns="3" cellpadding="0" cellspacing="5" columnClasses="col_top">
+			        		<a:commandButton action="#{respuestaSolicitudAction.rechazarSolicitudesDerivada()}" 
+			        						 value="Si" 
+			        						 ajaxSingle="true"
+			        	                reRender="escrituraAprobar,mpRechazaSolicitudDerivada,mpMensajeRespuestaDerivadaAprobar"
+			        	                oncomplete="if (#{respuestaSolicitudAction.mensajeGlogal != null}) {#{rich:component('mpMensajeRespuestaDerivadaAprobar')}.show()}"
+			        		            process="enviacorreoRechazo" /> 
+			        		            
+			        		<a:commandButton action="#{respuestaSolicitudAction.salirAprobarSolicitudDerivada()}" 
+			        						 value="No" 
+			        						 ajaxSingle="true"
+			        	                reRender="mpRechazaSolicitudDerivada"
+			        	                disabled="false"
+			        		            oncomplete="if (#{respuestaSolicitudAction.salirDelMensaje==true}) {#{rich:component('mpRechazaSolicitudDerivada')}.hide()}" 
+			        		            />
+						</h:panelGrid>					
+					
+					</td>				
+				</tr>
+			</table>
+
+        </h:form>
+    </rich:modalPanel>
+    
+</ui:composition>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/layout/template.xhtml"
+    xmlns:a="http://richfaces.org/a4j"
+     xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+    xmlns:p="http://primefaces.prime.com.tr/ui">
+    
+  <ui:define name="body">
+  <div class="divTitular"><h1>Matriz de Responsabilidades</h1></div>
+  <h:form id="frmSeleccion">
+    <rich:panel id="panelGeneralAux">
+        <f:facet name="header">Parámetros</f:facet>
+		<table cellpadding="2" cellspacing="3" border="1" style="font-size:10px;" width="100%">
+			<tr valign="top">
+				<td style="font-size:11px; text-align:center; border:1px solid #000000;padding:3px;"><strong>Responsables</strong></td>
+				<td style="font-size:11px; text-align:center; border:1px solid #000000;padding:3px;"><strong>Sucursales</strong></td>
+				<td style="font-size:11px; text-align:center; border:1px solid #000000;padding:3px;"><strong>Acción</strong></td>
+			</tr>
+			<tr valign="top">
+				<td style="border:1px solid #000000;padding:3px;" align="center">
+			        <rich:listShuttle id="idListaUsuarios" sourceValue="#{matrizResponsabilidadAction.listaUsuariosegurs}"
+				            targetValue="#{matrizResponsabilidadAction.listaUsuariosegursSeleccionados}" var="usuario" listsHeight="100"
+				            sourceListWidth="300" targetListWidth="300" sourceCaptionLabel="Usuario Disponible"
+				            targetCaptionLabel="Usuario Seleccionado" orderControlsVisible="false" fastOrderControlsVisible="false" > 
+			            <ui:include src="/layout/facetSelectionLists.xhtml" />
+			            <s:convertEntity/>
+			            <rich:column>
+			                <h:outputText value="#{usuario.nombre.toUpperCase(locale)}"></h:outputText>
+			            </rich:column>
+					</rich:listShuttle>		
+				</td>
+				<td style="border:1px solid #000000;padding:3px;" align="center">
+			        <rich:listShuttle id="idListaSucursal" sourceValue="#{matrizResponsabilidadAction.listaSucursals}"
+				            targetValue="#{matrizResponsabilidadAction.listaSucursalsSeleccionados}" var="sucursal" listsHeight="100"
+				            sourceListWidth="150" targetListWidth="150" sourceCaptionLabel="Sucursal Disponible"
+				            targetCaptionLabel="Sucursal Seleccionado" orderControlsVisible="false" fastOrderControlsVisible="false" > 
+			            <ui:include src="/layout/facetSelectionLists.xhtml" />
+			            <s:convertEntity/>
+			            <rich:column>
+			                <h:outputText value="#{sucursal.descripcion.toUpperCase(locale)}"></h:outputText>
+			            </rich:column>
+					</rich:listShuttle>		
+				</td>				
+				<td style="border:1px solid #000000;padding:3px;" width="75px;" align="center">
+					<a:commandButton action="#{matrizResponsabilidadAction.guardarInformacion()}" 
+					                  value="Guardar" 
+					             ajaxSingle="true"
+					                reRender="panelMensaje,panelGeneral,listaTodasUsuariosResponsabilidades"
+          				                title="Guardar..."
+          				                process="idListaUsuarios,idListaSucursal"
+          				                style="width:75px;"
+					                />
+					<a:commandButton action="#{matrizResponsabilidadAction.consultarGrilla()}" 
+					                  value="Consultar" 
+					             ajaxSingle="true"
+					                reRender="panelMensaje,panelGeneral,listaTodasUsuariosResponsabilidades"
+             				                title="Consultar..."
+             				                process="idListaUsuarios,idListaSucursal"
+             				                style="width:75px;"
+					                />							
+					<a:commandButton action="#{matrizResponsabilidadAction.limpiarParametos()}" 
+					                  value="Limpiar" 
+					             ajaxSingle="true"
+					                reRender="idListaUsuarios,idListaSucursal,listaTodasUsuariosResponsabilidades"
+             				                title="Limpiar..."
+             				                style="width:75px;"
+					                />				
+				</td>
+			</tr>
+		</table>
+		<br />
+  	    <a:outputPanel id="panelMensaje" >
+        	<h:panelGrid columns="1" cellpadding="0" cellspacing="0" width="100%" style="text-align:left; ">
+	        	<h:messages  globalOnly="true" styleClass="message"
+		    	errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" style="font-size:12px; color:#DF0101" />
+	    	</h:panelGrid>
+		</a:outputPanel>  		
+		
+    </rich:panel>
+
+    
+       
+    <rich:panel id="panelGeneral">
+        <f:facet name="header">Listado de Resultado </f:facet>
+   			<table cellpadding="0" cellspacing="0" border="0" style="font-size:10px;" width="100%">
+   				<tr >
+   					<td width="100%;" >
+						<a:outputPanel id="listaTodasUsuariosResponsabilidades">  
+							<h:outputText value="No existen Resumen ." rendered="#{empty matrizResponsabilidadAction.listaGeneralResponsabilidades}" />
+							<div style="width: 100%; overflow: auto;">
+								<rich:datascroller id="sc4" for="usuariosResponsabilidadesList" />
+								
+								<rich:extendedDataTable id="usuariosResponsabilidadesList" var="_ur" rows="15"  reRender="sc4" 
+													tableState="#{matrizResponsabilidadAction.tsListaResposabilidades}"
+									enableContextMenu="true"
+									value="#{matrizResponsabilidadAction.listaGeneralResponsabilidades}"
+									rendered="#{not empty matrizResponsabilidadAction.listaGeneralResponsabilidades}"
+									style="font-size:7px; ">
+									<rich:column style="font-size:10px;" label="Usuario" width="462px;" 
+										sortBy="#{_ur.nombreUsuario}"
+										filterExpression="#{fn:containsIgnoreCase(_ur.nombreUsuario, matrizResponsabilidadAction.usuarioFilter)}">
+										<f:facet name="header">Usuario</f:facet>
+										<f:facet name="filter">
+											<h:selectOneMenu value="#{matrizResponsabilidadAction.usuarioFilter}" style="width:300px;">
+												<s:selectItems value="#{matrizResponsabilidadAction.listaUsuarios}" hideNoSelectionLabel="false"
+													noSelectionLabel="Seleccione" var="_sp" itemValue="#{_sp}" label="#{_sp}" ></s:selectItems>
+												<a:support event="onchange" ajaxSingle="true" reRender="usuariosResponsabilidadesList"></a:support>
+											</h:selectOneMenu>
+										</f:facet>										
+										<h:outputText value="#{_ur.nombreUsuario}" />
+									</rich:column>
+									<rich:column width="800px;" 
+										label="Sucursales Responsables." 
+										sortBy="#{_ur.matrizUsuarioResp.usuariosegur.alias}"
+										style="font-size:10px;">
+										<f:facet name="header">Sucursales Responsables.</f:facet>
+										<s:fragment rendered="#{_ur.listaMatrizDetalleResp == null}">
+											<h:outputText value="no existen sucursal asignadas al usuario" />
+										</s:fragment>
+										<s:fragment rendered="#{_ur.listaMatrizDetalleResp != null}">
+										
+										   <div id="listaSucursales" style="height:180px; overflow:auto;">
+										   
+												<rich:datascroller id="sc5" for="subUsuariosResponsabilidadesList" />
+													<rich:extendedDataTable id="subUsuariosResponsabilidadesList" var="_deta" rows="20"  reRender="sc5" 
+																		tableState="#{matrizResponsabilidadAction.tsListaSubResposabilidades}"
+														enableContextMenu="true"
+														value="#{_ur.listaMatrizDetalleResp}"
+														rendered="#{not empty _ur.listaMatrizDetalleResp}"
+														style="font-size:7px; ">
+														<rich:column style="font-size:10px;" label="Usuario"  width="250px;" 
+															sortBy="#{_deta.sucursal.descripcion}">
+															<f:facet name="header">Descripción</f:facet>
+															<h:outputText value="#{_deta.sucursal.descripcion}" />
+														</rich:column>
+														<rich:column style="font-size:10px;" label="Usuario"  
+															sortBy="#{_deta.sucursal.descripcion}">
+															<f:facet name="header">Acción</f:facet>
+															<a:commandButton value="Eliminar" 
+														                    action="#{matrizResponsabilidadAction.eliminarMatrizDetalleResponsabilidad(_deta)}"
+														                ajaxSingle="true"
+														                  reRender="listaTodasUsuariosResponsabilidades" 
+														                   />																	
+														</rich:column>														
+												</rich:extendedDataTable>
+												<ui:remove>
+													<table cellpadding="2" cellspacing="1" width="50%" border="0">
+														<a:repeat id="detalle" value="#{_ur.listaMatrizDetalleResp}"  var="_deta">
+															<tr valign="top">
+																<td >#{_deta.sucursal.descripcion}</td>
+																<td > 
+																	<a:commandButton value="Eliminar" 
+																                    action="#{matrizResponsabilidadAction.eliminarMatrizDetalleResponsabilidad(_deta)}"
+																                ajaxSingle="true"
+																                  reRender="listaTodasUsuariosResponsabilidades" 
+																                   />															
+																</td>
+															</tr>													
+														</a:repeat>
+													</table>
+												</ui:remove>
+										   </div>
+										</s:fragment>										
+									</rich:column>
+								</rich:extendedDataTable>
+							</div>
+						</a:outputPanel>
+   					</td>
+				</tr>
+   			</table>
+		<div style="clear:both"/>
+    </rich:panel>
+    </h:form>
+     <a:status onstart="abrirModal();" onstop="cerrarModal();"></a:status>
+</ui:define>
+
+
+
+</ui:composition>

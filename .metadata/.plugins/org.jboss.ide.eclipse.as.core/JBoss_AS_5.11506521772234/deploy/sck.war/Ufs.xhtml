@@ -1,0 +1,66 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <rich:panel>
+        <f:facet name="header">Detalle de Ufs Ingresada</f:facet>
+
+        <s:decorate id="idUfs" template="layout/display.xhtml">
+            <ui:define name="label">Id Ufs</ui:define>
+            <h:outputText value="#{ufsHome.instance.idUfs}"/>
+        </s:decorate>
+
+        <s:decorate id="dolar" template="layout/display.xhtml">
+            <ui:define name="label">Dolar</ui:define>
+            <h:outputText value="#{ufsHome.instance.dolar}"/>
+        </s:decorate>
+
+        <s:decorate id="euro" template="layout/display.xhtml">
+            <ui:define name="label">Euro</ui:define>
+            <h:outputText value="#{ufsHome.instance.euro}"/>
+        </s:decorate>
+
+        <s:decorate id="fecha" template="layout/display.xhtml">
+            <ui:define name="label">Fecha</ui:define>
+            <h:outputText value="#{ufsHome.instance.fecha}">
+                <s:convertDateTime type="both" dateStyle="short"/>
+            </h:outputText>
+        </s:decorate>
+
+        <s:decorate id="utm" template="layout/display.xhtml">
+            <ui:define name="label">Utm</ui:define>
+            <h:outputText value="#{ufsHome.instance.utm}"/>
+        </s:decorate>
+
+        <s:decorate id="valor" template="layout/display.xhtml">
+            <ui:define name="label">Monto Uf</ui:define>
+            <h:outputText value="#{ufsHome.instance.valor}"/>
+        </s:decorate>
+
+        <div style="clear:both"/>
+
+    </rich:panel>
+
+    <div class="actionButtons">
+
+        <!-- s:button view="/UfsEdit.xhtml"
+                    id="edit"
+                 value="Editar"/-->
+
+        <s:button view="/#{empty ufsFrom ? 'UfsList' : ufsFrom}.xhtml"
+                    id="done"
+                 value="Volver"/>
+
+    </div>
+
+</ui:define>
+
+</ui:composition>

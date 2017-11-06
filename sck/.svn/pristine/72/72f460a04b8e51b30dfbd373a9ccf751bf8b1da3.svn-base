@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:p="http://primefaces.prime.com.tr/ui"
+    template="layout/template.xhtml">
+	
+	<ui:define name="body">
+	<div class="divTitular"><h1>Mantenedor Rango de Plazos</h1></div>
+	
+			<h:form id="frm_PlazosRangos">
+				<s:button view="/GenerarSolicitud.xhtml" propagation="none" value="Volver" ></s:button>
+				
+				<h:messages id="messagesEsp" globalOnly="false" styleClass="message"
+		            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
+		            rendered="#{showGlobalMessages != 'false'}" />
+		            
+				<a:commandButton value="Agregar Rango de Plazos" ajaxSingle="true" action="#{matrizAction.cambiarEstado(false)}"  
+					reRender="frm_modalPlazoRango" oncomplete="#{rich:component('mpPlazoRango')}.show();" />
+				
+				<rich:panel id="rp_listaPlazos">
+					<f:facet name="label">Rango de Plazos</f:facet>
+						
+						<rich:extendedDataTable id="dtRangoPlazos" value="#{matrizAction_plazosList}" var="_plazo" noDataLabel="No se encuentran rango de montos para las solicitudes" >
+							<f:facet name="header">Codigo</f:facet>
+							
+							<rich:column sortBy="#{_plazo.system_id}" label="id"  width="30%;" style="text-align: center;">
+								<f:facet name="header">Id</f:facet>
+								<h:outputText value="#{_plazo.system_id}" ></h:outputText>
+							</rich:column>
+							
+							<rich:column sortBy="#{_plazo.descripcion}" label="descripcion"  width="30%;" style="text-align: center;">
+								<f:facet name="header">descripcion</f:facet>
+								<h:outputText value="#{_plazo.descripcion}" ></h:outputText>
+							</rich:column>
+							
+							<rich:column sortBy="#{_plazo.monto_inicial}" label="inicial"  width="30%;" style="text-align: center;">
+								<f:facet name="header">Rango inicial</f:facet>
+								<h:outputText value="#{_plazo.plazo_inicial}" ></h:outputText>
+							</rich:column>
+							
+							<rich:column sortBy="#{_plazo.monto_final}" label="inicial"  width="30%;" style="text-align: center;">
+								<f:facet name="header">Rango final</f:facet>
+								<h:outputText value="#{_plazo.plazo_final}" ></h:outputText>
+							</rich:column>
+							
+							<rich:column label="inicial"  width="30%;" style="text-align: center;">
+								<f:facet name="header">Estado</f:facet>
+								<h:outputText value="Activo" rendered="#{_plazo.disabled ne true}"></h:outputText>
+								<h:outputText value="Inactivo" rendered="#{_plazo.disabled eq true}"></h:outputText>
+							</rich:column>
+							
+							<rich:column sortBy="#{_plazo.monto_final}" label="inicial"  width="30%;" style="text-align: center;">
+								<f:facet name="header">Accion</f:facet>
+								<a:commandLink value="Editar" action="#{matrizAction.cargarPlazoMatrizEditar(_plazo, true)}" reRender="frm_modalPlazoRango" oncomplete="#{rich:component('mpPlazoRango')}.show();"></a:commandLink>
+								
+							</rich:column>
+							
+							
+						</rich:extendedDataTable>
+				</rich:panel>
+			</h:form>
+		 <a:status onstart="abrirModal();" onstop="cerrarModal();"></a:status>	
+		<ui:include src="/layout/modalSckMatriz/modalAgregarPlazoRango.xhtml"/>  
+	</ui:define>
+</ui:composition>
+

@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	<rich:modalPanel id="mpCreacionCliente" autosized="true" width="800">
+    	 <f:facet name="header">
+            <h:outputText value="Creación Cliente" style="padding-right:15px;" />
+        </f:facet>
+    	<f:facet name="controls">
+            <h:panelGroup>
+            	<h:form>
+					<a:commandLink action="#{generarSolicitudAction.limpiarClienteNuevo}" ajaxSingle="true">
+						<h:graphicImage value="img/close.png" styleClass="hidelink" id="mpCreacionClientehidelink" />
+					</a:commandLink>
+					<rich:componentControl for="mpCreacionCliente" attachTo="mpCreacionClientehidelink"
+                   		operation="hide" event="onclick" />
+				</h:form>
+            </h:panelGroup>
+        </f:facet>
+        <h:form id="frm_CreacionCliente">
+        	 <div  id="datos" style="height:500px; overflow: auto;">
+	        	 <rich:panel>
+	        	 	<f:facet name="header">Informacion de Cliente  </f:facet>
+						<table cellpadding="0" cellspacing="0" width="100%;" border="0">
+							<tr>
+								<td width="50%;">Rut Cliente:</td>	
+								<td width="50%;">
+											<h:inputText id="rutClienteNuevo" 
+														value="#{generarSolicitudAction.clienteSck.rut}" 
+											          required="false"  
+												       maxlength="10"
+												       size="10" 
+												       disabled="false">
+											</h:inputText>	  								
+								</td>	
+							</tr>
+							<tr>
+								<td width="50%;">Nombre:</td>	
+								<td width="50%;">
+											<h:inputText id="nombreNuevo" 
+														value="#{generarSolicitudAction.clienteSck.nombre}" 
+											          required="false"  
+												       maxlength="100"
+												       size="100" 
+												       disabled="false">
+											</h:inputText>	  								
+								</td>	
+							</tr>
+							<tr>
+								<td width="50%;">Giro:</td>	
+								<td width="50%;">
+											<h:inputText id="giroNuevo" 
+														value="#{generarSolicitudAction.clienteSck.giro}" 
+											          required="false"  
+												       maxlength="100"
+												       size="50" 
+												       disabled="false">
+											</h:inputText>	  								
+								</td>	
+							</tr>					
+							<tr>
+								<td width="50%;">Calle:</td>	
+								<td width="50%;">
+											<h:inputText id="calleNuevo" 
+														value="#{generarSolicitudAction.clienteSck.calle}" 
+											          required="false"  
+												       maxlength="100"
+												       size="100" 
+												       disabled="false">
+											</h:inputText>	  								
+								</td>	
+							</tr>					
+							<tr>
+								<td width="50%;">Región:</td>	
+								<td width="50%;">
+	       								<h:selectOneMenu id="cboRegion" 
+	       								              value="#{generarSolicitudAction.region}" 
+	       								                 style="width:120px;"
+	       								                 >
+			                			<s:selectItems value="#{generarSolicitudAction.listaRegiones}" 
+			                			                 var="_reg"  
+			                			               label="#{_reg.descripcion}" 
+			                			               noSelectionLabel="Regiones..." 
+			                			               hideNoSelectionLabel="true"/>
+			                			               <s:convertEntity/> 
+						       			   	<a:support event="onchange" 
+						                         reRender="cboRegion,cboProvincia"
+						             			      ajaxSingle="true" 
+						             			      action="#{generarSolicitudAction.obtenerProvincias()}" />						                			               
+			                		</h:selectOneMenu>			  								
+								</td>	
+							</tr>						
+						
+							<tr>
+								<td width="50%;">Ciudad:</td>	
+								<td width="50%;">
+	       								<h:selectOneMenu id="cboProvincia" 
+	       								              value="#{generarSolicitudAction.provincia}" 
+	       								                 style="width:120px;"
+	       								                 >
+			                			<s:selectItems value="#{generarSolicitudAction.listaProvincias}" 
+			                			                 var="_pro"  
+			                			               label="#{_pro.descripcion}" 
+			                			               noSelectionLabel="Cuidades..." 
+			                			               hideNoSelectionLabel="true"/>
+			                			               <s:convertEntity/> 
+						       			   	<a:support event="onchange" 
+						                         reRender="cboProvincia,cboComuna"
+						             			      ajaxSingle="true" 
+						             			      action="#{generarSolicitudAction.obtenerComunas()}" />						                			               
+			                		</h:selectOneMenu>			  								
+								</td>	
+							</tr>						
+							<tr>
+								<td width="50%;">Comuna:</td>	
+								<td width="50%;">
+	       								<h:selectOneMenu id="cboComuna" 
+	       								              value="#{generarSolicitudAction.comuna}" 
+	       								                 style="width:120px;"
+	       								                 >
+			                			<s:selectItems value="#{generarSolicitudAction.listaComunas}" 
+			                			                 var="_com"  
+			                			               label="#{_com.descripcion}" 
+			                			               noSelectionLabel="Comunas..." 
+			                			               hideNoSelectionLabel="true"/>
+			                			               <s:convertEntity/> 
+						       			   	<a:support event="onchange" 
+						                         reRender="cboComuna"
+						             			      ajaxSingle="true" 
+						             			      action="#{generarSolicitudAction.seleccionarComuna()}" />						                			               
+			                		</h:selectOneMenu>			  								
+								</td>	
+							</tr>							
+							<tr>
+								<td width="50%;">Teléfono:</td>	
+								<td width="50%;">
+											<h:inputText id="telefonoNuevo" 
+														value="#{generarSolicitudAction.clienteSck.telefono}" 
+											          required="false"  
+												       maxlength="20"
+												       size="20" 
+												       disabled="false">
+											</h:inputText>	  								
+								</td>	
+							</tr>
+							<tr>
+								<td width="50%;">Fax:</td>	
+								<td width="50%;">
+											<h:inputText id="faxNuevo" 
+														value="#{generarSolicitudAction.clienteSck.fax}" 
+											          required="false"  
+												       maxlength="20"
+												       size="20" 
+												       disabled="false">
+											</h:inputText>	  								
+								</td>	
+							</tr>
+							<tr>
+								<td width="50%;">E-Mail:</td>	
+								<td width="50%;">
+											<h:inputText id="emailNuevo" 
+														value="#{generarSolicitudAction.clienteSck.correoElectronico}" 
+											          required="false"  
+												       maxlength="100"
+												       size="100" 
+												       disabled="false">
+											</h:inputText>	  								
+								</td>	
+							</tr>							
+							<tr>
+								<td width="50%;">Rubro:</td>	
+								<td width="50%;">
+											<h:inputText id="rubroNuevo" 
+														value="#{generarSolicitudAction.clienteSck.rubro}" 
+											          required="false"  
+												       maxlength="100"
+												       size="100" 
+												       disabled="false">
+											</h:inputText>	  								
+								</td>	
+							</tr>								
+							<tr>
+								<td width="50%;">Potencial Compra:</td>	
+								<td width="50%;">
+											<h:inputText id="potencialNuevo" 
+														value="#{generarSolicitudAction.clienteSck.potencialCompra}" 
+											          required="false"  
+												       maxlength="100"
+												       size="100" 
+												       disabled="false">
+												        <f:convertNumber type="currency" currencySymbol="" locale="#{globalLocale}"/>
+											</h:inputText>	  								
+								</td>	
+							</tr>														
+							<tr>
+								<td width="50%;">Status Juríduco:</td>	
+								<td width="50%;">
+											<h:inputText id="statusNuevo" 
+														value="#{generarSolicitudAction.clienteSck.statusJuridico}" 
+											          required="false"  
+												       maxlength="100"
+												       size="100" 
+												       disabled="false">
+											</h:inputText>	  								
+								</td>	
+							</tr>	
+							<tr>
+								<td width="50%;">Zona de Ventas:</td>	
+								<td width="50%;">
+											<h:inputText id="zonaVentaNuevo" 
+														value="#{generarSolicitudAction.clienteSck.zonaVenta}" 
+											          required="false"  
+												       maxlength="100"
+												       size="100" 
+												       disabled="false">
+											</h:inputText>	  								
+								</td>	
+							</tr>	
+							<tr>
+								<td width="50%;">Oficina de Ventas:</td>	
+								<td width="50%;">
+											<h:inputText id="oficinaVentaNuevo" 
+														value="#{generarSolicitudAction.clienteSck.oficinaVenta}" 
+											          required="false"  
+												       maxlength="100"
+												       size="100" 
+												       disabled="false">
+											</h:inputText>	  								
+								</td>	
+							</tr>	
+							<tr>
+								<td width="50%;">Canal:</td>	
+								<td width="50%;">
+											<h:inputText id="canalNuevo" 
+														value="#{generarSolicitudAction.clienteSck.canal}" 
+											          required="false"  
+												       maxlength="100"
+												       size="100" 
+												       disabled="false">
+											</h:inputText>	  								
+								</td>	
+							</tr>								
+						</table>
+	        	 </rich:panel>    
+	        	 
+	        	 <rich:panel>
+	        	 	<f:facet name="header">Datos de Contacto </f:facet>
+						<table cellpadding="0" cellspacing="0" width="100%;" border="0">
+							<tr>
+								<td width="50%;">Nombre:</td>	
+								<td width="50%;">
+											<h:inputText id="nombreClienteContactoNuevo" 
+														value="#{generarSolicitudAction.clienteSck.nombreContacto}" 
+											          required="false"  
+												       maxlength="100"
+												       size="100" 
+												       disabled="false">
+											</h:inputText>	  								
+								</td>	
+							</tr>
+							<tr>
+								<td width="50%;">Teléfono:</td>	
+								<td width="50%;">
+											<h:inputText id="telefonoContactoNuevo" 
+														value="#{generarSolicitudAction.clienteSck.telefonoContacto}" 
+											          required="false"  
+												       maxlength="100"
+												       size="100" 
+												       disabled="false">
+											</h:inputText>	  								
+								</td>	
+							</tr>
+							<tr>
+								<td width="50%;">Departamento:</td>	
+								<td width="50%;">
+											<h:inputText id="departamentoNuevo" 
+														value="#{generarSolicitudAction.clienteSck.departamento}" 
+											          required="false"  
+												       maxlength="100"
+												       size="100" 
+												       disabled="false">
+											</h:inputText>	  								
+								</td>	
+							</tr>					
+							<tr>
+								<td width="50%;">Cargo:</td>	
+								<td width="50%;">
+											<h:inputText id="cargoContactoNuevo" 
+														value="#{generarSolicitudAction.clienteSck.cargo}" 
+											          required="false"  
+												       maxlength="100"
+												       size="50" 
+												       disabled="false">
+											</h:inputText>	  								
+								</td>	
+							</tr>					
+							<tr>
+								<td width="50%;">E-Mail:</td>	
+								<td width="50%;">
+											<h:inputText id="emailContactoNuevo" 
+														value="#{generarSolicitudAction.clienteSck.correoElectronicoContacto}" 
+											          required="false"  
+												       maxlength="50"
+												       size="50" 
+												       disabled="false">
+											</h:inputText>	  								
+								</td>	
+							</tr>
+							<tr>
+								<td width="50%;">Observaciones:</td>	
+								<td width="50%;">
+	         								<h:inputTextarea id="idObervaciones" value="#{generarSolicitudAction.clienteSck.observaciones}" 
+	         									rows="2" 
+	         									style="width:99%;"/> 
+								</td>	
+							</tr>
+						</table>
+	        	 </rich:panel>	
+	        	 
+	        	 
+	        	         	 
+			    <h:panelGrid columns="2">
+	
+			        	<a:commandButton action="#{generarSolicitudAction.guardarClienteDMToListaClienteDM}" 
+			        	                  value="Guardar Cliente DM" 
+			        	               reRender="idCreacionDMList,idClienteCreacionDM,mensajeDM,idUsuariosCorreosOSAux3"
+	       							 oncomplete="if (#{empty facesContext.maximumSeverity}) {#{rich:component('mpAgregarClienteDM')}.hide()}" /> 	
+		        	
+		        	
+	        	</h:panelGrid>
+	        	<a:outputPanel id="mensajeDM">
+					<h:panelGrid columns="1">
+					        <h:outputLabel value="#{generarSolicitudAction.mensajeCreacionDm}" />				
+					</h:panelGrid>
+				</a:outputPanel>
+        
+        
+           </div>
+        </h:form>
+    </rich:modalPanel>
+	
+</ui:composition>

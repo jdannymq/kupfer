@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:s="http://jboss.com/products/seam/taglib"
+                xmlns:a="http://richfaces.org/a4j"
+                template="/layout/emailBaseAlertaInternaPrueba.xhtml"  importance="normal"> 
+                <!-- template="/layout/emailBaseAlertaInterna.xhtml" -->
+
+	<ui:param name="listacorreoUsuariosegur" value="#{emailAlertaContactoMensajeHelper.mensajeCondiciones.listaNuevosCorreos}" />       
+    <ui:param name="coreroEmisor" value="#{emailAlertaContactoMensajeHelper.mensajeCondiciones.correoEmisor}" />  
+	<ui:param name="asunto" value=" #{emailAlertaContactoMensajeHelper.mensajeCondiciones.tituloRespuesta} SCK N #{emailAlertaContactoMensajeHelper.mensajeCondiciones.solicitud.id.numSolicitud} - #{emailAlertaContactoMensajeHelper.mensajeCondiciones.soloNombre}" />
+	
+	<ui:define name="contenido">
+		
+	    <table >
+	        <tr>
+	            <td colspan="2">
+	                <label  style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Se ha generado la siguiente solicitud de crédito Número #{emailAlertaContactoMensajeHelper.mensajeCondiciones.solicitud.id.numSolicitud} </label></td>
+	        </tr>
+	        <tr style="height:5px">
+	            <td colspan="2" style="width:85px; font-weight: bold;">***************************************************</td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Cliente</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: xx-small; font-size: 12px;">#{emailAlertaContactoMensajeHelper.mensajeCondiciones.rutNombre}</label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;" >Canal de venta</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: xx-small; font-size: 12px;">#{emailAlertaContactoMensajeHelper.mensajeCondiciones.canalVenta}</label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Sucursal</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: xx-small; font-size: 12px;">#{emailAlertaContactoMensajeHelper.mensajeCondiciones.sucursal}</label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Emisor</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: xx-small; font-size: 12px;">#{emailAlertaContactoMensajeHelper.mensajeCondiciones.emisor}</label></td>
+	        </tr>
+	        <tr style="height:5px">
+	            <td colspan="2" style="width:85px;font-weight: bold;">***************************************************</td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Tipo de Solicitud</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: xx-small; font-size: 12px;">#{emailAlertaContactoMensajeHelper.mensajeCondiciones.tipoSolicitud}</label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Tipo Condiciones</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: xx-small; font-size: 12px;">#{emailAlertaContactoMensajeHelper.mensajeCondiciones.tipoLineaCredito}</label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Condicion de pago actual</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: xx-small; font-size: 12px;">#{emailAlertaContactoMensajeHelper.mensajeCondiciones.condicionPago}</label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Condicion de riesgo actual</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: xx-small; font-size: 12px;">#{emailAlertaContactoMensajeHelper.mensajeCondiciones.condicionRiesgo}</label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;"> </label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: xx-small; font-size: 12px;"> </label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Condicion pago solicitado</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: xx-small; font-size: 12px; ">#{emailAlertaContactoMensajeHelper.mensajeCondiciones.condicionPagoNuevo}</label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Condicion riesgo solicitado</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: xx-small; font-size: 12px;">#{emailAlertaContactoMensajeHelper.mensajeCondiciones.condicionRiesgoNuevo}</label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;"> </label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: xx-small; font-size: 12px;"> </label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Motivo del cambio</label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: xx-small; font-size: 12px;">#{emailAlertaContactoMensajeHelper.mensajeCondiciones.motivoCambio}</label></td>
+	        </tr>
+	        <tr>
+	            <td >
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;"> </label></td>
+	            <td style="width:72%;">
+	                <label style="font-family: Arial, Helvetica, sans-serif; font-size: xx-small; font-size: 12px;"> </label></td>
+	        </tr>
+		
+	        <tr style="height:5px">
+	            <td colspan="2" style="width:85px;font-weight: bold;">***************************************************</td>
+	        </tr>
+	        <tr>
+	            <td  colspan="2">
+	                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif; font-weight: bold;">Archivos Adjuntos</label></td>
+	        </tr>
+	        <a:repeat id="archivos" value="#{emailAlertaContactoMensajeHelper.mensajeCondiciones.listaArchivos}" var="_archivos">
+		        <tr>
+		         	<td style="width:100px;">
+		                <label style="font-size: 12px;  font-family: Arial, Helvetica, sans-serif"> </label>
+		            </td>		        
+		        
+		            <td ><label style="font-family:Arial,Helvetica,sans-serif; font-weight: bold; font-size: 12px;">
+		            	 	<a href="#{_archivos.rutaCompleta}">#{_archivos.nombreArchivo}</a> 
+		                </label>
+		            </td>
+		        </tr>
+		   </a:repeat>		        
+	    </table>
+	    <br/><br/>
+		<br/><br/>
+		<br/><br/>
+		<p>Importante: correo es generado de forma automatica. ¡NO responder este correo! </p>
+	</ui:define>
+</ui:composition>

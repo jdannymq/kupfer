@@ -1,0 +1,44 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	<rich:modalPanel id="mpAdjuntarArchivoOS" autosized="true" width="350" height="200">
+    	 <f:facet name="header">
+            <h:outputText value="Adjuntar Archivo" style="padding-right:15px;" />
+        </f:facet>
+    	<f:facet name="controls">
+            <h:panelGroup>
+               	<h:graphicImage value="img/close.png" styleClass="hidelink" id="archivosAdjuntosOShidelink" />
+                <rich:componentControl for="mpAdjuntarArchivoOS" attachTo="archivosAdjuntosOShidelink"
+                   	operation="hide" event="onclick" />
+            </h:panelGroup>
+        </f:facet>
+        <h:form id="frm_AdjuntarArchivoOS">
+        	<h:messages  globalOnly="true" styleClass="message"
+		    	errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
+		    <h:panelGrid>
+	        	<s:decorate template="/layout/edit.xhtml">
+					<ui:define name="label">Archivo</ui:define>
+						<rich:fileUpload id="newPDF_uploadAdjuntoOS"
+					         uploadData="#{generarSolicitudReparosAction.uploadFile}"
+					         maxFilesQuantity="100" ajaxSingle="true" immediateUpload="false"
+					         acceptedTypes="*" autoclear="false" allowFlash="auto" listHeight="200" listWidth="400"
+					         addControlLabel="Agregar..." cancelEntryControlLabel="Cancelar"
+					         clearAllControlLabel="Limpiar" clearControlLabel="Limpiar" 
+					         stopEntryControlLabel="Parar Proceso" uploadControlLabel="Subir" doneLabel="Hecho" required="true">
+					         <a:support ajaxSingle="true" reRender="newPDF_uploadAdjuntoOS" event="onclear" />
+						</rich:fileUpload>
+	 			</s:decorate>
+        	</h:panelGrid>
+        	<a:commandButton action="#{generarSolicitudReparosAction.guardarArchivo('archivosOS')}" value="Guardar Archivo" reRender="frm_AdjuntarArchivoOS,archivosListOS,idArchivosAgregadosOS2,archivosListOS2"
+        		oncomplete="if (#{empty facesContext.maximumSeverity}) {#{rich:component('mpAdjuntarArchivoOS')}.hide()}" /> 
+        </h:form>
+    </rich:modalPanel>
+	
+</ui:composition>

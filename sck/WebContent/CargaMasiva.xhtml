@@ -1,0 +1,56 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/layout/template.xhtml"
+    xmlns:p="http://primefaces.prime.com.tr/ui"
+    xmlns:a="http://richfaces.org/a4j">
+
+<ui:define name="body">
+	<h1>Cargar Masivos Usuarios</h1>
+		<a:outputPanel id="uploadPanel"  >
+				<h:form enctype="multipart/form-data">
+					<table cellpadding="0" cellspacing="0" width="100%">
+						<tr valign="top">
+							<td align="center">
+						        <rich:panel style=" width : 100%;">
+						          <f:facet name="header">Archivo a Cargar</f:facet>
+						            <h:panelGrid columns="1">  
+										<rich:fileUpload id="newExcel_uploadAdjunto"
+										         uploadData="#{cargaMasivaAction.uploadXls}"
+										         maxFilesQuantity="1" 
+										         ajaxSingle="true" 
+										         immediateUpload="true"
+										         acceptedTypes="xls,xlsx" 
+										         autoclear="false" 
+										         allowFlash="auto" 
+										         listHeight="60" listWidth="400"
+										         addControlLabel="Agregar..." cancelEntryControlLabel="Cancelar"
+										         clearAllControlLabel="Limpiar" clearControlLabel="Limpiar"
+										         stopEntryControlLabel="Parar Proceso" uploadControlLabel="Subir" doneLabel="Hecho">
+										</rich:fileUpload>		
+						            </h:panelGrid>
+						         </rich:panel> 		
+							</td>
+						</tr>
+					</table>				
+					<a:commandButton action="#{cargaMasivaAction.readExcelFile}" 
+					                  title="Carga" 
+					             ajaxSingle="true" 
+					               reRender="uploadPanel,newExcel_uploadAdjunto"
+					               value="cargar"
+					               process="newExcel_uploadAdjunto"/>
+					<a:commandButton action="#{cargaMasivaAction.cancelar}" 
+					                  value="Cancelar" 
+					             ajaxSingle="true"  
+					               reRender="uploadPanel,newExcel_uploadAdjunto"
+					               title="Limpiar Página"/>
+				</h:form>
+		</a:outputPanel>
+</ui:define>
+
+</ui:composition>

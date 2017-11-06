@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+     xmlns:a="http://richfaces.org/a4j"
+    template="/layout/template.xhtml">
+
+<ui:define name="body">
+    	<style type="text/css">
+			.bodyLogin{	font-size: 1em/16px/100%;}
+			.pLogin{	font: 0.8em Helvetica, "Helvetica Cyrillic Upright", Arial, sans-serif; color: #666;}
+			.tableLogin{ width:90%; padding:1px; margin:0% 5% 5% 5%;	-webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px;}
+			.thLogin{	font: 1em/100% Helvetica, "Helvetica Cyrillic Upright", Arial, sans-serif; line-height:125%; font-weight: bold; color: #444; padding: 10px; text-align: justify;}
+			.tdLogin{ width:30%;}
+			.tableTitle1{ font: 0.840em/84% Helvetica, "Helvetica Cyrillic Upright", Arial, sans-serif; font-weight:600; background-image:url(images/actionButton.png); color: #444; vertical-align:middle; padding: 7px 3px 6px 10px;}
+			.tableTitle2{ font: 0.750em/75% Helvetica, "Helvetica Cyrillic Upright", Arial, sans-serif; line-height:1.1; font-weight: bold; color: #444; vertical-align: middle; padding: 10px 3px 10px 50px;}
+			.tableTitle3{ font: 0.750em/75% Helvetica, "Helvetica Cyrillic Upright", Arial, sans-serif; line-height:1.1; color: #444; vertical-align: middle; padding: 10px 3px 10px 50px;}
+			.ptext{ font: 0.820em/82% Helvetica, "Helvetica Cyrillic Upright", Arial, sans-serif; color: #444; padding: 30px 3px 20px 30px;}
+			.inputText1,
+			.inputText2{ width:70%; max-width:150px; text-align:justify; vertical-align:middle; padding: 2px 3px 2px 10px; margin: 8px 0 8px 0;}
+			.inputText1 { color: #333; border:none;}
+			.inputText2 { color: #444;}
+			.checkbox { margin: 10px 3px 10px 5px;}
+			.logo { width:100%; max-width:300px; text-align:center; vertical-align:middle;
+			}
+			.button { margin-left:40%; cursor:pointer; border:none; clip:rect(1px 1px 1px 1px);}
+			.cell{ border:1px solid #666;}
+    	</style>
+    <h:form id="loginForm">
+
+
+		 <table class="cell tableLogin">
+		 	<tr>
+		    	<th colspan="4" class="tableTitle1 thLogin">SCK Login</th>
+		    </tr>
+		    <tr>
+		    	<td colspan="3" class="ptext tdLogin">Por favor ingrese sus datos aquï¿½</td>
+		        <td rowspan="6" class="tdLogin">&nbsp;</td>
+		    </tr>
+		    <tr>
+		    	<td class="tableTitle2 tdLogin">Codigo de Sistema</td>
+		        <td class="tdLogin">
+		                    <h:inputText id="codigo"
+		                              value="#{authenticator.codigoSistemaProduccion}"
+		                              disabled="true"
+		                              size="3"
+		                              style="text-align:center;"
+		                              class="inputText1"/>			        
+		        </td>
+		        <td class="tdLogin" rowspan="5"><img class="login" src="img/logo.png"/></td>
+		    </tr>
+		    <tr>
+		    	<td class="tableTitle2 tdLogin">Nombre Usuario</td>
+		        <td class="tdLogin">
+       		           <h:inputText id="username"
+                             value="#{credentials.username}"
+                             class="inputText2"
+                             />
+		        
+		        </td>
+		    </tr>
+		    <tr>
+		    	<td class="tableTitle2 tdLogin">Contraseña</td>
+		        <td class="tdLogin">
+                    <h:inputSecret id="password"
+                                value="#{credentials.password}"
+                      			 class="inputText2"   
+                      			        
+                                />
+		        </td>
+		    </tr>
+		    <tr>
+		    	<td class="tableTitle3 tdLogin">Recordar datos</td>
+		        <td class="tdLogin">
+  		                    <h:selectBooleanCheckbox id="rememberMe"
+                                    value="#{rememberMe.enabled}"
+                                    class="checkbox"
+                                    title="recordar_datos"/>
+		        
+		        </td>
+		    </tr>
+		    <tr>
+		    	<td colspan="2" class="tdLogin">
+		        &nbsp;
+		        &nbsp;
+		        </td>
+		    </tr>
+		    <tr>
+		    	<td colspan="4" class="tdLogin">
+		            <div class="button">
+		            	<ui:remove>
+	            		<h:commandButton id="submitProduccion" value="Login" action="#{identity.login}"  onclick="abrirModal();">
+	            			<f:param name="producciondesarrollo" value="#{authenticator.codigoSistemaProduccion}" />
+	            		</h:commandButton>
+	            		</ui:remove>
+	            		<h:commandLink  id="submitProduccion1" value="" action="#{identity.login}" onclick="abrirModal();">
+	            			<img src="img/ingresar_normal.png" onMouseOver="this.src='img/ingresar_hover.png';" onMouseOut="this.src='img/ingresar_normal.png';"/>		
+	            			<f:param name="producciondesarrollo" value="#{authenticator.codigoSistemaProduccion}" />
+	            		</h:commandLink>
+	       			</div>		    	
+		    	</td> 
+		    </tr>
+		    <tr>
+		    	<td colspan="4" class="tdLogin">
+		        &nbsp;
+		        &nbsp;
+		        </td>
+		    </tr>
+		 </table>
+
+
+		<ui:remove>
+			<h:panelGrid columns="3" cellpadding="3" cellspacing="3" style="align:center;" width="100%">
+		        <rich:panel>
+		            <f:facet name="header">Login Producciï¿½n</f:facet>
+		            <p>Por favor, ingresa aquï¿½</p>
+		            <div class="dialog">
+		                <h:panelGrid columns="2" rowClasses="prop" columnClasses="name,value">
+		                    <h:outputLabel for="codigo">Codigo de Sistema</h:outputLabel>
+                
+		                    <h:outputLabel for="username">Username</h:outputLabel>
+
+		                    <h:outputLabel for="password">Password</h:outputLabel>
+
+		                    <h:outputLabel for="rememberMe">Recordar</h:outputLabel>
+
+		                </h:panelGrid>
+		            </div>
+
+		        </rich:panel>
+	            <p>#{' '}</p>
+	        </h:panelGrid>
+		</ui:remove>        
+        
+        
+    </h:form>
+ </ui:define>
+</ui:composition>

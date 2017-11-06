@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	
+	
+	<rich:modalPanel id="mpHistorialAproRechaTodas" autosized="true" width="750">
+		<f:facet name="header">
+			<h:outputText value="Consulta a lo Aprobadores de Solicitud"	style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:form>
+					<a:commandLink	ajaxSingle="true" action="#{respuestaSolicitudAction.limpiarAprobadoresAndUsuarioRechazos()}">
+						<h:graphicImage value="img/close.png" styleClass="hidelink"	id="mpHistorialAproRechaTodaslink" />
+					</a:commandLink>
+					<rich:componentControl for="mpHistorialAproRechaTodas"
+						attachTo="mpHistorialAproRechaTodaslink" operation="hide"
+						event="onclick" />
+				</h:form>
+			</h:panelGroup>
+		</f:facet>
+		<h:form id = "frm_consulta_Aprobador_rechazo_vertodas">
+		<table cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td colspan="2"> 
+					<rich:panel>
+						<f:facet name="header"><h:outputText value="Información de Solicitud"	style="padding-right:15px;" /></f:facet>
+							<table cellpadding="0" cellspacing="0" width="100%;" >
+								<tr>
+									<td>Numero de Solicitud</td>
+									<td>Nombre del Cliente</td>
+									<td>Fecha de Solicitud</td>
+									<td>Hora de Solicitud</td>
+									<td>Tipo Solicitud</td>
+								</tr>
+								<tr>
+									<td> 
+										<h:inputText id="idNumSolicitud" 
+													value="#{respuestaSolicitudAction.solicitudAntiguaDTO.solicitud.id.numSolicitud}" 
+										          required="false"  
+											       maxlength="10"
+											       size="10" 
+											       disabled="true">	
+										</h:inputText>	       					
+									</td>									
+									<td> 
+										<h:inputText id="nombrecliente" 
+													value="#{respuestaSolicitudAction.solicitudAntiguaDTO.solicitud.nomCliente}" 
+										          required="false"  
+											       maxlength="120"
+											       size="50" 
+											       disabled="true" >	
+										</h:inputText>		
+									</td>
+									<td> 
+											<h:inputText value="#{respuestaSolicitudAction.solicitudAntiguaDTO.solicitud.id.fecSolicitud}" size="10" disabled="true">
+															<s:convertDateTime pattern="dd-MM-yyyy" />
+											</h:inputText>						
+									</td>
+									<td> 
+										<h:inputText value="#{respuestaSolicitudAction.solicitud.hraSolicitud}" size="10" disabled="true">
+															<s:convertDateTime pattern="HH:mm:ss" />
+										</h:inputText>								
+									</td>
+									<td> 
+										<h:inputText value="#{respuestaSolicitudAction.solicitud.desTiposol}" size="30"  disabled="true"/>
+									</td>
+								</tr>
+							</table>
+					</rich:panel>				
+							
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<rich:panel>
+						<f:facet name="header"><h:outputText value="Información de Análisis"	style="padding-right:15px;" /></f:facet>
+							<table cellpadding="0" cellspacing="0" width="100%;" >
+								<tr>
+									<td>Fecha de Análisis</td>
+									<td> 
+											<h:inputText value="#{respuestaSolicitudAction.solicitudAntiguaDTO.fechaAnalisis}" >
+															<s:convertDateTime pattern="dd-MM-yyyy" />
+											</h:inputText>						
+									</td>
+									<td>Hora de Análisis</td>
+									<td> 
+										<h:inputText value="#{respuestaSolicitudAction.solicitudAntiguaDTO.horaAnalisis}">
+															<s:convertDateTime pattern="HH:mm:ss" />
+										</h:inputText>								
+									</td>
+									<td>Usuario de Análisis</td>
+									<td> 
+										<h:inputText value="#{respuestaSolicitudAction.solicitudAntiguaDTO.usuarioAnalisis}" 
+													 size="30"	/>
+															
+									</td>
+								</tr>
+							</table>	
+					</rich:panel>
+				</td>
+			</tr>	 
+			<tr valign="top">
+				<td width="50%">
+					<rich:panel>
+						<f:facet name="header"><h:outputText value="Información de Usuarios Aprobadores"	style="padding-right:15px;" /></f:facet>
+							<a:outputPanel id="grillaAprobadores1">
+					    	<div class="results" id="grillaAprobar1" style="height:200px; overflow: auto;">
+						   		<h:outputText value="No existe registro de los aprobadores de la solicitud." 
+						   		           rendered="#{empty respuestaSolicitudAction.solicitudAntiguaDTO.listaAprobadores}"/>
+							    <rich:dataTable id="idlistaAprobadores1"
+							                var="_sp"
+							              value="#{respuestaSolicitudAction.solicitudAntiguaDTO.listaAprobadores}"
+							           rendered="#{not empty respuestaSolicitudAction.solicitudAntiguaDTO.listaAprobadores}">
+							        <rich:column>
+							            <f:facet name="header">Usuario</f:facet>
+							            <h:outputText value="#{_sp}"/>
+							        </rich:column>
+							    </rich:dataTable>
+						    </div>
+							</a:outputPanel>
+					</rich:panel>
+				</td>
+				<td width="50%">
+					<rich:panel>
+						<f:facet name="header"><h:outputText value="Informacion de Usuarios que Rechazaron"	style="padding-right:15px;" /></f:facet>
+							<a:outputPanel id="grillaAprobadores2">
+					    	<div class="results" id="grillaProductos2" style="height:200px; overflow: auto;">
+						   		<h:outputText value="No existe registro de los usuarios que rechazaron la solicitud." 
+						   		           rendered="#{empty respuestaSolicitudAction.solicitudAntiguaDTO.listaRechazos}"/>
+							    <rich:dataTable id="idlistaAprobadores2"
+							                var="_sr"
+							              value="#{respuestaSolicitudAction.solicitudAntiguaDTO.listaRechazos}"
+							           rendered="#{not empty respuestaSolicitudAction.solicitudAntiguaDTO.listaRechazos}">
+							        <rich:column>
+							            <f:facet name="header">Usuario</f:facet>
+							            <h:outputText value="#{_sr}"/>
+							        </rich:column>
+							    </rich:dataTable>
+						    </div>
+							</a:outputPanel>
+					</rich:panel>				
+				</td>
+			</tr>	
+			<s:fragment rendered="#{respuestaSolicitudAction.solicitudAntiguaDTO.listaMotivosRechazos != null}">
+			<tr>
+				<td colspan="2">
+					<rich:panel>
+						<f:facet name="header"><h:outputText value="Información de Rechazo"	style="padding-right:15px;" /></f:facet>
+							<table cellpadding="0" cellspacing="0" width="100%;" >
+								<tr>
+									<td>Motivo de Rechazo</td>
+									<td> 
+										<h:outputText value="#{respuestaSolicitudAction.solicitudAntiguaDTO.observacionesRechazo}" />
+									</td>
+								</tr>
+							</table>	
+					</rich:panel>					
+					<rich:panel>
+						<f:facet name="header"><h:outputText value="Lista de Rechazos"	style="padding-right:15px;" /></f:facet>
+							<table cellpadding="0" cellspacing="0" width="100%;" >
+								<tr>
+									<td> 
+										<a:outputPanel id="grillaRechazo1">
+								    	<div class="results" id="grillaRechazos11" style="height:200px; overflow: auto;">
+									   		<h:outputText value="No existe registro de motivos de rechazos." 
+									   		           rendered="#{empty respuestaSolicitudAction.solicitudAntiguaDTO.listaMotivosRechazos}"/>
+										    <rich:dataTable id="idlistaAprobadores111"
+										                var="_mr"
+										              value="#{respuestaSolicitudAction.solicitudAntiguaDTO.listaMotivosRechazos}"
+										           rendered="#{not empty respuestaSolicitudAction.solicitudAntiguaDTO.listaMotivosRechazos}">
+										        <rich:column>
+										            <f:facet name="header">Codigo</f:facet>
+										            <h:outputText value="#{_mr.codRechazo}"/>
+										        </rich:column>
+										        <rich:column>
+										            <f:facet name="header">Descripción </f:facet>
+										            <h:outputText value="#{_mr.desRechazo}"/>
+										        </rich:column>
+										    </rich:dataTable>
+									    </div>
+										</a:outputPanel>
+									</td>
+								</tr>
+							</table>	
+					</rich:panel>	
+				</td>
+			</tr>
+			</s:fragment>
+		</table>
+   	</h:form>
+	</rich:modalPanel>
+</ui:composition>

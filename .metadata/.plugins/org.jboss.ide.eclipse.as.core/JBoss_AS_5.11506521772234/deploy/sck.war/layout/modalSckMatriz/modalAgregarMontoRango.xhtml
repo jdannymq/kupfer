@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+
+	<style type="text/css">
+.top {
+	vertical-align: top;
+}
+</style>
+
+	<rich:modalPanel id="mpMontoRango" autosized="true" width="550" >
+		<f:facet name="header">
+			<h:outputText value="Agregar Rango" style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+
+			<h:panelGroup>
+				<h:form>
+					<a:commandLink action="#{matrizAction.limpiarMatrizMonto()}" ajaxSingle="true">
+						<h:graphicImage value="img/close.png" styleClass="hidelink"
+							id="mpMontoRangohidelink" />
+					</a:commandLink>
+				
+				<rich:componentControl for="mpMontoRango" attachTo="mpMontoRangohidelink"
+					operation="hide" event="onclick" />
+				</h:form>
+			</h:panelGroup>
+
+		</f:facet>
+		<h:form id="frm_modalMontoRango">
+			<h:messages id="messagesEsp" globalOnly="true" styleClass="message"
+				errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
+				rendered="#{showGlobalMessages != 'false'}" />
+				
+			<h:panelGrid columns="4">
+				<s:decorate template="/layout/edit.xhtml">
+					<ui:define name="label">Monto Inicial</ui:define>
+					<h:inputText value="#{matrizAction.rango_inicial}" required="true" requiredMessage="Debe Ingresar un valor"/>
+				</s:decorate>
+				
+				<s:decorate template="/layout/edit.xhtml">
+					<ui:define name="label">Monto Final</ui:define>
+					<h:inputText value="#{matrizAction.rango_final}" required="true" requiredMessage="Debe Ingresar un valor"/>
+				</s:decorate>
+				
+				<s:decorate template="/layout/edit.xhtml">
+					<ui:define name="label">Descripción</ui:define>
+					<h:inputText value="#{matrizAction.rango_descripcion}" required="true" requiredMessage="Debe Ingresar una descripcion"/>
+				</s:decorate>
+				
+				<s:decorate template="/layout/edit.xhtml">
+					<ui:define name="label">Inactivo</ui:define>
+					<h:selectBooleanCheckbox value="#{matrizAction.rango_disabled}" />
+				</s:decorate>
+				<s:decorate>					
+					<div>
+						<a:commandButton value="Guardar" rendered="#{!matrizAction.editando}"
+							action="#{matrizAction.guardarMontoMatriz()}"
+							reRender="frm_MontosRangos,idMensajeModal"
+							oncomplete="if(#{empty facesContext.maximumSeverity}) {#{rich:component('mpMontoRango')}.hide(); alert('Guardado correctamente');}"	/>
+					</div>
+				</s:decorate>	
+				
+				<s:decorate>					
+					<div>
+						<a:commandButton value="Guardar Edicion" rendered="#{matrizAction.editando}"
+							action="#{matrizAction.guardarEdicionMontoMatriz()}"
+							reRender="frm_MontosRangos,idMensajeModal"
+							oncomplete="if(#{empty facesContext.maximumSeverity}) {#{rich:component('mpMontoRango')}.hide(); alert('Editado correctamente');}"	/>
+					</div>
+				</s:decorate>	
+				
+				
+			</h:panelGrid>
+			<br />
+			<a:outputPanel id="idMensajeModal">
+				<div>
+						<h:messages id="messagesModal" globalOnly="false" styleClass="message"
+			            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
+			            rendered="#{showGlobalMessages != 'false'}" />			
+				</div>
+			</a:outputPanel>
+
+		</h:form>
+
+
+	</rich:modalPanel>
+
+</ui:composition>

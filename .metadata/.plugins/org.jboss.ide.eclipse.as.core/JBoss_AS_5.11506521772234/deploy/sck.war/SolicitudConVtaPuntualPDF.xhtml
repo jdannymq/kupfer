@@ -1,0 +1,878 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<p:document xmlns:p="http://jboss.com/products/seam/pdf"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:h="http://java.sun.com/jsf/html" 
+	title="PDF Perfil de Riesgo"
+	orientation="portrait" margins="15.0 15.0 5.0 5.0">
+	<p:font name="courier" style="NORMAL" size="6">
+		<p:html>
+		<table border="0" width="100%" cellpadding="0">
+			<tr>
+				<td width="30%">
+					<table border="0" style="font-size: 6px;" width="95%" height="100%">
+						<tr>
+							<td>Kupfer Hnos.</td>
+						</tr>
+						<tr>
+							<td>Depto de Crédito y Riesgo</td>
+						</tr>
+					</table>
+				</td>
+				<td width="70%">
+					<table border="0" width="100%">
+						<tr>
+							<td style="text-align: center; font-size: 8px;">Fecha
+								Impresión:</td>
+							<td><h:outputText style="font-size: 8px;"
+									value="#{respuestaSolicitudAction.fechaHoy}">
+									<f:convertDateTime pattern="dd-MM-yyyy"></f:convertDateTime>
+								</h:outputText></td>
+							<td style="text-align: center; font-size: 8px;">Fecha
+								Solicitud:</td>
+							<td><h:outputText style="font-size: 8px;"
+									value="#{respuestaSolicitudAction.solicitud.id.fecSolicitud}">
+									<f:convertDateTime pattern="dd-MM-yyyy"></f:convertDateTime>
+								</h:outputText></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+
+
+
+		<br />
+		</p:html>
+
+		<p:table columns="1" widthPercentage="100">
+			<p:cell horizontalAlignment="center" backgroundColor="#EEEEEE">
+				<p:paragraph>
+					<p:font size="9">
+						<p:text
+							value="SOLICITUD DE CONDICIONES DE VENTA PUNTUAL KUPFER HNOS."></p:text>
+					</p:font>
+					
+				</p:paragraph>
+			</p:cell>
+		</p:table>
+		
+		<p:table columns="1" widthPercentage="100">
+		<f:facet name="defaultCell">
+			 <p:cell borderWidth="0" />
+ 		</f:facet>
+		
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:font size="7">
+						<p:text	value="Solicitud Nro: #{respuestaSolicitudAction.solicitud.id.numSolicitud}"></p:text>
+						<p:text	value=" "></p:text>
+						<p:text	value="Estado Solicitud: #{respuestaSolicitudAction.cliente.estadoSolicitud.toUpperCase(globalLocale)}"></p:text>
+					</p:font>
+					
+				</p:paragraph>
+				
+			</p:cell>
+		</p:table>
+		
+		<p:html>
+		<br />
+		</p:html>
+		<p:table columns="1" widthPercentage="100">
+			<p:cell horizontalAlignment="center" backgroundColor="#EEEEEE">
+				<p:paragraph>
+					<p:font size="9">
+						<p:text value="Datos CLiente"></p:text>
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+		</p:table>
+		<p:table columns="4" widthPercentage="100"  widths="1 3 1 3"  >
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0"></p:cell>
+			</f:facet>
+			<p:cell >Rut Cliente:</p:cell>
+			<p:cell>#{respuestaSolicitudAction.cliente.rut}</p:cell>
+			<p:cell>Tipo Cliente:</p:cell>
+			<p:cell>#{respuestaSolicitudAction.cliente.tipoCliente}</p:cell>
+
+			<p:cell>Nombre:</p:cell>
+			<p:cell>#{respuestaSolicitudAction.cliente.razonSocial}</p:cell>
+			<p:cell>Fono Fax:</p:cell>
+			<p:cell>#{respuestaSolicitudAction.cliente.fono} - #{respuestaSolicitudAction.cliente.fax}</p:cell>
+
+			<p:cell>Giro:</p:cell>
+			<p:cell>#{respuestaSolicitudAction.cliente.giro}</p:cell>
+			<p:cell>Sucursal:</p:cell>
+			<p:cell>#{respuestaSolicitudAction.cliente.sucursalCliente}</p:cell>		
+		
+			<p:cell>Dirección:</p:cell>
+			<p:cell>#{respuestaSolicitudAction.cliente.direccion}</p:cell>
+			<p:cell>Solicitante:</p:cell>
+			<p:cell>#{respuestaSolicitudAction.lcredUsuarioNivelEnc.id.nombreUsuario}</p:cell>	
+
+			<p:cell>Ciudad:</p:cell>
+			<p:cell>#{respuestaSolicitudAction.cliente.ciudad}</p:cell>
+			<p:cell></p:cell>
+			<p:cell></p:cell>	
+
+			<p:cell>Canal Venta:</p:cell>
+			<p:cell>#{respuestaSolicitudAction.cliente.canalVenta}</p:cell>
+			<p:cell></p:cell>
+			<p:cell></p:cell>	
+
+		</p:table>
+		<p:html>
+		<br />
+		</p:html>
+		<p:table columns="1" widthPercentage="100" >
+			<p:cell horizontalAlignment="center" backgroundColor="#EEEEEE">
+				<p:paragraph>
+					<p:font size="9">
+						<p:text value="Antecedentes del cliente en SAP"></p:text>
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+		</p:table>
+
+		<p:table columns="6" widthPercentage="100"  widths="2 2 2 2 2 2"  >
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" > </p:cell>
+				
+			</f:facet>
+			
+			<p:cell ></p:cell>
+			<p:cell> </p:cell>
+			<p:cell></p:cell>
+			<p:cell></p:cell>
+			<p:cell></p:cell>
+			<p:cell></p:cell>	
+			
+			<p:cell >L.Crédito KH:</p:cell>
+			<p:cell > <p:html>
+						<h:outputText
+							value="#{respuestaSolicitudAction.cliente.lineaCreditoKH}" style="text-align: left; font-size: 6px;">
+							<f:convertNumber maxFractionDigits="0" locale="cl" />
+						</h:outputText>
+					</p:html>
+			</p:cell>
+			<p:cell>Condición de Pago</p:cell>
+			<p:cell> 
+					<p:html>
+						<h:outputText
+							value="#{respuestaSolicitudAction.cliente.condicionPago}" style="text-align: left; font-size: 6px;">
+						</h:outputText>
+					</p:html>			
+			</p:cell>
+			<p:cell>Monto Seguro UF</p:cell>
+			<p:cell>
+					<p:html>
+						<h:outputText
+							value="#{respuestaSolicitudAction.cliente.montoSeguroUf}" style="text-align: left; font-size: 6px;">
+							<f:convertNumber maxFractionDigits="0" locale="cl" />
+						</h:outputText>	
+					</p:html>		
+			</p:cell>
+		
+		
+			<p:cell >L.Crédito KH Utilizado</p:cell>
+			<p:cell> <p:html>
+						<h:outputText
+							value="#{respuestaSolicitudAction.cliente.lineaCreditoKHUtilizado}" style="text-align: left; font-size: 6px;">
+							<f:convertNumber maxFractionDigits="0" locale="cl" />
+						</h:outputText>
+					</p:html>
+			</p:cell>
+			<p:cell>Clasificación Riesgo</p:cell>
+			<p:cell>
+					<p:html>
+						<h:outputText
+							value="#{respuestaSolicitudAction.cliente.clasificacionRiesgo}" style="text-align: left; font-size: 6px;">
+						</h:outputText>
+					</p:html>	
+					
+			</p:cell>
+			<p:cell>Ventas Prom 12 Meses</p:cell>
+			<p:cell>
+					<p:html>
+						<h:outputText
+							value="#{respuestaSolicitudAction.cliente.ventasProm12Meses}" style="text-align: left; font-size: 6px;">
+							<f:convertNumber maxFractionDigits="0" locale="cl" />
+						</h:outputText>	
+					</p:html>		
+			</p:cell>
+
+			<p:cell >Estado L.Crédito KH</p:cell>
+			<p:cell> <p:html>
+						<h:outputText
+							value="#{respuestaSolicitudAction.cliente.estadoLineaCreditoKH}" style="text-align: left; font-size: 6px;">
+						</h:outputText>
+					</p:html>
+			</p:cell>
+			<p:cell>Tipo Seguro</p:cell>
+			<p:cell> <p:html>
+						<h:outputText
+							value="#{respuestaSolicitudAction.cliente.seguro}" style="text-align: left; font-size: 6px;">
+						</h:outputText>
+					</p:html>
+			</p:cell>
+			<p:cell>Fact.Prom 12 Meses</p:cell>
+			<p:cell>
+					<p:html>
+						<h:outputText
+							value="#{respuestaSolicitudAction.cliente.factProm12Meses}" style="text-align: left; font-size: 6px;">
+						</h:outputText>
+					</p:html>			
+			</p:cell>				
+
+
+			<p:cell >Número RV</p:cell>
+			<p:cell> <p:html>
+						<h:outputText
+							value="#{respuestaSolicitudAction.cliente.numeroRV}" style="text-align: left; font-size: 6px;">
+						</h:outputText>
+					</p:html>
+			</p:cell>
+			<p:cell>Monto Seguro $</p:cell>
+			<p:cell> <p:html>
+						<h:outputText
+							value="#{respuestaSolicitudAction.cliente.montoSeguro}" style="text-align: left; font-size: 6px;">
+							<f:convertNumber maxFractionDigits="0" locale="cl" />
+						</h:outputText>
+					</p:html>
+			</p:cell>
+			<p:cell>Cant. Meses Ventas</p:cell>
+			<p:cell>
+					<p:html>
+						<h:outputText
+							value="#{respuestaSolicitudAction.cliente.cantMesesVentas}" style="text-align: left; font-size: 6px;">
+							<f:convertNumber maxFractionDigits="0" locale="cl" />
+						</h:outputText>
+					</p:html>
+			</p:cell>				
+
+
+
+			<p:cell></p:cell>
+			<p:cell></p:cell>
+			<p:cell></p:cell>
+			<p:cell></p:cell>
+			<p:cell>Ventas Total 12 Meses</p:cell>
+			<p:cell>
+					<p:html>
+						<h:outputText
+							value="#{respuestaSolicitudAction.cliente.ventasTotal12Meses}" style="text-align: left; font-size: 6px;">
+							<f:convertNumber maxFractionDigits="0" locale="cl" />
+						</h:outputText>
+					</p:html>
+			</p:cell>				
+
+
+
+			<p:cell></p:cell>
+			<p:cell></p:cell>
+			<p:cell></p:cell>
+			<p:cell></p:cell>
+			<p:cell>Creación en SAP</p:cell>
+			<p:cell>
+					<p:html>
+						<h:outputText
+							value="#{respuestaSolicitudAction.cliente.creacionSap}" style="text-align: left; font-size: 6px;">
+							<f:convertDateTime pattern="dd-MM-yyyy" />
+						</h:outputText>
+					</p:html>
+			</p:cell>	
+		</p:table>
+		
+		
+		<p:html>
+		
+		<br />
+
+		<table border="0" style="vertical-align: top; padding-top: 0px;" cellpadding="0" cellspacing="0">
+			<tr valign="top">
+				<td width="20%">
+					<table border="1" style="font-size: 6px;" width="95%">
+						<tr>
+							<th colspan="4"  style="text-align: center; font-size: 8px;">Comportamiento comercial con KH</th>
+						</tr>
+						<tr>
+							<td></td>
+							<td align="center">Monto Total</td>
+							<td align="center">Número</td>
+							<td align="center">Días de Mora</td>
+						</tr>
+						<tr>
+							<td>Morosidad</td>
+							<td align="center">
+										<h:outputText
+											value="#{respuestaSolicitudAction.comportamiento.montoTotalMoro}">
+											<f:convertNumber maxFractionDigits="0" locale="cl" />
+										</h:outputText>								
+								
+							</td>
+							<td align="center">#{respuestaSolicitudAction.comportamiento.numeroMoro}</td>
+							<td align="center">#{respuestaSolicitudAction.comportamiento.diasMoras}</td>
+						</tr>
+						<tr>
+							<td>Protesto</td>
+							<td align="center">
+									<h:outputText
+										value="#{respuestaSolicitudAction.comportamiento.montoTotalProt}">
+										<f:convertNumber maxFractionDigits="0" locale="cl" />
+									</h:outputText>								
+							</td>
+							<td align="center">#{respuestaSolicitudAction.comportamiento.numeroProt}</td>
+							<td align="center">#{respuestaSolicitudAction.comportamiento.dmPort}</td>
+						</tr>
+					</table>
+			</td>
+			<td width="80%">
+				<table border="1" width="100%" cellpadding="0" cellspacing="0">
+					<tr>
+						<td style="text-align: center; font-size: 8px;">Exposición de
+							Riesgo Küpfer</td>
+					</tr>
+					<tr>
+						<td>
+
+							<table border="0" style="font-size: 6px;" width="100%" >
+								<tr>
+									<td >Peak Crédito</td>
+									<td width="20px;" align="center">
+										<h:outputText
+											value="#{respuestaSolicitudAction.expoRiesgoKh.peakCredito}">
+											<f:convertNumber maxFractionDigits="0" locale="cl" />
+										</h:outputText></td>
+									<td>Pedidos Proceso</td>
+									<td width="20px;" align="center"><h:outputText
+											value="#{respuestaSolicitudAction.expoRiesgoKh.montoPedidoProceso}">
+											<f:convertNumber maxFractionDigits="0" locale="cl" />
+										</h:outputText></td>
+								</tr>
+								<tr>
+									<td>Seguro</td>
+									<td  width="20px;" align="center">
+										<h:outputText
+											value="#{respuestaSolicitudAction.expoRiesgoKh.montoAsegurado}">
+											<f:convertNumber maxFractionDigits="0" locale="cl" />
+										</h:outputText></td>
+									<td>P.Credito + P.enProceso</td>
+									<td  width="20px;" align="center"><h:outputText
+											value="#{respuestaSolicitudAction.expoRiesgoKh.montoPeakCreditoPedidoProceso}">
+											<f:convertNumber maxFractionDigits="0" locale="cl" />
+										</h:outputText></td>
+								</tr>
+								<tr>
+									<td>Riesgo Kupfer</td>
+									<td  width="20px;" align="center"><h:outputText
+											value="#{respuestaSolicitudAction.expoRiesgoKh.montoRiesgoKupfer}">
+											<f:convertNumber maxFractionDigits="0" locale="cl" />
+										</h:outputText></td>
+									<td>R.K + P. en Proceso</td>
+									<td  width="20px;" align="center"><h:outputText
+											value="#{respuestaSolicitudAction.expoRiesgoKh.montoRiesgoKupferPedidoProceso}">
+											<f:convertNumber maxFractionDigits="0" locale="cl" />
+										</h:outputText></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</td>
+			</tr>
+		</table>
+		<br />
+		</p:html>
+		<p:table columns="1" widthPercentage="100">
+			<p:cell horizontalAlignment="center" backgroundColor="#EEEEEE">
+				<p:paragraph>
+					<p:font size="9">
+						<p:text value="Solicitud de Crédito Kex"></p:text>
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+		</p:table>
+		<p:html>
+		<br />
+
+		<table border="1" cellpadding="1" cellspacing="1" style="width: 100%;">
+			<tr>
+				<td width="50%">
+					<table border="1" cellpadding="1" cellspacing="1"
+						style="width: 100%; font-size: 6px;">
+						<tr>
+							<td>Venta Puntual</td>
+							<td align="center"> 
+								<s:fragment rendered="#{respuestaSolicitudAction.solicitud.tipTiposol == '1N'}">
+									#{respuestaSolicitudAction.ventaPuntual}
+								</s:fragment>
+							</td>
+							<td align="center" >
+								<s:fragment rendered="#{respuestaSolicitudAction.solicitud.tipTiposol == '1N'}">
+									<h:outputText
+										value="#{respuestaSolicitudAction.solicitud.monto}">
+										<f:convertNumber maxFractionDigits="0" locale="cl" />
+									</h:outputText>							
+								</s:fragment>
+								
+							</td>
+						</tr>
+						<tr>
+							<td>Venta En cuotas</td>
+							<td align="center" >
+								<s:fragment rendered="#{respuestaSolicitudAction.solicitud.tipTiposol == '1C'}">
+									#{respuestaSolicitudAction.ventaCuotas}
+								</s:fragment>	
+							</td>
+							<td align="center" >
+								<s:fragment rendered="#{respuestaSolicitudAction.solicitud.tipTiposol == '1C'}">
+									<h:outputText
+										value="#{respuestaSolicitudAction.solicitud.monto}">
+										<f:convertNumber maxFractionDigits="0" locale="cl" />
+									</h:outputText>		
+								</s:fragment>	
+							</td>
+						</tr>
+					</table>
+				</td>
+
+				<td width="50%" height="300">
+					<table border="0" cellpadding="1" cellspacing="1"
+						style="width: 100%; font-size: 8px; text-align: center;"
+						height="300">
+						<tr>
+							<td><h:outputLabel
+									value="#{respuestaSolicitudAction.cliente.estadoSolicitud.toUpperCase(globalLocale)}"
+									style="color:#2B00FF; font-weight:bold; "
+									rendered="#{respuestaSolicitudAction.solicitud.estado != 'A' and respuestaSolicitudAction.solicitud.estado != 'R'}" />
+								<h:outputLabel
+									value="#{respuestaSolicitudAction.cliente.estadoSolicitud.toUpperCase(globalLocale)}"
+									style="color:#008712; font-weight:bold; "
+									rendered="#{respuestaSolicitudAction.solicitud.estado == 'A'}" />
+								<h:outputLabel
+									value="#{respuestaSolicitudAction.cliente.estadoSolicitud.toUpperCase(globalLocale)}"
+									style="color:#E00000; font-weight:bold; "
+									rendered="#{respuestaSolicitudAction.solicitud.estado == 'R'}" />
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+		<br />
+		</p:html>
+
+		<p:table columns="2" widthPercentage="100" >
+			<p:cell colspan="2" horizontalAlignment="center"
+				backgroundColor="#EEEEEE">
+				<p:paragraph>
+					<p:font size="9">
+						<p:text
+							value="Observaciones del Ejecutivo de ventas con respecto a la venta puntual"></p:text>
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			
+			<p:cell>
+				<p:paragraph>
+					<p:font size="6">Negocios de la compra</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell  horizontalAlignment="left" >
+				<p:paragraph>
+					<p:font size="6">
+							#{respuestaSolicitudAction.negocioPdf}	
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			
+			<p:cell>
+				<p:paragraph>
+					<p:font size="6">Plazo que compra</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell>
+				<p:paragraph>
+					<p:font size="6">#{respuestaSolicitudAction.formaPago}</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell>
+				<p:paragraph>
+					<p:font size="6">Motivo que compra</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell>
+				<p:paragraph>
+					<p:font size="6">#{respuestaSolicitudAction.motivoCompra}</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell>
+				<p:paragraph>
+					<p:font size="6">margen que compra</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell>
+				<p:paragraph>
+					<p:font size="6">#{respuestaSolicitudAction.margenGlogal} %</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell>
+				<p:paragraph>
+					<p:font size="6">Observaciones</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell>
+				<p:paragraph>
+					<p:font size="6">#{respuestaSolicitudAction.observacionesCompra}</p:font>
+				</p:paragraph>
+			</p:cell>
+		</p:table>
+
+		<p:html>
+		<br />
+		</p:html>
+		
+		<p:table columns="1" widthPercentage="100" headerRows="1">
+			<p:cell borderWidth="1" horizontalAlignment="center"
+				backgroundColor="#EEEEEE">
+				<p:paragraph>
+					<p:font size="8">
+						<p:text value="Observación Aprobador"></p:text>
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell><p:paragraph>
+					<p:font size="6">
+						<s:fragment rendered="#{respuestaSolicitudAction.venta != null}">
+							<p:text value="#{respuestaSolicitudAction.venta.observacionesFinal}"></p:text>
+						</s:fragment>	
+						<s:fragment rendered="#{respuestaSolicitudAction.venta == null}">
+							<p:text value="No tiene observaciones de aprobador"></p:text>
+						</s:fragment>	
+
+					</p:font>
+				</p:paragraph></p:cell>
+		</p:table>
+		<p:html>
+		<br />
+		</p:html>
+
+		<p:table columns="9" widthPercentage="100">
+			<p:cell>
+				<p:paragraph>
+					<p:font size="6">Jefe Sucursal/Zonal</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell>
+				<p:paragraph>
+					<p:font size="6">P. Manager/J. Negocio</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell>
+				<p:paragraph>
+					<p:font size="6">Ejecutivo/Pilar Crédito</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell>
+				<p:paragraph>
+					<p:font size="6">Jefe Crédito</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell>
+				<p:paragraph>
+					<p:font size="6">Sub-gerente Canal/Negocio</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell>
+				<p:paragraph>
+					<p:font size="6">Gerente Negocio/Canal </p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell>
+				<p:paragraph>
+					<p:font size="6">Sub-gerente Finazas</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell>
+				<p:paragraph>
+					<p:font size="6">Gerente Finanzas</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell>
+				<p:paragraph>
+					<p:font size="6">Gerente General</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell fixedHeight="30"></p:cell>
+			<p:cell fixedHeight="30"></p:cell>
+			<p:cell fixedHeight="30"></p:cell>
+			<p:cell fixedHeight="30"></p:cell>
+			<p:cell fixedHeight="30"></p:cell>
+			<p:cell fixedHeight="30"></p:cell>
+			<p:cell fixedHeight="30"></p:cell>
+			<p:cell fixedHeight="30"></p:cell>
+			<p:cell fixedHeight="30"></p:cell>
+
+		</p:table>
+		<p:newPage />
+		<p:html>
+		<table border="0" width="100%" cellpadding="0">
+			<tr>
+				<td width="30%">
+					<table border="0" style="font-size: 6px;" width="95%" height="100%">
+						<tr>
+							<td>Kupfer Hnos.</td>
+						</tr>
+						<tr>
+							<td>Depto de Crédito y Riesgo</td>
+						</tr>
+					</table>
+				</td>
+
+			</tr>
+		</table>
+		<br />
+		</p:html>
+		<p:paragraph>
+			<p:font size="9">Datos Anexos Solicitud Nro: #{respuestaSolicitudAction.solicitud.id.numSolicitud}</p:font>
+		</p:paragraph>
+
+		<p:html>
+			<br />
+		</p:html>
+
+		<p:table columns="1" widthPercentage="100">
+			<p:cell horizontalAlignment="center" backgroundColor="#EEEEEE">
+				<p:paragraph>
+					<p:font size="9"><p:text value="Detalle de Productos."></p:text></p:font>
+				</p:paragraph>
+			</p:cell>
+		 </p:table>
+
+		<p:table columns="1" widthPercentage="100">
+		<f:facet name="defaultCell"><p:cell borderWidth="1" /></f:facet>
+			<p:cell horizontalAlignment="left">
+				#{respuestaSolicitudAction.productos}			
+			</p:cell>
+		</p:table>
+
+		<p:html>
+			<br />
+		</p:html>
+
+
+		<p:table columns="1" widthPercentage="100">
+			<p:cell horizontalAlignment="center" backgroundColor="#EEEEEE">
+				<p:paragraph>
+					<p:font size="9">
+						<p:text value="Motivos de rechazo"></p:text>
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+		 </p:table>
+
+		
+		<p:table columns="4" widthPercentage="100">
+		<f:facet name="defaultCell"><p:cell borderWidth="0" /></f:facet>
+			<p:cell>
+				<p:paragraph>
+					<p:font size="7">Codigo rechazo:</p:font>
+				</p:paragraph>
+			</p:cell>
+			
+			<p:cell>
+				<p:list>
+					<ui:repeat value="#{respuestaSolicitudAction.listaMotivosRechazoPdf}" var="_rech1">
+						<p:listItem><p:font size="7">#{_rech1.rechazo.codRechazo}</p:font></p:listItem>
+					</ui:repeat>
+				</p:list>
+			</p:cell>
+			<p:cell>
+				<p:paragraph>
+					<p:font size="7">Motivo rechazo:</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell>
+				<p:list>
+					<ui:repeat value="#{respuestaSolicitudAction.listaMotivosRechazoPdf}" var="_rech2">
+						<p:listItem><p:font size="7">#{_rech2.rechazo.desRechazo}</p:font></p:listItem>
+					</ui:repeat>
+				</p:list>
+			</p:cell>
+		</p:table>
+		<p:html>
+			<br />
+			<hr>____________________________________________________________________________________</hr>
+			<br />
+			<br />
+		</p:html>
+		<p:table columns="2" widthPercentage="100">
+		<f:facet name="defaultCell">
+			 <p:cell borderWidth="0" />
+ 		</f:facet>
+			<p:cell horizontalAlignment="left" >
+				<p:paragraph>
+				<p:font size="7">
+					<p:html>
+				   		<h:outputText
+								value="Observaciones rechazo :"
+								style="font-size: 7px;"
+								rendered="#{respuestaSolicitudAction.solicitud.estado=='R'}" />
+
+				   		<h:outputText
+								value="Observaciones Aprobada :"
+								style="font-size: 7px;"
+								rendered="#{respuestaSolicitudAction.solicitud.estado=='A'}" />
+
+				   		<h:outputText
+								value="Observaciones :"
+								style="font-size: 7px;"
+								rendered="#{respuestaSolicitudAction.solicitud.estado !='A' and respuestaSolicitudAction.solicitud.estado =='R'}" />
+
+				   </p:html> 
+				  </p:font> 
+				</p:paragraph>
+			</p:cell>
+			<p:cell>
+				<p:font size="8">
+					<p:html>
+						<s:fragment rendered="#{respuestaSolicitudAction.solicitud.estado=='R'}">
+							<s:fragment rendered="#{respuestaSolicitudAction.venta != null}">
+								<h:outputText value="#{respuestaSolicitudAction.venta.motivoRechazo}" 
+										style="font-size:7px;" />
+							</s:fragment>	
+							<s:fragment rendered="#{respuestaSolicitudAction.venta == null}">
+								<h:outputText value="#{'No existe motivo de rechazo'}" 
+										style="font-size:7px;" />
+							</s:fragment>
+						</s:fragment>
+						<s:fragment rendered="#{respuestaSolicitudAction.solicitud.estado=='A'}">
+							<s:fragment rendered="#{respuestaSolicitudAction.venta != null}">
+								<h:outputText value="#{respuestaSolicitudAction.venta.observacionesFinal}" 
+										style="font-size:7px;" />
+							</s:fragment>	
+							<s:fragment rendered="#{respuestaSolicitudAction.venta == null}">
+								<h:outputText value="#{'No existe motivo de aprobación final'}" 
+										style="font-size:7px;" />
+							</s:fragment>
+						</s:fragment>	
+						<s:fragment rendered="#{respuestaSolicitudAction.solicitud.estado !='A' and respuestaSolicitudAction.solicitud.estado =='R'}">
+							<s:fragment rendered="#{respuestaSolicitudAction.venta != null}">
+								<h:outputText value="#{respuestaSolicitudAction.venta.observacionesInicial}" 
+										style="font-size:7px;" />
+							</s:fragment>	
+							<s:fragment rendered="#{respuestaSolicitudAction.venta == null}">
+								<h:outputText value="#{'No existe motivo de aprobación inicial.'}" 
+										style="font-size:7px;" />
+							</s:fragment>
+						</s:fragment>	
+					</p:html>
+				</p:font>
+			</p:cell>
+		</p:table>
+		<p:html>
+		<br />
+		</p:html>
+		
+		<p:table columns="6" widthPercentage="100">
+		  <p:cell colspan="6" horizontalAlignment="center" 
+				backgroundColor="#EEEEEE">
+				<p:paragraph>
+					<p:font size="8">
+						<p:text
+							value="Comentarios Adicionales"></p:text>
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell>Fecha</p:cell>
+			<p:cell>
+				<p:html>
+				<h:outputText style="font-size: 8px;"
+									value="#{respuestaSolicitudAction.fechaHoy}">
+									<f:convertDateTime pattern="dd-MM-yyyy"></f:convertDateTime>
+				</h:outputText>
+				</p:html>
+				</p:cell>
+			<p:cell>Hora</p:cell>
+			<p:cell><p:html>
+				<h:outputText style="font-size: 8px;"
+									value="#{respuestaSolicitudAction.fechaHoy}">
+									<f:convertDateTime pattern="HH:MM"></f:convertDateTime>
+				</h:outputText>
+				</p:html></p:cell>
+			<p:cell>Usuario</p:cell>
+			<p:cell><p:paragraph>
+					<p:font size="8">
+						<p:text
+							value="#{respuestaSolicitudAction.usuarioLogueado.alias}"></p:text>
+					</p:font>
+				</p:paragraph></p:cell>
+		</p:table>
+		<p:html>
+		<br />
+		</p:html>		
+		<p:table columns="4" widthPercentage="100" widths="1 1 1 4.5" >
+			<f:facet name="defaultCell"><p:cell borderWidth="1" /></f:facet>
+			  <p:cell colspan="4" horizontalAlignment="center" 
+					backgroundColor="#EEEEEE">
+					<p:paragraph>
+						<p:font size="9">
+							<p:text
+								value="Observaciones de la Solicitud"></p:text>
+						</p:font>
+					</p:paragraph>
+				</p:cell>	
+				<p:cell backgroundColor="#EEEEEE" >
+					<p:paragraph>
+						<p:font size="9" >N°</p:font>
+					</p:paragraph>
+				</p:cell>
+				<p:cell backgroundColor="#EEEEEE">
+					<p:paragraph>
+						<p:font size="9">Fecha</p:font>
+					</p:paragraph>
+				</p:cell>
+				<p:cell backgroundColor="#EEEEEE">
+					<p:paragraph>
+						<p:font size="9">Usuario</p:font>
+					</p:paragraph>
+				</p:cell>
+				<p:cell backgroundColor="#EEEEEE">
+					<p:paragraph>
+						<p:font size="9">Observaciones</p:font>
+					</p:paragraph>
+				</p:cell>
+
+				<ui:repeat value="#{respuestaSolicitudAction.listaObservacionesPdf}" var="_obs1">
+					<p:cell>
+						<p:paragraph>					
+							<p:font size="7">#{_obs1.id.correlativo}</p:font>
+						</p:paragraph>
+					</p:cell>				
+					<p:cell>
+						<p:html>
+							<p:font size="7">
+								<h:outputText style="font-size: 8px;" value="#{_obs1.id.fecha}">
+									<f:convertDateTime pattern="dd-MM-yyyy"></f:convertDateTime>
+								</h:outputText>							
+							</p:font>
+						</p:html>
+					</p:cell>
+					<p:cell>
+						<p:paragraph>	
+							<p:font size="7">#{_obs1.id.usuario}</p:font>
+						</p:paragraph>
+					</p:cell>
+					<p:cell>
+						<p:paragraph>						
+							<p:font size="7">#{_obs1.id.observacion}</p:font>
+						</p:paragraph>
+					</p:cell>							
+				</ui:repeat>
+			</p:table>		
+	
+	</p:font>
+</p:document>
+

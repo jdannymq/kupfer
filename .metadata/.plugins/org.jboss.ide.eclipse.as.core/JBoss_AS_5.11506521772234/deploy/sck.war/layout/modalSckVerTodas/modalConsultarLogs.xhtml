@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	
+	<rich:modalPanel id="mpConsultarLogsVer" autosized="true" width="600">
+		<f:facet name="header">
+			<h:outputText value="Consulta de Logs de Solicitud"	style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:form>
+					<a:commandLink	ajaxSingle="true" action="#{visualizarSolicitudTodasAction.limpiarHitos()}">
+						<h:graphicImage value="img/close.png" styleClass="hidelink"	id="mpConsultarLogsVerlink" />
+					</a:commandLink>
+					<rich:componentControl for="mpConsultarLogsVer"
+						attachTo="mpConsultarLogsVerlink" operation="hide"
+						event="onclick" />
+				</h:form>
+			</h:panelGroup>
+		</f:facet>
+		<h:form id = "frm_consultaLogs">
+		<rich:panel>
+			<f:facet name="header"><h:outputText value="Información de Solicitud"	style="padding-right:15px;" /></f:facet>		
+        	 	<h:panelGrid columns="3" border="0">
+		        	<s:decorate template="/layout/edit.xhtml">
+						<ui:define name="label">N°</ui:define>
+						<h:inputText id="idNumSolicitud" 
+									value="#{visualizarSolicitudTodasAction.solicitudLogHitos.id.numSolicitud}" 
+						          required="false"  
+							       maxlength="10"
+							       size="10" 
+							       disabled="true">
+						</h:inputText>	       
+		 			</s:decorate>        	 	
+		        	<s:decorate template="/layout/edit.xhtml">
+						<ui:define name="label">Nombre</ui:define>
+						<h:inputText id="idNombreSolicitud" 
+									value="#{visualizarSolicitudTodasAction.solicitudLogHitos.nomCliente}" 
+						          required="false"  
+							       maxlength="120"
+							       size="50" 
+							       disabled="true" >
+						</h:inputText>	        	
+					</s:decorate>        	 	
+		        	<s:decorate template="/layout/edit.xhtml">
+						<ui:define name="label">Estado</ui:define>
+						<h:inputText id="idEstadoSolicitud" 
+									value="#{visualizarSolicitudTodasAction.estadoLogHitos.desEstado}" 
+						          required="false"  
+							       maxlength="120"
+							       size="50" 
+							       disabled="true" >
+						</h:inputText>	        	
+					</s:decorate>   
+        	 	</h:panelGrid>
+
+
+		</rich:panel>
+
+
+		<rich:panel>
+				<f:facet name="header"><h:outputText value="Logs de la Solicitud"	style="padding-right:15px;" /></f:facet>
+				<a:outputPanel id="idgrillaLogs">
+			    	<div class="results" id="grillaLogs" style="height:380px; overflow: auto;">
+				   		<h:outputText value="No existe ningun Logs en esta solicitud." 
+				   		           rendered="#{empty visualizarSolicitudTodasAction.listaLogs}"/>
+					    <rich:dataTable id="idlistalogs"
+					                var="_sl"
+					              value="#{visualizarSolicitudTodasAction.listaLogs}"
+					           rendered="#{not empty visualizarSolicitudTodasAction.listaLogs}">
+					        <rich:column>
+					            <f:facet name="header">Usuario</f:facet>
+					            <h:outputText value="#{_sl.usuario}"/>
+					        </rich:column>
+					        <rich:column>
+					            <f:facet name="header">Fecha - Hora</f:facet>
+					            <h:outputText value="#{_sl.fechaHora}">
+					            	<s:convertDateTime pattern="dd-MM-yyyy HH:mm" />
+					            </h:outputText>
+					        </rich:column>
+					        <rich:column>
+					            <f:facet name="header">Estado</f:facet>
+					            <h:outputText value="#{_sl.descripcionEstado}"/>
+					        </rich:column>
+					        <rich:column>
+					            <f:facet name="header">Accion Realizada</f:facet>
+					            <h:outputText value="#{_sl.accion}"/>
+					        </rich:column>
+	
+					    </rich:dataTable>
+				    </div>
+			    </a:outputPanel>
+		</rich:panel>
+
+   	</h:form>
+
+	</rich:modalPanel>
+	
+</ui:composition>

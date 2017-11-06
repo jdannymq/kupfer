@@ -1,0 +1,84 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="ufSolicitudTipo" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{ufSolicitudTipoHome.managed ? 'Editar' : 'Agregar'} Uf Solicitud Tipo</f:facet>
+
+
+            <s:decorate id="tipoSolicitudField" template="layout/edit.xhtml">
+                <ui:define name="label">Tipo solicitud</ui:define>
+					<h:selectOneMenu id="idComboTipo"
+                		          value="#{ufSolicitudTipoHome.tipoSolicitud}"
+                		       required="false"
+                		          style="width:300px;">
+                  	    <s:selectItems value="#{ufSolicitudTipoHome.listaSolicitudes}" 
+                  	                     var="_sol" 
+                  	    hideNoSelectionLabel="true" 
+                  	        noSelectionLabel="Seleccionar Tipo de Solicitud"
+               			               label="#{_sol.desTipoSolicitud.toUpperCase(globalLocale)}"/>
+               			    <s:convertEntity/>
+       			   	<a:support event="onchange" 
+                         reRender="tipoSolicitudField"
+             			      ajaxSingle="true" 
+             			      action="#{ufSolicitudTipoHome.obtenerTipoSolicitud()}" />		 
+					</h:selectOneMenu>	
+
+            </s:decorate>
+
+
+            <s:decorate id="valorUfField" template="layout/edit.xhtml">
+                <ui:define name="label">Valor uf</ui:define>
+                <h:inputText id="valorUf"
+                          value="#{ufSolicitudTipoHome.instance.valorUf}"
+                           size="25">
+                    <a:support event="onblur" reRender="valorUfField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+            
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                required fields
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Guardar"
+                         action="#{ufSolicitudTipoHome.persist}"
+                       disabled="#{!ufSolicitudTipoHome.wired}"
+                       rendered="#{!ufSolicitudTipoHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="Cancelar"
+             propagation="end"
+                    view="/UfSolicitudTipo.xhtml"
+                rendered="#{ufSolicitudTipoHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="Cancelar"
+             propagation="end"
+                    view="/#{empty ufSolicitudTipoFrom ? 'UfSolicitudTipoList' : ufSolicitudTipoFrom}.xhtml"
+                rendered="#{!ufSolicitudTipoHome.managed}"/>
+
+        </div>
+    </h:form>
+
+</ui:define>
+
+</ui:composition>

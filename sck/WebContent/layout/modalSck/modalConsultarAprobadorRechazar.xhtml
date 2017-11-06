@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	
+	
+	<rich:modalPanel id="mpConsultarAproRecha" autosized="true" width="600">
+		<f:facet name="header">
+			<h:outputText value="Consulta a lo Aprobadores de Solicitud"	style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:form>
+					<a:commandLink	ajaxSingle="true" action="#{globalHitosLogdService.limpiarAprobaRechaza()}">
+						<h:graphicImage value="img/close.png" styleClass="hidelink"	id="mpConsultarAproRechalink" />
+					</a:commandLink>
+					<rich:componentControl for="mpConsultarAproRecha"
+						attachTo="mpConsultarAproRechalink" operation="hide"
+						event="onclick" />
+				</h:form>
+			</h:panelGroup>
+		</f:facet>
+		<h:form id = "frm_consultaAprobador">
+		<rich:panel>
+			<f:facet name="header"><h:outputText value="Información de Solicitud"	style="padding-right:15px;" /></f:facet>		
+        	 	<h:panelGrid columns="3" border="0">
+		        	<s:decorate template="/layout/edit.xhtml">
+						<ui:define name="label">N°</ui:define>
+						<h:inputText id="idNumSolicitud" 
+									value="#{globalHitosLogdService.solicitud.idSolictud}" 
+						          required="false"  
+							       maxlength="10"
+							       size="10" 
+							       disabled="true">
+						</h:inputText>	       
+		 			</s:decorate>        	 	
+		        	<s:decorate template="/layout/edit.xhtml">
+						<ui:define name="label">Nombre</ui:define>
+						<h:inputText id="idNombreSolicitud" 
+									value="#{globalHitosLogdService.solicitud.razonSocial}" 
+						          required="false"  
+							       maxlength="120"
+							       size="50" 
+							       disabled="true" >
+						</h:inputText>	        	
+					</s:decorate>        	 	
+		        	<s:decorate template="/layout/edit.xhtml">
+						<ui:define name="label">Estado</ui:define>
+						<h:inputText id="idEstadoSolicitud" 
+									value="#{globalHitosLogdService.solicitud.estado}" 
+						          required="false"  
+							       maxlength="120"
+							       size="50" 
+							       disabled="true" >
+						</h:inputText>	        	
+					</s:decorate>   
+        	 	</h:panelGrid>
+		</rich:panel>
+
+		<rich:panel>
+				<f:facet name="header"><h:outputText value="Aprobadores de la Solicitud"	style="padding-right:15px;" /></f:facet>
+				<a:outputPanel id="grillaAprobadores">
+		    	<div class="results" id="grillaProductos" style="height:380px; overflow: auto;">
+			   		<h:outputText value="No existe registro de los aprobadores de la solicitud." 
+			   		           rendered="#{empty globalHitosLogdService.listaAprobadoToRechazado}"/>
+				    <rich:dataTable id="idlistaAprobadores"
+				                var="_sp"
+				              value="#{globalHitosLogdService.listaAprobadoToRechazado}"
+				           rendered="#{not empty globalHitosLogdService.listaAprobadoToRechazado}">
+				        <rich:column>
+				            <f:facet name="header">Usuario</f:facet>
+				            <h:outputText value="#{_sp.aprobador.nombre}"/>
+				        </rich:column>
+				        <rich:column>
+				            <f:facet name="header">Cargo</f:facet>
+				            <h:outputText value="#{_sp.cargo.desCargo}"/>
+				        </rich:column>
+				        <rich:column>
+				            <f:facet name="header">Estado</f:facet>
+				            <h:outputText value="#{_sp.estado.desEstado}"/>
+				        </rich:column>
+				        <rich:column>
+				            <f:facet name="header">Observaciones</f:facet>
+				            <h:outputText value="#{_sp.observaciones}"/>
+				        </rich:column>
+				    </rich:dataTable>
+			    </div>
+				</a:outputPanel>
+		</rich:panel>
+
+   	</h:form>
+
+	</rich:modalPanel>
+	
+</ui:composition>

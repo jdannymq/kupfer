@@ -1,0 +1,123 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="ufs" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{ufsHome.managed ? 'Editar' : 'Agregar'} Ufs</f:facet>
+
+
+            <s:decorate id="idUfsField" template="layout/display.xhtml">
+                <ui:define name="label">Id Ufs</ui:define>
+                <h:inputText id="idUfs"
+                       required="false"
+                       disabled="true"
+                          value="#{ufsHome.instance.idUfs}">
+                </h:inputText> 
+            </s:decorate>
+            
+            <s:decorate id="idUfsNotaField" template="layout/display.xhtml">
+                <ui:define name="label"></ui:define>
+               <span class="required">* NOTA: El separador de decimales, debe ser el punto (.) </span>
+            </s:decorate>
+
+            <s:decorate id="dolarField" template="layout/edit.xhtml">
+                <ui:define name="label">Dolar</ui:define>
+                <h:inputText id="dolar"
+                          value="#{ufsHome.instance.dolar}">
+                    <a:support event="onblur" reRender="dolarField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>  EJ: 626.68 
+            </s:decorate> 
+
+
+            <s:decorate id="euroField" template="layout/edit.xhtml">
+                <ui:define name="label">Euro</ui:define>
+                <h:inputText id="euro"
+                          value="#{ufsHome.instance.euro}">
+                    <a:support event="onblur" reRender="euroField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText> Ej : 752.23
+            </s:decorate> 
+
+
+            <s:decorate id="fechaField" template="layout/edit.xhtml">
+                <ui:define name="label">Fecha</ui:define>
+                <rich:calendar id="fecha"
+                          value="#{ufsHome.instance.fecha}" 
+                          datePattern="dd/MM/yyyy hh:mm a"
+                		  required="true"	
+                		  disabled="true"/>
+            </s:decorate>
+
+
+            <s:decorate id="utmField" template="layout/edit.xhtml">
+                <ui:define name="label">Utm</ui:define>
+                <h:inputText id="utm"
+                          value="#{ufsHome.instance.utm}">
+                    <a:support event="onblur" reRender="utmField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText> Ej : 46600.0
+            </s:decorate> 
+
+
+            <s:decorate id="valorField" template="layout/edit.xhtml">
+                <ui:define name="label">Monto Uf</ui:define>
+                <h:inputText id="valor"
+                          value="#{ufsHome.instance.valor}"
+                          required="true">
+                    <a:support event="onblur" reRender="valorField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText> Ej : 26602.38 
+            </s:decorate>
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                campos requeridos.
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Guardar"
+                         action="#{ufsHome.persist}"
+                       disabled="#{!ufsHome.wired}"
+                       rendered="#{!ufsHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="Modificar"
+                         action="#{ufsHome.update}"
+                       rendered="#{ufsHome.managed}"/>
+
+            <h:commandButton id="delete"
+                          value="Eliminar"
+                         action="#{ufsHome.remove}"
+                      immediate="true"
+                       rendered="#{ufsHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="Cancelar"
+             propagation="end"
+                    view="/Ufs.xhtml"
+                rendered="#{ufsHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="Cancelar"
+             propagation="end"
+                    view="/#{empty ufsFrom ? 'UfsList' : ufsFrom}.xhtml"
+                rendered="#{!ufsHome.managed}"/>
+
+        </div>
+    </h:form>
+
+</ui:define>
+
+</ui:composition>

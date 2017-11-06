@@ -1,0 +1,69 @@
+package org.domain.sck.dto;
+
+import java.io.Serializable;
+
+public class PlanillaHitosDTO implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private long idSystem; 
+	private String fecha;
+	private String hora;
+	private String estado;
+	private String descripcionEstado;
+	private String tiempo;
+	private String tiempoTotal;
+	
+	
+	/* sets y gets*/
+	public long getIdSystem() {
+		return idSystem;
+	}
+	public void setIdSystem(long idSystem) {
+		this.idSystem = idSystem;
+	}
+	public String getEstado() {
+		return estado;
+	}
+	public void setEstado(String estado) {
+		this.estado = estado;
+	}
+	public String getDescripcionEstado() {
+		return descripcionEstado;
+	}
+	public void setDescripcionEstado(String descripcionEstado) {
+		this.descripcionEstado = descripcionEstado;
+	}
+	public String getTiempo() {
+		return tiempo;
+	}
+	public void setTiempo(String tiempo) {
+		this.tiempo = tiempo;
+	}
+	public String getTiempoTotal() {
+		return tiempoTotal;
+	}
+	public void setTiempoTotal(String tiempoTotal) {
+		this.tiempoTotal = tiempoTotal;
+	}
+	public String getFecha() {
+		return fecha;
+	}
+	public void setFecha(String fecha) {
+		this.fecha = fecha;
+	}
+	public String getHora() {
+		return hora;
+	}
+	public void setHora(String hora) {
+		this.hora = hora;
+	}
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}	
+
+	
+	
+}

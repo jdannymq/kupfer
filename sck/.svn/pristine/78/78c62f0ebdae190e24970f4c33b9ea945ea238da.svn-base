@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	<rich:modalPanel id="mpMensajeRespuestaDerivadaAprobar" autosized="true" width="400" height="100">
+    	 <f:facet name="header">
+            <h:outputText value="Mensaje" style="padding-right:15px;" />
+        </f:facet>
+    	<f:facet name="controls">
+            <h:panelGroup>
+				<h:form>
+					<a:commandLink	ajaxSingle="true">
+						<h:graphicImage value="img/close.png" styleClass="hidelink"	id="mpMensajeRespuestaDerivadaAprobarhidelink" />
+					</a:commandLink>
+					<rich:componentControl for="mpMensajeRespuestaDerivadaAprobar"
+						attachTo="mpMensajeRespuestaDerivadaAprobarhidelink" operation="hide"
+						event="onclick" 
+						/>
+				</h:form>            
+            </h:panelGroup>
+        </f:facet>
+        <h:form id="frm_mensaje_solicitud_aprobar_derivada">
+		        <h:panelGrid id="mensajeAprobar" columns="1" cellpadding="0" cellspacing="5" width="100%" style="text-align:center;">
+		        	<h:outputLabel style="font-size:14px; font-weight: bold;" value="#{respuestaSolicitudAction.mensajeGlogal}" />
+				</h:panelGrid>
+				<table cellpadding="0" cellspacing="0" border="0" width="100%">
+					<tr>
+						<td width="100%"  align="center"> 
+							<ui:remove>
+			   				 <a:commandButton value="Cerrar" 
+			   				 			   reRender="mpMensajeRespuestaDerivadaAprobar"
+			                        	 ajaxSingle="true" 
+			                        	 action="#{respuestaSolicitudAction.salirRespuestaIrListado()}"
+			                        	oncomplete="#{rich:component('mpMensajeRespuestaDerivadaAprobar')}.hide()"
+			             			  />
+			             	</ui:remove>		  	
+        					<s:button view="/GenerarSolicitud.xhtml" 
+				                   id="done"
+				                   value="Cerrar" 								
+				                   action="#{generarSolicitudAction.retorno()}"
+				                   propagation="none" 
+				                    onclick="abrirModal();" >
+									<f:param name="tabGrilla" value="#{respuestaSolicitudAction.tabGrilla}" />
+									<f:param name="tabGrillaRetorno" value="#{respuestaSolicitudAction.tabGrilla}" />
+									<f:param name="solicitudSeleccionada" value="#{respuestaSolicitudAction.solicitud.id.numSolicitud}" />	
+									<f:param name="pagina" value="Resp" />	
+							</s:button>					             			  
+			             			  						
+						 </td>
+					</tr>
+				</table>				
+        </h:form>
+    </rich:modalPanel>
+</ui:composition>

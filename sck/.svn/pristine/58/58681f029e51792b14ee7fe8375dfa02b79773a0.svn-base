@@ -1,0 +1,63 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <rich:panel>
+        <f:facet name="header">Detalle de Tipo Usuario </f:facet>
+
+        <s:decorate id="idTipo" template="layout/display.xhtml">
+            <ui:define name="label">Id Tipo</ui:define>
+            <h:inputText value="#{tipoUsuarioHome.instance.idTipo}" disabled="true"/>
+        </s:decorate>
+
+        <s:decorate id="descripcion" template="layout/display.xhtml">
+            <ui:define name="label">Descripción</ui:define>
+            <h:inputText value="#{tipoUsuarioHome.instance.descripcion}" disabled="true"/>
+        </s:decorate>
+        
+        <s:decorate id="abreviado" template="layout/display.xhtml">
+            <ui:define name="label">Abreviado</ui:define>
+            <h:inputText value="#{tipoUsuarioHome.instance.abreviado}" disabled="true"/>
+        </s:decorate>
+         <s:decorate id="comboTipoField" template="/layout/display.xhtml">
+            <ui:define name="label">Estado</ui:define>
+				<h:selectOneMenu id="idComboTipo"
+			            		          value="#{tipoUsuarioHome.estadoAux}"
+			            		       required="false"
+			            		          style="width :200px;"
+			            		          disabled="true">
+			              	    <s:selectItems value="#{tipoUsuarioHome.listaEstados}" 
+			              	                     var="tipo" 
+			              	    hideNoSelectionLabel="true" 
+			              	        noSelectionLabel="Seleccionar Estado..."
+			           			               label="#{tipo}"/>
+				</h:selectOneMenu>	
+        </s:decorate>
+
+        <div style="clear:both"/>
+
+    </rich:panel>
+
+    <div class="actionButtons">
+
+        <s:button view="/TipoUsuarioEdit.xhtml"
+                    id="edit"
+                 value="Editar"/>
+
+        <s:button view="/#{empty tipoUsuarioFrom ? 'TipoUsuarioList' : tipoUsuarioFrom}.xhtml"
+                    id="done"
+                 value="Volver"/>
+
+    </div>
+
+</ui:define>
+
+</ui:composition>

@@ -1,0 +1,13 @@
+<graph bgcolor='e1f5ff' caption='Decline in Net Interest Margins of Asian Banks (1995-2001)' subCaption='(in Percentage %)' yaxismaxvalue="2" yaxisminvalue='-2.5' yaxisname='Points' xaxisname='Country' hovercapbg='FFFFDD' hovercapborder='000000' numdivlines='4' numberSuffix='%25'>
+   <set name='Taiwan' value='-0.33' color='F6BD0F'/> 
+   <set name='Malaysia' value='-0.27' color='FF6600'/> 
+   <set name='Hong Kong' value='0.40' color='8BBA00' alpha='70'/> 
+   <set name='Philippines' value='0.6' color='F984A1'/> 
+   <set name='Singapore' value='-0.8' color='A66EDD' alpha='70'/>
+   <set name='Thailand' value='-2.2' color='B2FF66'/> 
+   <set name='India' value='1.2' color='AFD8F8'/> 
+<trendlines>
+   <line startvalue='0.8' displayValue='Good' color='FF0000' thickness='1' isTrendZone='0'/>
+   <line startvalue='-0.4' displayValue='Bad' color='009999' thickness='1' isTrendZone='0'/>
+</trendlines>
+</graph>

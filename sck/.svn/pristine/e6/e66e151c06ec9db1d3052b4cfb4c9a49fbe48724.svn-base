@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/layout/template.xhtml"
+    xmlns:a="http://richfaces.org/a4j"
+     xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+    xmlns:p="http://primefaces.prime.com.tr/ui">
+    
+  <ui:define name="body">
+  <div class="divTitular"><h1>Informe Nivel de Servicio Área Crédito</h1></div>
+  <h:form id="frmSeleccion">
+    <rich:panel id="panelGeneralAux">
+        <f:facet name="header">Filtros de Busquedas</f:facet>
+		<table cellpadding="2" cellspacing="3" border="1" style="font-size:10px;" width="100%">
+			<tr valign="top">
+				<td style="font-size:11px; text-align:center;" colspan="2"> <strong>Fechas y Acciones</strong></td>
+				<td style="font-size:11px; text-align:center;"><strong>Canales</strong></td>
+				<td style="font-size:11px; text-align:center;"><strong>Negocios</strong></td>
+			</tr>
+			<tr valign="top">
+				<td colspan="2">
+					<table cellpadding="0" cellspacing="0" border="0" style="font-size:10px;" width="100%">
+						<tr valign="top">
+							<td style="font-size:11px;"><strong>Fecha Inicial</strong>  </td>
+							<td style="font-size:11px;"><strong>Fecha Final </strong></td>							
+						</tr>
+						<tr>
+							<td style="font-size:11px;">
+								<rich:calendar id="fechadesde"
+					                       required="false"
+					                       disabled="false"
+					                          value="#{informeMatrizResponsabilidadAction.fechaInical}" 
+					                          datePattern="yyyy-MM-dd"
+					                          buttonIcon="/img/calendario_icono.gif"
+					                          style="width:75px;"/>								
+							</td>
+							<td style="font-size:11px;">
+								<rich:calendar id="fechahasta"
+					                       required="false"
+					                       disabled="false"
+					                          value="#{informeMatrizResponsabilidadAction.fechaFinal}" 
+					                          datePattern="yyyy-MM-dd" 
+					                          buttonIcon="/img/calendario_icono.gif"/>								
+							</td>							
+						</tr>
+						<tr valign="top">
+							<td style="font-size:11px;" colspan="2" height="20px;"> </td>
+						</tr>
+						<tr valign="top">
+							<td style="font-size:11px;" align="center" colspan="2">
+								<a:commandButton action="#{informeMatrizResponsabilidadAction.consultarSolicitudes()}" 
+								                  value="Consultar" 
+								             ajaxSingle="true"
+								                reRender="panelMensaje,panelGeneral,listaTodasSolicitudes,panelPorcentajeAux"
+		              				                title="Consultar..."
+		              				                process="fechadesde,fechahasta,idSolicitud,rutCliente"
+		              				                style="width:75px;"
+								                />							
+								<a:commandButton action="#{informeMatrizResponsabilidadAction.limpiarParametos()}" 
+								                  value="Limpiar" 
+								             ajaxSingle="true"
+								                reRender="fechadesde,fechahasta,idCboEstado,idCboSucursal,panelMensaje,solicitudTodasList,panelGeneral,idSolicitud,rutCliente"
+		              				                title="Limpiar..."
+		              				                style="width:75px;"
+								                />								
+							</td>
+						</tr>
+						<tr valign="top">
+							<td style="font-size:12px; " colspan="2" height="20px;">
+							    <a:outputPanel id="panelMensaje" >
+						    		<h:messages  globalOnly="true" styleClass="message"
+							            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" style="color: red;"/>
+						        </a:outputPanel>								
+							</td>
+						</tr>						
+					</table>				
+				</td>
+				<td style="border:1px solid #000000;padding:3px;">
+			        <rich:listShuttle id="idListaCanal" sourceValue="#{informeMatrizResponsabilidadAction.listaCanales}"
+				            targetValue="#{informeMatrizResponsabilidadAction.listaCanalesSeleccionada}" var="canal" listsHeight="100"
+				            sourceListWidth="150" targetListWidth="150" sourceCaptionLabel="Canales Disponible"
+				            targetCaptionLabel="Canales Seleccionado" orderControlsVisible="false" fastOrderControlsVisible="false" > 
+			            <ui:include src="/layout/facetSelectionLists.xhtml" />
+			            <s:convertEntity/>
+			            <rich:column>
+			                <h:outputText value="#{canal.codigo} - #{canal.descripcion.toUpperCase(locale)}"></h:outputText>
+			            </rich:column>
+					</rich:listShuttle>		
+				</td>				
+				<td style="border:1px solid #000000;padding:3px;">
+			        <rich:listShuttle id="idListaNegocio" sourceValue="#{informeMatrizResponsabilidadAction.listaNegocios}"
+				            targetValue="#{informeMatrizResponsabilidadAction.listaNegociosSeleccionados}" var="negocio" listsHeight="100"
+				            sourceListWidth="150" targetListWidth="150" sourceCaptionLabel="Negocios Disponible"
+				            targetCaptionLabel="Negocios Seleccionado" orderControlsVisible="false" fastOrderControlsVisible="false" > 
+			            <ui:include src="/layout/facetSelectionLists.xhtml" />
+			             <s:convertEntity/>
+			            <rich:column>
+			                <h:outputText value="#{negocio.desNegocio.toUpperCase(locale)}"></h:outputText>
+			            </rich:column>
+					</rich:listShuttle>					
+				</td>
+			</tr>
+			<tr valign="top">
+				<td style="font-size:11px; text-align:center;" colspan="2"><strong>Tipo de Solicitudes</strong></td>
+				<td style="font-size:11px; text-align:center;"><strong>Sucursales</strong></td>
+				<td style="font-size:11px; text-align:center;"><strong>Responsables</strong></td>
+			</tr>			
+			<tr valign="top">
+				<td colspan="2" style="border:1px solid #000000;padding:3px;">
+			        <rich:listShuttle id="idTipoSolicitud" sourceValue="#{informeMatrizResponsabilidadAction.listaLcredTipoSolicituds}"
+				            targetValue="#{informeMatrizResponsabilidadAction.listaLcredTipoSolicitudsSeleccionados}" var="tipo" listsHeight="100"
+				            sourceListWidth="150" targetListWidth="150" sourceCaptionLabel="Tipo Disponible"
+				            targetCaptionLabel="Tipo Seleccionado" orderControlsVisible="false" fastOrderControlsVisible="false" > 
+			            <ui:include src="/layout/facetSelectionLists.xhtml" />
+			            <s:convertEntity/>
+			            <rich:column>
+			                <h:outputText value="#{tipo.desTipoSolicitud.toUpperCase(locale)}"></h:outputText>
+			            </rich:column>
+					</rich:listShuttle>	
+				</td>
+				<td style="border:1px solid #000000;padding:3px;">
+			        <rich:listShuttle id="idListaSucursal" sourceValue="#{informeMatrizResponsabilidadAction.listaSucursals}"
+				            targetValue="#{informeMatrizResponsabilidadAction.listaSucursalsSeleccionados}" var="sucursal" listsHeight="100"
+				            sourceListWidth="150" targetListWidth="150" sourceCaptionLabel="Sucursales Disponible"
+				            targetCaptionLabel="Sucursales Seleccionado" orderControlsVisible="false" fastOrderControlsVisible="false" 
+				            > 
+			            <ui:include src="/layout/facetSelectionLists.xhtml" />
+			             <s:convertEntity/>
+			            <rich:column>
+			                <h:outputText value="#{sucursal.descripcion.toUpperCase(locale)}"></h:outputText>
+			            </rich:column>
+			            <a:support event="onlistchanged" ajaxSingle="true" reRender="idResponsable" 
+			                      action="#{informeMatrizResponsabilidadAction.sacarUsuariosSegunSucursalesSeleccionadas()}" />
+					</rich:listShuttle>		
+				</td>				
+				<td style="border:1px solid #000000;padding:3px;">
+			        <rich:listShuttle id="idResponsable" sourceValue="#{informeMatrizResponsabilidadAction.listaUsuariosegurs}"
+				            targetValue="#{informeMatrizResponsabilidadAction.listaUsuariosegursSeleccionados}" var="usuario" listsHeight="100"
+				            sourceListWidth="150" targetListWidth="150" sourceCaptionLabel="Usuarios Disponible"
+				            targetCaptionLabel="Usuarios Seleccionado" orderControlsVisible="false" fastOrderControlsVisible="false" > 
+			            <ui:include src="/layout/facetSelectionLists.xhtml" />
+			            <s:convertEntity/>
+			            <rich:column>
+			                <h:outputText value="#{usuario.nombre.toUpperCase(locale)}"></h:outputText>
+			            </rich:column>
+					</rich:listShuttle>		
+				</td>
+			</tr>	
+		</table>
+    </rich:panel>
+    <a:outputPanel id="panelPorcentajeAux"> 
+	    <rich:panel  >
+	        <f:facet name="header">Porcentaje General</f:facet>
+	          <table cellpadding="2" cellspacing="3" border="1" style="font-size:10px;" width="100%">
+				<tr valign="top">
+					<td style="font-size:11px; text-align:center;"> <strong></strong></td>
+					<td style="font-size:11px; text-align:center;"><strong>Cantidades</strong></td>
+					<td style="font-size:11px; text-align:center;"><strong>Porcentaje (%)</strong></td>
+				</tr>
+				<tr valign="top">
+					<td style="font-size:11px; text-align:center;"> <strong>Cantidad de Solictudes</strong></td>
+					<td style="font-size:11px; text-align:center;"><strong>#{informeMatrizResponsabilidadAction.totalSolicitudes}</strong></td>
+					<td style="font-size:11px; text-align:center;"><strong>100 %</strong></td>
+				</tr>
+				<tr valign="top">
+					<td style="font-size:11px; text-align:center;"> <strong>Cumplidas</strong></td>
+					<td style="font-size:11px; text-align:center;"><strong>#{informeMatrizResponsabilidadAction.cumplidas}</strong></td>
+					<td style="font-size:11px; text-align:center;"><strong>#{informeMatrizResponsabilidadAction.porcentajeCumplidas}</strong></td>
+				</tr>			
+				<tr valign="top">
+					<td style="font-size:11px; text-align:center;"> <strong>No Cumplidas</strong></td>
+					<td style="font-size:11px; text-align:center;"><strong>#{informeMatrizResponsabilidadAction.nocumplidas}</strong></td>
+					<td style="font-size:11px; text-align:center;"><strong>#{informeMatrizResponsabilidadAction.porcentajeNoCumplidas}</strong></td>
+				</tr>	
+			  </table>	
+	    </rich:panel> 
+    </a:outputPanel>   
+    <rich:panel id="panelGeneral">
+        <f:facet name="header">Listado de Resultado </f:facet>
+   			<table cellpadding="0" cellspacing="0" border="0" style="font-size:10px;" width="100%">
+   				<tr >
+   					<td width="100%;" >
+						<a:outputPanel id="listaTodasSolicitudes">  
+							<h:outputText value="No existen Resumen ." rendered="#{empty informeMatrizResponsabilidadAction.listaTodasSolicitudesDto}" />
+							<div style="width: 100%; overflow: auto;">
+								<rich:datascroller id="sc4" for="solicitudTodasList" />
+								<rich:extendedDataTable id="solicitudTodasList" var="_sol" rows="15" height="450px;" reRender="sc4" 
+													tableState="#{informeMatrizResponsabilidadAction.tsListaTodasSolicitudes}"
+									enableContextMenu="true"
+									value="#{informeMatrizResponsabilidadAction.listaTodasSolicitudesDto}"
+									rendered="#{not empty informeMatrizResponsabilidadAction.listaTodasSolicitudesDto}"
+									style="font-size:7px; ">
+									<rich:column style="font-size:9px;" label="Num. Solicitud"
+										filterBy="#{_sol.idSolictud}" sortBy="#{_sol.idSolictud}">
+										<f:facet name="header">N°</f:facet>
+										
+										<s:link view="/RespuestaSolicitud.xhtml"
+											value="#{_sol.idSolictud}" id="respuestaInicialId"
+											includePageParams="false" propagation="join"
+											rendered="#{_sol.controlador == 1}"
+											action="#{respuestaSolicitudAction.ingresarPaginaPrincipal()}" 
+											onclick="abrirModal();">
+											<f:param name="idSolicitud" value="#{_sol.idSolictud}" />
+											<f:param name="tipoSolicitud" value="#{_sol.tipoSolicitud}" />
+											<f:param name="pagina" value="Listado" />
+											<f:param name="tab" value="pendiente" />
+										</s:link>
+										<s:link view="/VerSolicitudTodas.xhtml" value="#{_sol.idSolictud}"
+											id="respuestavVerId" includePageParams="false"
+											propagation="join"
+											rendered="#{_sol.controlador == 2}"
+											action="#{visualizarSolicitudTodasAction.ingresarPaginaPrincipal()}"
+											onclick="abrirModal();">
+											<f:param name="idSolicitud" value="#{_sol.idSolictud}" />
+											<f:param name="tipoSolicitud" value="#{_sol.tipoSolicitud}" />
+											<f:param name="pagina" value="Listado" />
+											<f:param name="tab" value="todas" />
+										</s:link>
+										
+										<s:link view="/GenerarSolicitudReparos.xhtml" value="#{_sol.idSolictud}"
+											id="reparosSolicitudesId" includePageParams="false"
+											propagation="join"
+											rendered="#{_sol.controlador == 3}"
+											action="#{generarSolicitudReparosAction.ingresarPaginaPrincipal()}"
+											onclick="abrirModal();">
+											<f:param name="idSolicitud" value="#{_sol.idSolictud}" />
+											<f:param name="tipoSolicitud" value="#{_sol.tipoSolicitud}" />
+											<f:param name="pagina" value="Listado" />
+											<f:param name="tab" value="pendiente" />
+										</s:link>				
+		
+
+									</rich:column>
+									<rich:column width="75px;" filterBy="#{_sol.fechaEmision}"
+										label="fecha Sol." sortBy="#{_sol.fechaEmision}"
+										style="text-align: center; font-size:9px;">
+										<f:facet name="header">Fecha Sol. </f:facet>
+										<h:outputText value="#{_sol.fechaEmision}">
+											<s:convertDateTime pattern="dd-MM-yy HH:mm" />
+										</h:outputText>
+									</rich:column>
+									<rich:column styleClass="action" style="font-size:9px;"
+										label="Accion">
+										<f:facet name="header">Acción</f:facet>
+										<a:commandLink
+											action="#{informeMatrizResponsabilidadAction.sacarLogSolicitud(_sol)}"
+											value="Log"
+											oncomplete="#{rich:component('mpConsultarLogs')}.show()"
+											reRender="mpConsultarLogs">
+											<f:param name="logIdSolicitud" value="#{_sol.idSolictud}" />
+										</a:commandLink>
+									            #{' '}
+									    <a:commandLink
+											action="#{informeMatrizResponsabilidadAction.sacarLogHitos(_sol)}"
+											value="Hitos"
+											oncomplete="#{rich:component('mpConsultarHitos')}.show()"
+											reRender="mpConsultarHitos">
+											<f:param name="logIdSolicitud" value="#{_sol.idSolictud}" />
+										</a:commandLink>
+									</rich:column>							
+									<rich:column style="font-size:9px;" filterBy="#{_sol.rut}"
+										label="Rut Cliente" sortBy="#{_sol.rut}">
+										<f:facet name="header">Rut Cliente</f:facet>
+										<h:outputText value="#{_sol.rut}" />
+									</rich:column>
+									<rich:column style="font-size:9px;" label="Razón Social"
+										filterBy="#{_sol.razonSocial}" sortBy="#{_sol.razonSocial}">
+										<f:facet name="header">Razón Social</f:facet>
+										<h:outputText value="#{_sol.razonSocial}" />
+									</rich:column>
+									
+									<rich:column filterExpression="#{fn:containsIgnoreCase(_sol.emisor, informeMatrizResponsabilidadAction.usuarioFilter)}"
+										sortBy="#{_sol.emisor}" label="Emisor">
+										<f:facet name="header">Emisor</f:facet>
+										<f:facet name="filter">
+											<h:selectOneMenu value="#{informeMatrizResponsabilidadAction.usuarioFilter}" style="width:90px;">
+												<s:selectItems value="#{informeMatrizResponsabilidadAction.listaUsuarios}" hideNoSelectionLabel="false"
+													noSelectionLabel="Seleccione" var="_u" itemValue="#{_u}" label="#{_u}" ></s:selectItems>
+												<a:support event="onchange" ajaxSingle="true" reRender="solicitudTodasList"></a:support>
+											</h:selectOneMenu>
+										</f:facet>
+										<h:outputText value="#{_sol.emisor}" />
+									</rich:column>								
+									
+									<ui:remove>
+										<rich:column style="font-size:9px;" label="Emisor"
+											filterBy="#{_sol.emisor}" sortBy="#{_sol.emisor}">
+											<f:facet name="header">Emisor</f:facet>
+											<h:outputText value="#{_sol.emisor}" />
+										</rich:column>
+										<rich:column style="font-size:9px;" label="Tipo Solicitud"
+											filterBy="#{_sol.despTipoSolictud}"
+											sortBy="#{_sol.despTipoSolictud}">
+											<f:facet name="header">Tipo Solicitud</f:facet>
+											<h:outputText value="#{_sol.despTipoSolictud}" />
+										</rich:column>
+									</ui:remove>
+									<rich:column filterExpression="#{fn:containsIgnoreCase(_sol.despTipoSolictud, informeMatrizResponsabilidadAction.tipoFilter)}"
+										sortBy="#{_sol.despTipoSolictud}" label="Emisor">
+										<f:facet name="header">Tipo Solicitud</f:facet>
+										<f:facet name="filter">
+											<h:selectOneMenu value="#{informeMatrizResponsabilidadAction.tipoFilter}" style="width:90px;">
+												<s:selectItems value="#{informeMatrizResponsabilidadAction.listaTiposSolicitudes}" hideNoSelectionLabel="false"
+													noSelectionLabel="Seleccione" var="_u" itemValue="#{_u}" label="#{_u}" ></s:selectItems>
+												<a:support event="onchange" ajaxSingle="true" reRender="solicitudTodasList"></a:support>
+											</h:selectOneMenu>
+										</f:facet>
+										<h:outputText value="#{_sol.despTipoSolictud}" />
+									</rich:column>									
+									<rich:column style="text-align: center;font-size:9px;"
+										label="Negocio" filterBy="#{_sol.monto}" sortBy="#{_sol.monto}">
+										<f:facet name="header">Negocio</f:facet>
+										<h:outputText value="#{_sol.monto}">
+											<f:convertNumber type="currency" currencySymbol="$ " />
+										</h:outputText>
+									</rich:column>
+									<rich:column style="text-align: center; font-size:9px;"
+										label="Seguro" filterBy="#{_sol.montoAsegurado}"
+										sortBy="#{_sol.montoAsegurado}">
+										<f:facet name="header">Seguro</f:facet>
+										<h:outputText value="#{_sol.montoAsegurado}">
+											<f:convertNumber type="currency" currencySymbol="$ " />
+										</h:outputText>
+									</rich:column>
+									<rich:column style="text-align: center; font-size:9px;"
+										label="Riesgo Küpfer" filterBy="#{_sol.montoRiegoKupfer}"
+										sortBy="#{_sol.montoRiegoKupfer}">
+										<f:facet name="header">Riesgo Küpfer</f:facet>
+										<h:outputText value="#{_sol.montoRiegoKupfer}">
+											<f:convertNumber type="currency" currencySymbol="$ " />
+										</h:outputText>
+									</rich:column>
+									
+									<rich:column filterExpression="#{fn:containsIgnoreCase(_sol.emisor, informeMatrizResponsabilidadAction.usuarioFilter)}"
+										sortBy="#{_sol.condicionPago}" label="F.Pago">
+										<f:facet name="header">F.Pago</f:facet>
+										<f:facet name="filter">
+											<h:selectOneMenu value="#{informeMatrizResponsabilidadAction.fpagos}" style="width:90px;">
+												<s:selectItems value="#{informeMatrizResponsabilidadAction.listaFormaPago}" hideNoSelectionLabel="false"
+													noSelectionLabel="Seleccione" var="_u" itemValue="#{_u}" label="#{_u}" ></s:selectItems>
+												<a:support event="onchange" ajaxSingle="true" reRender="solicitudTodasList"></a:support>
+											</h:selectOneMenu>
+										</f:facet>
+										<h:outputText value="#{_sol.condicionPago}" />
+									</rich:column>										
+									
+									<ui:remove>
+										<rich:column style="font-size:9px;" label="F.Pago"
+											filterBy="#{_sol.condicionPago}" sortBy="#{_sol.condicionPago}">
+											<f:facet name="header">F.Pago</f:facet>
+											<h:outputText value="#{_sol.condicionPago}" />
+										</rich:column>
+									</ui:remove>
+									<rich:column style="font-size:9px;" filterBy="#{_sol.sucursal}"
+										label="Sucursal" sortBy="#{_sol.sucursal}">
+										<f:facet name="header">Sucursal</f:facet>
+										<h:outputText value="#{_sol.sucursal}" />
+									</rich:column>
+									<rich:column style="font-size:9px;" filterBy="#{_sol.estado}"
+										label="Estado" sortBy="#{_sol.estado}">
+										<f:facet name="header">Estado</f:facet>
+										<h:outputText value="#{_sol.estado}" />
+									</rich:column>
+									<rich:column style="font-size:9px;" filterBy="#{_sol.canal}"
+										label="Canal" sortBy="#{_sol.canal}">
+										<f:facet name="header">Canal</f:facet>
+										<h:outputText value="#{_sol.canal}" />
+									</rich:column>
+									<rich:column style="text-align: center; font-size:9px;"
+										label="F. Resolucion" filterBy="#{_sol.fechaSalida}"
+										sortBy="#{_solfechaSalida}">
+										<f:facet name="header">F. Resolución</f:facet>
+										<h:outputText value="#{_sol.fechaSalida}">
+											<s:convertDateTime pattern="dd-MM-yy" />
+										</h:outputText>
+									</rich:column>
+									<rich:column style="font-size:9px;" filterBy="#{_sol.proceso}"
+										label="Proceso" sortBy="#{_sol.proceso}">
+										<f:facet name="header">Proceso</f:facet>
+										<h:outputText value="#{_sol.proceso}" />
+									</rich:column>
+									<rich:column style="font-size:9px;" label="Usuario Proceso"
+										filterBy="#{_sol.usuarioProceso}"
+										sortby="#{_sol.usuarioProceso}">
+										<f:facet name="header">Usuario Proceso</f:facet>
+										<s:fragment rendered="#{_sol.habilitaLista == false}">
+											<h:outputText value="#{_sol.usuarioProceso}" />
+										</s:fragment>
+										<s:fragment rendered="#{_sol.habilitaLista == true}">
+											<a:commandButton value="Usuarios" 
+										                    action="#{informeMatrizResponsabilidadAction.sacarListaUsuarioDerivado(_sol)}"
+										                ajaxSingle="true"
+										                  reRender="mpSolicitudUsuariosDerivado" 
+										                  oncomplete="#{rich:component('mpSolicitudUsuariosDerivado')}.show()"
+										                  />	
+										</s:fragment>								
+									</rich:column>
+								</rich:extendedDataTable>
+							</div>
+						</a:outputPanel>
+   					</td>
+				</tr>
+   			</table>
+		<div style="clear:both"/>
+    </rich:panel>
+    </h:form>
+     <a:status onstart="abrirModal();" onstop="cerrarModal();"></a:status>
+     <ui:include src="/layout/modalSckVerTodas/modalSolicitudUsuariosDerivadoLista.xhtml" />
+     <ui:include src="/layout/modalSckVerTodas/modalConsultarHitosLista.xhtml" />
+     <ui:include src="/layout/modalSckVerTodas/modalConsultarLogsLista.xhtml" />	
+</ui:define>
+
+
+
+</ui:composition>

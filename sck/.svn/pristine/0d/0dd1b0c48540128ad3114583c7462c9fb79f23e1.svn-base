@@ -1,0 +1,442 @@
+html {
+	overflow-y: scroll;
+}
+
+body {
+	font-size: 12px;
+	margin: 0px;
+}
+
+
+a img {
+	border: none;
+}
+
+a {
+	text-decoration: none;
+}
+
+h1 {
+	font-size: 1.6em;
+	margin-top: 0;
+}
+
+input[type=submit], input[type=button] {
+	font-size: 11px;
+	margin: 5px 5px 5px 0;
+	cursor: pointer;
+}
+
+input[type=text], input[type=password], textarea {
+	font-size: 12px;
+	padding-left: 1px;
+}
+
+select {
+	font-size: 13px;
+}
+
+.tableControl, .actionButtons {
+	width: 100%;
+}
+
+.tableControl a {
+	padding-left: 10px;
+}
+
+.tableControl {
+	text-align: right;
+}
+
+.footer {
+	text-align: center;
+	font-size: 11px;
+	margin-bottom: 10px;
+}
+
+.rich-table {
+	width: 100%;
+}
+
+.body {
+	padding: 30px;
+}
+.message {
+	padding: 5px;
+	list-style: none;
+	border: 0;
+	background: none;
+	padding: 0;
+	color: #000000;
+	margin: 5px 0 8px 0;
+	font-size: 12px;
+}
+
+.message li {
+	background: no-repeat left center;
+	padding-top: 1px;
+	padding-left: 20px;
+	margin-left: 3px;
+}
+
+.message li.infomsg {
+	background-image: url(../img/msginfo.png);
+}
+
+.message li.errormsg {
+	background-image: url(../img/msgerror.png);
+}
+
+.message li.warnmsg {
+	background-image: url(../img/msgwarn.png);
+}
+
+.fondotabla {
+	background-image: url(../img/sck_final_inicio_1024X500.png);
+
+}
+.name {
+	vertical-align: top;
+	font-weight: bold;
+	width: 115px;
+	float: left;
+	padding: 5px;
+	margin-top: 3px;
+	clear: left;
+}
+
+.value {
+	float: left;
+	padding: 5px;
+}
+
+.error {
+	float: left;
+	padding: 5px;
+}
+
+.errors {
+	color: #FF0000;
+	vertical-align: middle;
+}
+
+img.errors {
+	padding-right: 5px;
+}
+
+.errors input, .errors textarea, .errors select {
+	border: 1px solid red !important;
+}
+
+.required {
+	color: #FF0000;
+	padding-left: 2px;
+}
+
+.rich-stglpanel-body {
+	overflow: auto;
+} 
+
+/* the specificity here is necessary to override the defaults */
+/*
+.rich-panel .rich-panel-header,
+.rich-stglpanel .rich-stglpanel-header {
+	padding: 2px 3px;
+}*/
+
+.rich-panel input[type=submit], .rich-panel input[type=button],
+.rich-tabpanel input[type=submit], .rich-tabpanel input[type=button] {
+	margin-bottom: 0;
+}
+
+.tableControl input[type=submit], .tableControl input[type=button], .tableControl select {
+	margin: 5px 0 5px 5px;
+}
+
+/* I don't know why this is necessary, but the select is off by a pixel on the top and is padding too much on the left */
+.tableControl select {
+	margin-left: 2px;
+	position: relative;
+	top: 1px;
+}
+
+.actionButtons {
+	padding-left: 1px;
+}
+
+.actionButtons select {
+	margin: 5px 5px 5px 0;
+	vertical-align: bottom;
+}
+
+.rich-toolbar-item a {
+	text-decoration: none;
+}
+
+.rich-toolbar-item a:hover, .rich-ddmenu-label-select {
+	text-decoration: underline;
+}
+
+.rich-toolbar-item .rich-menu-item a:hover {
+	text-decoration: none;
+}
+
+.rich-datalist {
+	list-style: square;
+	margin: 6px 0 1px 0;
+	padding-left: 18px;
+}
+
+.rich-list-item {
+	padding-bottom: 4px;
+}
+
+div.info {
+	font-size: 1.2em;
+}
+
+ul.bullets {
+	list-style: square;
+}
+
+ul.bullets li {
+	padding-bottom: 2px;
+}
+
+td.action {
+	text-align: center;
+	width: 8em;
+	white-space: nowrap;
+}
+
+td.action a {
+	padding-left: 1px;
+	padding-right: 1px;
+}
+
+table.radio {
+   border: 0;
+}
+
+table.radio td {
+   padding: 0 2px;
+}
+
+table.radio input[type=radio] {
+   vertical-align: bottom;
+}
+
+.rich-panel .rich-panel-header,
+.rich-stglpanel .rich-stglpanel-header  {
+ padding: 2px 3px;
+ background-image: url("../img/panelHeader.png");
+ background-color: #000;
+ border-color: #a0a0a0;
+ color: #000000;
+ text-decoration: none;
+}
+
+.rich-toolbar {
+ background-image: url("../img/panelHeader.png");
+ border-color:  #a0a0a0; 
+}
+
+.rich-panel {
+ border-color:  #a0a0a0; 
+
+}
+
+.rich-menu-list-bg {
+ background-image: url("../img/menuDesp.png");
+ border-color: #a0a0a0;
+ background-color: #f0f0f0;
+ }
+
+input[type="submit"], input[type="button"] {
+padding: 1px 4px;
+background-image: url("../img/actionButton.png");
+border: 1px solid;
+border-color: #a0a0a0;
+color: black;
+font-weight: bold;
+}
+
+input[type="text"], input[type="password"], textarea, select {
+background-color: white;
+color: black;
+background-position: left top;
+background-repeat: repeat-x;
+background-image: url("../img/inputBg.png");
+border: 1px solid;
+border-color: #a0a0a0;
+}
+
+.dr-tbpnl-tb-inact {
+background-color: #a0a0a0;
+background-image: url(../img/tabInactivo.png);
+border-width: 1px;
+border-style: solid;
+background-repeat: repeat-x;
+background-position: top;
+border-bottom-width: 0;
+cursor: default;
+}
+
+.dr-tbpnl-tbtopbrdr {
+border-top-color: #a0a0a0;
+}
+
+.dr-tbpnl-tb-act {
+background-image: url(/PerfilRiesgo/img/tabActivo.png);
+background-color: white;
+}
+.dr-tbpnl-tb-act {
+color: #a0a0a0;
+border-color: white;
+}
+.dr-tbpnl-tb {
+color: black;
+font-size: 11px;
+font-family: Arial,Verdana,sans-serif;
+}
+.dr-tbpnl-tb-act {
+border-width: 1px;
+border-style: solid;
+padding: 3px 10px 4px 10px;
+background-repeat: repeat-x;
+background-position: top;
+border-bottom-width: 0;
+cursor: default;
+}
+
+.dr-tbpnl-cntnt {
+background-color: white;
+color: black;
+border-bottom-color: #a0a0a0;
+border-right-color: #a0a0a0;
+border-left-color: #a0a0a0;
+font-size: 11px;
+font-family: Arial,Verdana,sans-serif;
+}
+
+.dr-bottom-line {
+border-bottom-color: #a0a0a0;
+border-bottom-style: solid;
+border-bottom-width: 1px;
+}
+
+.dr-tbpnl-tbbrdr {
+background-image: url(../img/border.png);
+}
+.dr-tbpnl-tbtopbrdr {
+border-top-color: #a0a0a0;
+}
+
+<!--Tablas-->
+
+.dr-table-header {
+background-color: #ffffff;
+background-image: url("../img/cellGradient.png");
+background-position: top left;
+background-repeat: repeat-x;
+}
+
+.dr-table-header {
+background-color: #fff;
+background-image: url(../img/cellGradient.png);
+background-position: top left;
+background-repeat: repeat-x;
+}
+
+.dr-table-header-continue {
+background-color: #dbdbdb;
+}
+
+.dr-mpnl-pnl-h {
+background-color: #1F4A86;
+border-color: #a0a0a0;
+background-image: url(../img/cellGradient.png);
+}
+
+.rich-table-subheadercell {
+background-image: url(../img/cellGradient.png);
+}
+
+.body {
+padding: 30px;
+background-color: #ffffff;
+}
+
+.rich-list-picklist-button {
+background-image: url(../img/actionButton.png);
+background-color: #C6DEFF;
+color: black;
+font-family: Arial,Verdana,sans-serif;
+font-size: 11px;
+}
+
+.rich-list-picklist-button-light {
+background-image: url(../img/actionButton.png);
+background-color: #C6DEFF;
+color: black;
+font-family: Arial,Verdana,sans-serif;
+font-size: 11px;
+}
+
+.rich-list-picklist-button-disabled {
+background-image: url(../img/actionButton.png);
+background-color: #C6DEFF;
+color: #b3b3b3;
+font-family: Arial,Verdana,sans-serif;
+font-size: 11px;
+}
+
+.currency-text{
+text-align: right;	
+}
+
+.modal {
+	background-color:#D0D0D0;
+	display:none;
+	padding:5px;
+	z-index: 1;
+	opacity:1;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	-moz-box-shadow: 0 0 50px #ccc;
+	-webkit-box-shadow: 0 0 50px #ccc;
+}
+#modalCargando{
+	text-align:center;
+	vertical-align:middle;
+	width:230px;
+}
+
+.extdt-innerdiv{
+overflow-x:visible !important;
+overflow-y:hidden;
+}
+
+.midiv { 
+	word-wrap: break-word;   
+	max-width:200px;   
+    width:200px;
+ }
+
+.rich-tab-active-color1 
+url(../img/actionButton.png)
+{background-image: url(../img/imagen-color1.gif);}
+
+.rich-tab-active-color2
+{background-image: url(../img/imagen-color2.gif);}
+
+
+.footerDT {
+	text-align: center;
+	font-size: 11px;
+	margin-bottom: 50px;
+}
+
+.preformatted {
+    white-space: pre;
+}

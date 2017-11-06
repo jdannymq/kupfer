@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    template="/layout/template.xhtml">
+
+    <ui:define name="body">
+    	<table cellpadding="0" cellspacing="0" border="0" align="center" width="100%">
+    	<tr>
+    		<td height="100px;">
+    		    <rich:panel>
+	    			<rich:panel style="width:100%;" >
+		    		<f:facet name="header">Grafico</f:facet>
+		    		<h:form id="frmSeleccion" >
+		    			<table cellpadding="2" cellspacing="2" border="0" align="center" >
+		    				<tr>
+		    					<td> 
+					    				 <a:commandButton id="grafico"
+					    				    value="Generar Grafico" 
+			                           	 	ajaxSingle="true" 
+			                           	 	reRender="graficoDos"
+			                           	 	action="#{graficoAction.asignacionValores()}" 
+			                			  />		    					
+		    					
+		    					
+		    					 </td>
+		    				</tr>
+		    			</table>
+		
+			    	</h:form>
+		    	</rich:panel>
+	    	</rich:panel>
+    		</td>
+    	</tr>
+		<tr>
+			<td width="100%;" > 
+				<a:outputPanel id="graficoDos" >
+						<table cellpadding="2" cellspacing="2" border="0" align="center" >
+		    				<tr>
+		    					<td> 
+									<!--START Code Block for Chart <%=chartId%> -->
+									<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" 
+									width="#{graficoAction.chartWidth}" height="#{graficoAction.chartHeight}" id="#{graficoAction.chartId}">
+									<param name="allowScriptAccess" value="always" />
+									<param name="movie" value="#{graficoAction.chartSWF}"/>
+									<param name="FlashVars" value="#{graficoAction.strFlashVars}" />
+									<param name="quality" value="high" />
+									<embed src="#{graficoAction.chartSWF}" FlashVars="#{graficoAction.strFlashVars}" 
+										quality="high" width="#{graficoAction.chartWidth}" 
+										height="#{graficoAction.chartHeight}" name="#{graficoAction.chartId}"
+										allowScriptAccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" />
+									</object>
+									<!--END Code Block for Chart <%=chartId%> -->	    					
+		    					 </td>
+		    				</tr>
+		    			</table>
+				</a:outputPanel>
+			</td>
+		</tr>
+	  </table>
+    </ui:define>
+
+</ui:composition>

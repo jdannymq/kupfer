@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:p="http://primefaces.prime.com.tr/ui"
+    template="layout/template.xhtml">
+	
+	<ui:define name="body">
+	<div class="divTitular"><h1>Medición</h1></div>
+	
+			<h:form id="frm_medicion">
+				<s:button view="/GenerarSolicitud.xhtml" propagation="none" value="Volver" ></s:button>
+				
+				<h:messages id="messagesEsp" globalOnly="false" styleClass="message"
+		            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
+		            rendered="#{showGlobalMessages != 'false'}" />
+		            
+				<a:commandButton value="Agregar Medición" ajaxSingle="true" action="#{medicionAction.initGuardarMedicion()}" 
+					reRender="frm_medicion_model" oncomplete="#{rich:component('mpMedicion')}.show();" />
+				
+				<rich:panel id="rpMedicion">
+					<f:facet name="label">Mediciones</f:facet>
+						<rich:extendedDataTable id="dtFeriados" value="#{mantenedorMaestroAction_medicion}" var="_mediciones" noDataLabel="No se encuentran feriados" >
+							
+							<f:facet name="header">Codigo</f:facet>
+							<rich:column sortBy="#{_mediciones.systemId}" label="codigo"  width="30%;" style="text-align: center;">
+								<f:facet name="header">Codigo</f:facet>
+								<h:outputText value="#{_mediciones.systemId}" ></h:outputText>
+							</rich:column>
+							<rich:column filterBy="#{_mediciones.descripcion}" sortBy="#{_mediciones.descripcion}" label="Año" width="30%;" style="text-align: center;">
+								<f:facet name="header">Descripción</f:facet>
+								<h:outputText value="#{_mediciones.descripcion}" />
+							</rich:column>
+
+							<rich:column sortBy="#{_mediciones.disabled}" label="Activo" width="30%;" style="text-align: center;">
+								<f:facet name="header">Activo</f:facet>
+								<h:outputText value="#{_mediciones.disabled ? 'No':'Si'}" />
+							</rich:column>
+							<rich:column  width="30%;" style="text-align: center;">
+							<f:facet name="header">Acción</f:facet>
+								<a:commandLink value="Editar" ajaxSingle="true" action="#{medicionAction.editMedicion(_mediciones)}" 
+									oncomplete="#{rich:component('mpMedicion')}.show();" reRender="frm_Medicion_modal" />
+								#{'/'}
+								<a:commandLink value="Desactivar" rendered="#{!_mediciones.disabled}" ajaxSingle="true" action="#{medicionAction.cambiarActivoMedicion(true,_mediciones)}" 
+									reRender="rpTurno" />
+								<a:commandLink value="Activar" rendered="#{_mediciones.disabled}" ajaxSingle="true" action="#{medicionAction.cambiarActivoMedicion(false,_mediciones)}" 
+									reRender="rpTurno" />
+							</rich:column>								
+						</rich:extendedDataTable>
+				</rich:panel>
+			</h:form>
+		 <a:status onstart="abrirModal();" onstop="cerrarModal();"></a:status>	
+		<ui:include src="/layout/modalSck/modalMedicion.xhtml" />  
+	</ui:define>
+</ui:composition>
+

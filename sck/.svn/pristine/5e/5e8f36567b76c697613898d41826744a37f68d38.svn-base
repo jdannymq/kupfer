@@ -1,0 +1,906 @@
+package org.domain.sck.session.action;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+
+import org.domain.sck.base.GlobalHitosLogdService;
+import org.domain.sck.base.GlobalService;
+import org.domain.sck.dto.CPagoDTO;
+import org.domain.sck.dto.FiltroDTO;
+import org.domain.sck.dto.NivelServicioDTO;
+import org.domain.sck.dto.PlanillaDTO;
+import org.domain.sck.dto.PlanillaHitosDTO;
+import org.domain.sck.dto.SolicitudDTO;
+import org.domain.sck.dto.UsuarioSegurDTO;
+import org.domain.sck.entity.Canal;
+import org.domain.sck.entity.CanalUsuarioCargo;
+import org.domain.sck.entity.ConceptosNegocio;
+import org.domain.sck.entity.Jornada;
+import org.domain.sck.entity.LcredEstado;
+import org.domain.sck.entity.LcredTipoSolicitud;
+import org.domain.sck.entity.LcredUsuarioNivelEnc;
+import org.domain.sck.entity.MatrizNivelServicio;
+import org.domain.sck.entity.SolicitudHitos;
+import org.domain.sck.entity.SolicitudLogs;
+import org.domain.sck.entity.SolicitudUsuarioDerivada;
+import org.domain.sck.entity.Sucursal;
+import org.domain.sck.entity.UsuarioCargo;
+import org.domain.sck.entity.Usuariosegur;
+import org.domain.sck.session.service.intranetsap.NivelServicioService;
+import org.domain.sck.session.service.scoring.ScoringService;
+import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.Create;
+import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.Logger;
+import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Scope;
+import org.jboss.seam.faces.FacesMessages;
+import org.jboss.seam.international.StatusMessage.Severity;
+import org.jboss.seam.log.Log;
+
+
+@Name("nivelServicioAction")
+@Scope(ScopeType.CONVERSATION)
+@SuppressWarnings("unchecked")
+public class NivelServicioAction {
+	
+
+	@Logger
+	Log log;
+
+	@In(value="#{entityManager}")
+	EntityManager entityManager;
+	
+	
+	@In NivelServicioService nivelServicioService;
+	
+	@In ScoringService scoringService;
+	
+	@In GlobalService globalService;
+	
+	@In GlobalHitosLogdService globalHitosLogdService;
+	
+	@In(value="#{identity.usuarioCargo}", scope = ScopeType.SESSION, required = false)
+	private UsuarioCargo usuarioCargoAux;
+	
+	@In(value="#{identity.usuarioLogueado}", scope = ScopeType.SESSION, required = false)
+	private Usuariosegur usuarioLogueado;
+	
+		
+	@In(value="#{identity.lcredUsuarioNivelEnc}", scope = ScopeType.SESSION, required = false)
+	private LcredUsuarioNivelEnc lcredUsuarioNivelEnc;
+	
+	@In(value="#{identity.usuarioSegur}", scope = ScopeType.SESSION, required = false)
+	private UsuarioSegurDTO usuarioSegur;
+	
+	
+	private LcredTipoSolicitud tipoSolicitud;
+	private Usuariosegur usuarioSegurCbo;
+	private LcredEstado estado;
+	private Sucursal sucursal;
+	private Date fechaInical;
+	private Date fechaFinal = new Date();
+
+	private List<Canal> listaCanales;
+	private List<Canal> listaCanalesSeleccionada = new ArrayList<Canal>();	
+
+	private List<ConceptosNegocio> listaNegocios;
+	private List<ConceptosNegocio> listaNegociosSeleccionados = new ArrayList<ConceptosNegocio>();	
+	
+	private List<LcredTipoSolicitud> listaLcredTipoSolicituds;
+	private List<LcredTipoSolicitud> listaLcredTipoSolicitudsSeleccionados = new ArrayList<LcredTipoSolicitud>();
+	
+	private List<Sucursal> listaSucursals;
+	private List<Sucursal> listaSucursalsSeleccionados = new ArrayList<Sucursal>();
+	
+	private List<Usuariosegur> listaUsuariosegurs;
+	private List<Usuariosegur> listaUsuariosegursSeleccionados = new ArrayList<Usuariosegur>();
+	
+
+	private List<SolicitudDTO> listaTodasSolicitudesDto;
+	private List<CPagoDTO> listaCPagoDTOs;
+	private List<LcredEstado> listaEstados;
+	private List<String> listaUsuarios;
+	private List<String> listaTiposSolicitudes;
+	private List<String> listaFormaPago;
+	private String tsListaTodasSolicitudes;
+	private String usuarioFilter; 
+	private String tipoFilter;
+	private String fpagos;
+	private List<SolicitudUsuarioDerivada> listUsuariosDerivados;
+	private SolicitudDTO solicitudAux;
+	private SolicitudHitos solicitudHitos;
+	private Long idSolicitud;
+	private String rutAux;
+	private String rutAuxSinGuion;
+	private NivelServicioDTO nivelServicioTarget = new NivelServicioDTO();
+	
+    	
+	@Create
+	public void init(){
+		try{
+			sacarNegocios();
+			sacarCanales();
+			sacarUsuarios();
+			sacarTipoSolicitudes();
+		    sacarSucursales();
+		    sacarCPago();
+		    sacarEstadosSolicitudes();
+		    limpiarParametos();
+	   }catch (Exception e) {
+		log.error("error al sacar las solictudes de usuario logeado #0", e.getMessage());
+	   }
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public void sacarUsuarios(){
+		try{
+    		List<Usuariosegur> lista = (List<Usuariosegur>)entityManager
+				.createQuery("select u from Usuariosegur u where u.alias <> null and u.nombre <> null  " +
+                        "and lower(u.alias) in (select distinct  lower(h.usuarioActual) " +
+                        "from SolicitudHitos h where codigoEstado = 'E')" +
+                        "order by u.nombre")
+				.getResultList();
+    		
+    		if(lista != null){
+    			listaUsuariosegurs = new ArrayList<Usuariosegur>(0);
+    			for(Usuariosegur usuario : lista){
+    				if(usuario != null && !usuario.getAlias().equals("") && !usuario.getAlias().equals("xxxx") && !usuario.getAlias().equals("xxxxxx") ){
+    					if(usuario.getNombre() != null && !usuario.getNombre().equals("")){
+	    					if(!listaUsuariosegurs.contains(usuario)){
+	    						listaUsuariosegurs.add(usuario);
+	    					}
+    					}
+    				}
+    			}
+    		}			
+		}catch (Exception e) {
+			log.error("Error, al sacar los datos de usuarios #0", e.getMessage());
+		}
+	}
+
+	public void sacarCanales(){
+		try{
+			listaCanales = entityManager.createQuery("select c from Canal c where c.disabled=0  " +
+                    "order by c.descripcion asc").getResultList();
+			if(listaCanales == null || listaCanales.size() == 0){			
+				listaCanales = new ArrayList<Canal>(0);
+			}			
+		}catch (Exception e) {
+			log.error("Error, al sacar los datos del canal #0", e.getMessage());
+		}
+	}	
+
+	public void sacarNegocios(){
+		try{
+			listaNegocios = scoringService.obtenerNegocios();
+			if(listaNegocios == null || listaNegocios.size() == 0){			
+				listaNegocios = new ArrayList<ConceptosNegocio>(0);
+			}			
+		}catch (Exception e) {
+			log.error("Error, al sacar los datos del canal #0", e.getMessage());
+		}
+	}
+	
+	public void sacarTipoSolicitudes(){
+		try{
+			listaLcredTipoSolicituds = scoringService.getListadoLcredTipoSolicitudOrdenadoPorCorrelativo();
+			if(listaLcredTipoSolicituds == null && listaLcredTipoSolicituds.size() == 0){
+				listaLcredTipoSolicituds = new ArrayList<LcredTipoSolicitud>(0);
+			}
+		}catch (Exception e) {
+			log.error("Error, al sacar la lista de tipo de solicitudes #0", e.getMessage());
+		}		
+	}	
+
+	public void seleccionarTipoSolicitud(){
+		if(this.tipoSolicitud != null){
+			log.error(" el tipo de solicitud es: #0", this.tipoSolicitud.getDesTipoSolicitud());
+		}
+	}	
+
+	public void seleccionarUsuario(){
+		if(this.tipoSolicitud != null){
+			log.error(" el tipo de solicitud es: #0", this.tipoSolicitud.getDesTipoSolicitud());
+		}
+	}	
+	
+	public void sacarEstado(){
+		if(this.estado != null){
+			log.error(" el estado seleccionado #0", this.estado.getDesEstado());
+		}
+	}
+
+	public void sacarSucursal(){
+		if(this.sucursal != null){
+			log.error(" la sucursal  seleccionado #0", this.sucursal.getDescripcion());
+		}
+	}	
+	
+	public boolean validarParametros(){
+		try{
+			
+			if(this.fechaInical == null || this.fechaFinal == null ){
+				FacesMessages.instance().add(Severity.INFO,"Debe ingresar filtro por fecha");
+				return false;				
+			}
+			
+		}catch (Exception e) {
+			log.error("Error, al validar los parametros #0 ", e.getMessage());
+		}
+		return true;
+	}
+	
+	public void consultarSolicitudes(){
+		try {
+			if(validarParametros()){
+				FiltroDTO filtro = new FiltroDTO();
+				filtro.setFechaInicial(fechaInical);
+				filtro.setFechaFinal(fechaFinal);
+				filtro.setListaCanalesSeleccionada(listaCanalesSeleccionada);
+				filtro.setListaLcredTipoSolicitudsSeleccionados(listaLcredTipoSolicitudsSeleccionados);
+				filtro.setListaSucursalsSeleccionados(listaSucursalsSeleccionados);
+				filtro.setListaUsuariosegursSeleccionados(listaUsuariosegursSeleccionados);
+				filtro.setListaNegociosSeleccionados(listaNegociosSeleccionados);
+				nivelServicioTarget = nivelServicioService.procesarSolicitudes(filtro);
+			}
+
+			
+		}catch(Exception e) {
+			if(log.isDebugEnabled())
+				e.printStackTrace();
+		}
+	}
+
+    public void limpiarParametos(){
+		
+		this.setFechaFinal(null);
+		this.setFechaInical(null);
+		listaCanalesSeleccionada = new ArrayList<Canal>();
+		listaLcredTipoSolicitudsSeleccionados = new ArrayList<LcredTipoSolicitud>();
+		listaSucursalsSeleccionados = new ArrayList<Sucursal>();
+		listaUsuariosegursSeleccionados = new ArrayList<Usuariosegur>();
+		listaNegociosSeleccionados = new ArrayList<ConceptosNegocio>();
+		nivelServicioTarget = new NivelServicioDTO();
+	}
+
+	public void sacarSucursales(){
+		try{
+			listaSucursals = (List<Sucursal>)entityManager.createQuery("select suc from Sucursal suc " +
+					" where suc.codigo in ('C212','C246','N103','N206','S133','S148','S224','C115'," +
+					"                      'C227','N101','N142','N209','S118','S145','S221','S243','C138','TDS1') order by suc.descripcion asc ").getResultList();
+		}catch (Exception e) {
+			log.error("Error, al sacar la lista de sucursales #0", e.getMessage());
+		}		
+	}
+
+	public Sucursal obtenerObjetoSucursal(String codigo){
+		Sucursal suc = null;
+		if(listaSucursals != null && codigo != null){
+			for(Sucursal s: listaSucursals){
+				if(s.getCodigo().equals(codigo)){
+					suc= s;
+					break;
+				}
+			}
+		}
+		return suc;
+	}
+
+	public void sacarCPago(){
+		try{
+			listaCPagoDTOs = nivelServicioService.getCondicionPago();
+		}catch (Exception e) {
+			log.error("Error, al sacar la lista de condiciones de pagos #0", e.getMessage());
+		}		
+	}
+	
+	public CPagoDTO obtenerObjetoCPago(String codigo){
+		CPagoDTO obj = null;
+		if(listaCPagoDTOs != null && codigo != null){
+			for(CPagoDTO s: listaCPagoDTOs){
+				if(s.getCodigo().equals(codigo)){
+					obj= s;
+					break;
+				}
+			}
+		}
+		return obj;
+	}
+
+	public void sacarEstadosSolicitudes(){
+		try{
+			listaEstados = scoringService.obtenerEstados();
+		}catch (Exception e) {
+			log.error("Error, al sacar la lista de estados de pagos #0", e.getMessage());
+		}		
+	}
+
+	public LcredEstado obtenerObjetoLcredEstado(String codigo){
+		LcredEstado obj = null;
+		if(listaEstados != null && codigo != null){
+			for(LcredEstado s: listaEstados){
+				if(s.getCodEstado().equals(codigo)){
+					obj= s;
+					break;
+				}
+			}
+		}
+		return obj;
+	}
+	
+	public List<SolicitudUsuarioDerivada> sacarSolicitudUsuarioDerivada(Long idSolicitud){
+		List<SolicitudUsuarioDerivada> lista = null;
+		try{
+			lista = (List<SolicitudUsuarioDerivada>)
+					entityManager.createQuery("select sud " +
+							"	from SolicitudUsuarioDerivada sud" +
+							" 	where sud.codEstadoDerivada=:codEstado " +
+							"	and sud.confirmacionObligatoria=1 " +
+							"   and sud.idSolicitud=:solAux" +
+							"   and sud.confirmacion is null ")
+					.setParameter("codEstado","SA")
+					.setParameter("solAux",idSolicitud)
+					.getResultList();
+			if(lista != null && lista.size() > 0){
+				log.debug("cantidad #0", lista.size());
+			}
+		}catch (Exception e) {
+			log.error("Error, al sacar la lista de sucursales #0", e.getMessage());
+		}	
+		return lista;
+	}	
+	
+	@SuppressWarnings("unchecked")
+	public List<SolicitudUsuarioDerivada> sacarSolicitudUsuarioDerivadaAnalisis(Long idSolicitud){
+		List<SolicitudUsuarioDerivada> lista = null;
+		try{
+			lista = (List<SolicitudUsuarioDerivada>)
+					entityManager.createQuery("select sud " +
+							"	from SolicitudUsuarioDerivada sud" +
+							" 	where sud.codEstadoDerivada=:codEstado " +
+							"	and sud.confirmacionObligatoria=1 " +
+							"   and sud.idSolicitud=:solAux" +
+							"   and sud.confirmacion is null ")
+					.setParameter("codEstado","B")
+					.setParameter("solAux",idSolicitud)
+					.getResultList();
+			if(lista != null && lista.size() > 0){
+				log.debug("cantidad #0", lista.size());
+			}
+		}catch (Exception e) {
+			log.error("Error, al sacar la lista de sucursales #0", e.getMessage());
+		}	
+		return lista;
+	}
+	
+	public void sacarLogSolicitud(SolicitudDTO sol){
+		try{
+			if(sol != null){
+				globalHitosLogdService.setSolicitud(sol);
+				List<SolicitudLogs> listaSolicitudesLogs = scoringService.getSolicitudLogs(sol.getIdSolictud());
+				if(listaSolicitudesLogs != null){
+					globalHitosLogdService.setListaLogs(listaSolicitudesLogs);
+				}
+			}
+		}catch (Exception e) {
+			log.error("Error, al desplegar los datos de la solicitud", e.getMessage());
+		}
+
+
+	}
+
+	public void sacarLogHitos(SolicitudDTO sol){
+		try{
+			if(sol != null){
+
+				this.setSolicitudAux(sol);
+				globalHitosLogdService.setSolicitud(sol);
+				List<SolicitudHitos> listaSolicitudesHitos = scoringService.getSolicitudHitos(sol.getIdSolictud());
+				if(listaSolicitudesHitos != null){
+					globalHitosLogdService.setListaHitos(listaSolicitudesHitos);
+				}
+			}
+
+		}catch (Exception e) {
+			log.error("Error, al desplegar los datos de la solicitud", e.getMessage());
+		}
+
+	}
+
+
+	
+	public void sacarUsuariosSegunSucursalesSeleccionadas(){
+		int contador = 0;
+		StringBuffer cadena = new StringBuffer();
+		try{
+			if(listaSucursalsSeleccionados != null && listaSucursalsSeleccionados.size() != 0){
+				int cantidad = listaSucursalsSeleccionados.size();
+				for(Sucursal s : listaSucursalsSeleccionados){
+					if((contador + 1) == cantidad){
+						cadena.append("'");cadena.append(s.getCodigo());cadena.append("'");
+					}else{
+						cadena.append("'");cadena.append(s.getCodigo());cadena.append("'");cadena.append(",");
+						contador++;
+					}
+				}
+				log.debug("cadena #0", cadena.toString());
+				
+				if(cadena != null && !"".equals(cadena.toString())){
+					listaUsuariosegurs = scoringService.getListaUsuariosSegunMatrizResponsabilidades(cadena.toString());
+				}
+			}else{
+				listaUsuariosegurs = new ArrayList<Usuariosegur>();
+			}
+		}catch (Exception e) {
+			log.error("error, al sacar los usuarios de segun responsabilidad #0", e.getMessage());
+		}
+		
+	}
+
+	/*gets y Sets*/
+	public List<CPagoDTO> getListaCPagoDTOs() {
+		return listaCPagoDTOs;
+	}
+
+	public void setListaCPagoDTOs(List<CPagoDTO> listaCPagoDTOs) {
+		this.listaCPagoDTOs = listaCPagoDTOs;
+	}
+
+
+	public LcredEstado getEstado() {
+		return estado;
+	}
+
+	public void setEstado(LcredEstado estado) {
+		this.estado = estado;
+	}
+
+	
+	public String getTsListaTodasSolicitudes() {
+		return tsListaTodasSolicitudes;
+	}
+
+	public void setTsListaTodasSolicitudes(String tsListaTodasSolicitudes) {
+		this.tsListaTodasSolicitudes = tsListaTodasSolicitudes;
+	}
+
+
+	public Date getFechaInical() {
+		return fechaInical;
+	}
+
+
+	public void setFechaInical(Date fechaInical) {
+		this.fechaInical = fechaInical;
+	}
+
+
+	public Date getFechaFinal() {
+		return fechaFinal;
+	}
+
+
+	public void setFechaFinal(Date fechaFinal) {
+		this.fechaFinal = fechaFinal;
+	}
+
+
+	public List<SolicitudDTO> getListaTodasSolicitudesDto() {
+		return listaTodasSolicitudesDto;
+	}
+
+
+	public void setListaTodasSolicitudesDto(
+			List<SolicitudDTO> listaTodasSolicitudesDto) {
+		this.listaTodasSolicitudesDto = listaTodasSolicitudesDto;
+	}
+
+
+	public List<Sucursal> getListaSucursals() {
+		return listaSucursals;
+	}
+
+
+	public void setListaSucursals(List<Sucursal> listaSucursals) {
+		this.listaSucursals = listaSucursals;
+	}
+
+
+	public List<LcredEstado> getListaEstados() {
+		return listaEstados;
+	}
+
+
+	public void setListaEstados(List<LcredEstado> listaEstados) {
+		this.listaEstados = listaEstados;
+	}
+
+
+
+
+
+	public List<String> getListaUsuarios() {
+		return listaUsuarios;
+	}
+
+
+	public void setListaUsuarios(List<String> listaUsuarios) {
+		this.listaUsuarios = listaUsuarios;
+	}
+
+
+	public List<String> getListaTiposSolicitudes() {
+		return listaTiposSolicitudes;
+	}
+
+
+	public void setListaTiposSolicitudes(List<String> listaTiposSolicitudes) {
+		this.listaTiposSolicitudes = listaTiposSolicitudes;
+	}
+
+
+	public List<String> getListaFormaPago() {
+		return listaFormaPago;
+	}
+
+
+	public void setListaFormaPago(List<String> listaFormaPago) {
+		this.listaFormaPago = listaFormaPago;
+	}
+
+
+
+
+	public String getUsuarioFilter() {
+		return usuarioFilter;
+	}
+
+
+
+
+	public void setUsuarioFilter(String usuarioFilter) {
+		this.usuarioFilter = usuarioFilter;
+	}
+
+
+
+
+	public String getTipoFilter() {
+		return tipoFilter;
+	}
+
+
+
+
+	public void setTipoFilter(String tipoFilter) {
+		this.tipoFilter = tipoFilter;
+	}
+
+
+
+
+	public String getFpagos() {
+		return fpagos;
+	}
+
+
+
+
+	public List<SolicitudUsuarioDerivada> getListUsuariosDerivados() {
+		return listUsuariosDerivados;
+	}
+
+	public void setListUsuariosDerivados(
+			List<SolicitudUsuarioDerivada> listUsuariosDerivados) {
+		this.listUsuariosDerivados = listUsuariosDerivados;
+	}
+
+	public SolicitudDTO getSolicitudAux() {
+		return solicitudAux;
+	}
+
+	public void setSolicitudAux(SolicitudDTO solicitudAux) {
+		this.solicitudAux = solicitudAux;
+	}
+
+	public SolicitudHitos getSolicitudHitos() {
+		return solicitudHitos;
+	}
+
+	public void setSolicitudHitos(SolicitudHitos solicitudHitos) {
+		this.solicitudHitos = solicitudHitos;
+	}
+
+	public Sucursal getSucursal() {
+		return sucursal;
+	}
+
+	public void setSucursal(Sucursal sucursal) {
+		this.sucursal = sucursal;
+	}
+
+	public void setFpagos(String fpagos) {
+		this.fpagos = fpagos;
+	}
+
+	public Long getIdSolicitud() {
+		return idSolicitud;
+	}
+
+	public void setIdSolicitud(Long idSolicitud) {
+		this.idSolicitud = idSolicitud;
+	}
+
+	public String getRutAux() {
+		return rutAux;
+	}
+
+	public void setRutAux(String rutAux) {
+		this.rutAux = rutAux;
+	}
+
+	public String getRutAuxSinGuion() {
+		return rutAuxSinGuion;
+	}
+
+	public void setRutAuxSinGuion(String rutAuxSinGuion) {
+		this.rutAuxSinGuion = rutAuxSinGuion;
+	}
+
+	public UsuarioCargo getUsuarioCargoAux() {
+		return usuarioCargoAux;
+	}
+
+	public void setUsuarioCargoAux(UsuarioCargo usuarioCargoAux) {
+		this.usuarioCargoAux = usuarioCargoAux;
+	}
+
+	public LcredTipoSolicitud getTipoSolicitud() {
+		return tipoSolicitud;
+	}
+
+	public void setTipoSolicitud(LcredTipoSolicitud tipoSolicitud) {
+		this.tipoSolicitud = tipoSolicitud;
+	}
+
+	public List<LcredTipoSolicitud> getListaLcredTipoSolicituds() {
+		return listaLcredTipoSolicituds;
+	}
+
+	public void setListaLcredTipoSolicituds(
+			List<LcredTipoSolicitud> listaLcredTipoSolicituds) {
+		this.listaLcredTipoSolicituds = listaLcredTipoSolicituds;
+	}
+
+	public List<Usuariosegur> getListaUsuariosegurs() {
+		return listaUsuariosegurs;
+	}
+
+	public void setListaUsuariosegurs(List<Usuariosegur> listaUsuariosegurs) {
+		this.listaUsuariosegurs = listaUsuariosegurs;
+	}
+
+	public Usuariosegur getUsuarioSegurCbo() {
+		return usuarioSegurCbo;
+	}
+
+	public void setUsuarioSegurCbo(Usuariosegur usuarioSegurCbo) {
+		this.usuarioSegurCbo = usuarioSegurCbo;
+	}
+
+	public List<Canal> getListaCanales() {
+		return listaCanales;
+	}
+
+	public void setListaCanales(List<Canal> listaCanales) {
+		this.listaCanales = listaCanales;
+	}
+
+	public List<Canal> getListaCanalesSeleccionada() {
+		return listaCanalesSeleccionada;
+	}
+
+	public void setListaCanalesSeleccionada(List<Canal> listaCanalesSeleccionada) {
+		this.listaCanalesSeleccionada = listaCanalesSeleccionada;
+	}
+
+	public List<Sucursal> getListaSucursalsSeleccionados() {
+		return listaSucursalsSeleccionados;
+	}
+
+	public void setListaSucursalsSeleccionados(
+			List<Sucursal> listaSucursalsSeleccionados) {
+		this.listaSucursalsSeleccionados = listaSucursalsSeleccionados;
+	}
+
+	public List<LcredTipoSolicitud> getListaLcredTipoSolicitudsSeleccionados() {
+		return listaLcredTipoSolicitudsSeleccionados;
+	}
+
+	public void setListaLcredTipoSolicitudsSeleccionados(
+			List<LcredTipoSolicitud> listaLcredTipoSolicitudsSeleccionados) {
+		this.listaLcredTipoSolicitudsSeleccionados = listaLcredTipoSolicitudsSeleccionados;
+	}
+
+	public List<Usuariosegur> getListaUsuariosegursSeleccionados() {
+		return listaUsuariosegursSeleccionados;
+	}
+
+	public void setListaUsuariosegursSeleccionados(
+			List<Usuariosegur> listaUsuariosegursSeleccionados) {
+		this.listaUsuariosegursSeleccionados = listaUsuariosegursSeleccionados;
+	}
+
+	public List<ConceptosNegocio> getListaNegocios() {
+		return listaNegocios;
+	}
+
+	public void setListaNegocios(List<ConceptosNegocio> listaNegocios) {
+		this.listaNegocios = listaNegocios;
+	}
+
+	public List<ConceptosNegocio> getListaNegociosSeleccionados() {
+		return listaNegociosSeleccionados;
+	}
+
+	public void setListaNegociosSeleccionados(
+			List<ConceptosNegocio> listaNegociosSeleccionados) {
+		this.listaNegociosSeleccionados = listaNegociosSeleccionados;
+	}
+	
+	public NivelServicioDTO getNivelServicioTarget() {
+		return nivelServicioTarget;
+	}
+	
+	/** Mantenedor  Matriz **/
+	
+	
+	private LcredTipoSolicitud tipoSolicitudTarget;
+    private Double tiempoAnalista = 0d;
+    private Double tiempoEmisor = 0d;
+    private Double tiempoEjecutivoInicial = 0d;
+    private Double tiempoAprobadores = 0d;
+
+
+	public LcredTipoSolicitud getTipoSolicitudTarget() {
+		return tipoSolicitudTarget;
+	}
+	public void setTipoSolicitudTarget(LcredTipoSolicitud tipoSolicitudTarget) {
+		this.tipoSolicitudTarget = tipoSolicitudTarget;
+	}
+
+    public Double getTiempoAnalista() {
+        return tiempoAnalista;
+    }
+
+    public void setTiempoAnalista(Double tiempoAnalista) {
+        this.tiempoAnalista = tiempoAnalista;
+    }
+
+    public Double getTiempoEmisor() {
+        return tiempoEmisor;
+    }
+
+    public void setTiempoEmisor(Double tiempoEmisor) {
+        this.tiempoEmisor = tiempoEmisor;
+    }
+
+    public Double getTiempoEjecutivoInicial() {
+        return tiempoEjecutivoInicial;
+    }
+
+    public void setTiempoEjecutivoInicial(Double tiempoEjecutivoInicial) {
+        this.tiempoEjecutivoInicial = tiempoEjecutivoInicial;
+    }
+
+    public Double getTiempoAprobadores() {
+        return tiempoAprobadores;
+    }
+
+    public void setTiempoAprobadores(Double tiempoAprobadores) {
+        this.tiempoAprobadores = tiempoAprobadores;
+    }
+    
+    
+    public void guardarMatrizNivelServicio() {
+        MatrizNivelServicio aux;
+        boolean existe = false;
+
+        aux = nivelServicioService.getUltimaMatrizByTipoSolicitud(tipoSolicitud.getCodTipoSolicitud());
+        if(aux != null) {
+            existe = true;
+        }else {
+            aux = new MatrizNivelServicio();
+        }
+        tiempoAnalista =  tiempoAnalista * 60 * 60 * 1000;
+        tiempoEmisor = tiempoEmisor * 60 * 60 * 1000;
+        tiempoEjecutivoInicial = tiempoEjecutivoInicial * 60 * 60 * 1000;
+        tiempoAprobadores = tiempoAprobadores * 60 * 60 * 1000;
+        aux.setTiempoEmisor(tiempoEmisor.longValue());
+        aux.setTiempoInicial(tiempoEjecutivoInicial.longValue());
+        aux.setTiempoAprobador(tiempoAprobadores.longValue());
+        aux.setTiempoAnalista(tiempoAprobadores.longValue());
+        aux.setTipoSolicitud(tipoSolicitudTarget);
+        aux.setDisabled(false);
+        if(existe)
+            entityManager.merge(aux);
+        else
+            entityManager.persist(aux);
+        entityManager.flush();
+        tipoSolicitudTarget = null;
+        tiempoAnalista = 0d;
+        tiempoEmisor = 0d;
+        tiempoEjecutivoInicial = 0d;
+        tiempoAprobadores = 0d;
+    }
+	
+	
+    private List<PlanillaDTO> listaPlanilla = Collections.EMPTY_LIST;
+    private List<PlanillaDTO> listaPlanillaFinal = Collections.EMPTY_LIST;
+    public List<PlanillaDTO> getListaPlanilla() {
+		return listaPlanilla;
+	}
+    
+    public List<PlanillaDTO> getListaPlanillaFinal() {
+		return listaPlanillaFinal;
+	}
+    
+    public void initPlanilla(List<PlanillaDTO> data) {
+    	listaPlanilla = new ArrayList<PlanillaDTO>();
+    	listaPlanilla.addAll(data);
+    	log.debug("tamaño lista #0", listaPlanilla.size());
+	}
+    
+    public void ordenarParaExcel() {
+    	try {
+			if (this.listaPlanilla != null) {
+				this.listaPlanillaFinal = new ArrayList<PlanillaDTO>(0);
+				for (PlanillaDTO p : listaPlanilla) {
+					p.setDescripcionEstado("");
+					p.setTiempo("");
+					listaPlanillaFinal.add(p);
+					if (p.getListaHitos() != null
+							&& p.getListaHitos().size() > 0) {
+						for (PlanillaHitosDTO ph : p.getListaHitos()) {
+							PlanillaDTO pdto = new PlanillaDTO();
+							pdto.setIdSolictud("");
+							pdto.setFechaEmision("");
+							pdto.setRut("");
+							pdto.setRazonSocial("");
+							pdto.setAprobadores("");
+							pdto.setConceptosInvolucrados("");
+							pdto.setTipoSolicitud("");
+							pdto.setMonto("");
+							pdto.setDescripcionEstado(ph.getDescripcionEstado());
+							pdto.setTiempo(ph.getTiempo());
+							pdto.setTotalTime(ph.getTiempoHito());
+							listaPlanillaFinal.add(pdto);
+						}
+					}
+				}
+			}
+
+			if (this.listaPlanillaFinal != null) {
+				log.debug("cantidad de la lista #0",
+						this.listaPlanillaFinal.size());
+			}
+
+		} catch (Exception e) {
+			log.debug("Error al juntar los las dos grillas #0", e.getMessage());
+		}
+    }
+    
+    
+	
+	
+	
+
+}

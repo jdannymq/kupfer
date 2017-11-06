@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+
+	<style type="text/css">
+.top {
+	vertical-align: top;
+}
+</style>
+
+	<rich:modalPanel id="mpCanal" autosized="true" width="550" >
+		<f:facet name="header">
+			<h:outputText value="Agregar Canal" style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+
+			<h:panelGroup>
+				<h:graphicImage value="img/close.png" styleClass="hidelink"
+					id="mpCanalhidelink" />
+				<rich:componentControl for="mpCanal" attachTo="mpCanalhidelink"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+
+		</f:facet>
+		<h:form id="frm_canales_modal">
+			<h:messages id="messagesEsp" globalOnly="true" styleClass="message"
+				errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
+				rendered="#{showGlobalMessages != 'false'}" />
+			<h:panelGrid columns="2">
+			
+				<s:decorate template="/layout/edit.xhtml">
+					<ui:define name="label">Codigo</ui:define>
+					<h:inputText value="#{canalAction.canalTarget.codigo}"
+					size="5"
+					maxlength="5" />
+				</s:decorate>
+				<s:decorate template="/layout/edit.xhtml">
+					<ui:define name="label">Descripción</ui:define>
+					<h:inputText value="#{canalAction.canalTarget.descripcion}"
+					size="50"
+					maxlength="50" />
+				</s:decorate>
+			</h:panelGrid>
+			
+			<div>
+				<a:commandButton value="Guardar"
+					action="#{canalAction.guardarCanal()}"
+					reRender="frm_canales_modal,dtCanales"
+					oncomplete="if(#{empty facesContext.maximumSeverity}) {#{rich:component('mpCanal')}.hide(); alert('Guardado correctamente');}"
+					/>
+
+			</div>
+
+		</h:form>
+
+
+	</rich:modalPanel>
+
+</ui:composition>

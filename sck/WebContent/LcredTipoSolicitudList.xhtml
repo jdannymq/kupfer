@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="lcredTipoSolicitudSearch" styleClass="edit">
+
+        <rich:simpleTogglePanel label="Filtro de Búsqueda de Tipo de Solicitud" switchType="ajax">
+		 	<h:panelGrid columns="3">
+	            <s:decorate template="/layout/display.xhtml">
+	                <ui:define name="label">Codigo</ui:define>
+	                <h:inputText id="codTipoSolicitud" value="#{lcredTipoSolicitudList.lcredTipoSolicitud.codTipoSolicitud}"/>
+	            </s:decorate>
+	
+	            <s:decorate template="/layout/display.xhtml">
+	                <ui:define name="label">Descripción</ui:define>
+	                <h:inputText id="desTipoSolicitud" value="#{lcredTipoSolicitudList.lcredTipoSolicitud.desTipoSolicitud}"/>
+	            </s:decorate>
+	
+	            <s:decorate template="/layout/display.xhtml">
+	                <ui:define name="label">Clave Proceso</ui:define>
+	                <h:inputText id="claveProceso" value="#{lcredTipoSolicitudList.lcredTipoSolicitud.claveProceso}"/>
+	            </s:decorate>
+	
+	            <s:decorate template="/layout/display.xhtml">
+	                <ui:define name="label"></ui:define>
+	                <h:selectOneRadio id="logic" value="#{lcredTipoSolicitudList.restrictionLogicOperator}" styleClass="radio">
+	                    <f:selectItem itemLabel="Todos" itemValue="and"/>
+	                    <f:selectItem itemLabel="Cualquiera" itemValue="or"/>
+	                </h:selectOneRadio>
+	            </s:decorate>
+			</h:panelGrid>
+        </rich:simpleTogglePanel>
+
+        <div class="actionButtons">
+            <h:commandButton id="search" value="Buscar" title="Buscar" action="/LcredTipoSolicitudList.xhtml"/>
+            <s:button id="reset" value="Limpiar" title="Limpiar" includePageParams="false"/>
+        </div>
+
+    </h:form>
+
+    <rich:panel>
+        <f:facet name="header">Resultados (#{empty lcredTipoSolicitudList.resultList ? 0 : (lcredTipoSolicitudList.paginated ? lcredTipoSolicitudList.resultCount : lcredTipoSolicitudList.resultList.size)})</f:facet>
+    	<div class="results" id="lcredTipoSolicitudList">
+
+   		<h:outputText value="No existe registros de tipo de solicitud." rendered="#{empty lcredTipoSolicitudList.resultList}"/>
+
+    <rich:dataTable id="lcredTipoSolicitudList"
+                var="_lcredTipoSolicitud"
+              value="#{lcredTipoSolicitudList.resultList}"
+           rendered="#{not empty lcredTipoSolicitudList.resultList}">
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="/layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{lcredTipoSolicitudList}"/>
+                    <ui:param name="propertyLabel" value="Codigo Tipo Solicitud"/>
+                    <ui:param name="propertyPath" value="lcredTipoSolicitud.codTipoSolicitud"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_lcredTipoSolicitud.codTipoSolicitud}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="/layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{lcredTipoSolicitudList}"/>
+                    <ui:param name="propertyLabel" value="Descripción"/>
+                    <ui:param name="propertyPath" value="lcredTipoSolicitud.desTipoSolicitud"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_lcredTipoSolicitud.desTipoSolicitud}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="/layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{lcredTipoSolicitudList}"/>
+                    <ui:param name="propertyLabel" value="Ind Borrado"/>
+                    <ui:param name="propertyPath" value="lcredTipoSolicitud.indBorrado"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_lcredTipoSolicitud.indBorrado}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="/layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{lcredTipoSolicitudList}"/>
+                    <ui:param name="propertyLabel" value="Clave Proceso"/>
+                    <ui:param name="propertyPath" value="lcredTipoSolicitud.claveProceso"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_lcredTipoSolicitud.claveProceso}"/>
+        </h:column>
+        <rich:column styleClass="action">
+            <f:facet name="header">Acción</f:facet>
+            <s:link view="/#{empty from ? 'LcredTipoSolicitud' : from}.xhtml"
+                   value="#{empty from ? 'Ver' : 'Seleccionar'}"
+             propagation="#{empty from ? 'none' : 'default'}"
+                      id="lcredTipoSolicitudViewId">
+                <f:param name="lcredTipoSolicitudCodTipoSolicitud"
+                        value="#{_lcredTipoSolicitud.codTipoSolicitud}"/>
+            </s:link>
+            #{' '}
+            <s:link view="/LcredTipoSolicitudEdit.xhtml"
+                   value="Editar"
+             propagation="none"
+                      id="lcredTipoSolicitudEdit"
+                rendered="#{empty from}">
+                <f:param name="lcredTipoSolicitudCodTipoSolicitud"
+                        value="#{_lcredTipoSolicitud.codTipoSolicitud}"/>
+            </s:link>
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+
+    <div class="tableControl">
+
+        <s:link view="/LcredTipoSolicitudList.xhtml"
+            rendered="#{lcredTipoSolicitudList.previousExists}"
+               value="#{messages.left}#{messages.left} Primera Página"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link view="/LcredTipoSolicitudList.xhtml"
+            rendered="#{lcredTipoSolicitudList.previousExists}"
+               value="#{messages.left} Página Anterior"
+                  id="previousPage">
+            <f:param name="firstResult"
+                    value="#{lcredTipoSolicitudList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link view="/LcredTipoSolicitudList.xhtml"
+            rendered="#{lcredTipoSolicitudList.nextExists}"
+               value="Siguiente Página #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult"
+                    value="#{lcredTipoSolicitudList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link view="/LcredTipoSolicitudList.xhtml"
+            rendered="#{lcredTipoSolicitudList.nextExists}"
+               value="Ultima Página #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult"
+                    value="#{lcredTipoSolicitudList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+
+    <s:div styleClass="actionButtons" rendered="#{empty from}">
+        <s:button view="/LcredTipoSolicitudEdit.xhtml"
+                    id="create"
+           propagation="none"
+                 value="Crear Tipo Solicitud">
+            <f:param name="lcredTipoSolicitudCodTipoSolicitud"/>
+        </s:button>
+    </s:div>
+
+</ui:define>
+
+</ui:composition>

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	
+	
+	<rich:modalPanel id="mpSolicitudUsuariosDerivado" autosized="true" width="600">
+		<f:facet name="header">
+			<h:outputText value="Consulta de Usuarios para (Aprobar o Rechazar)"	style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:form>
+					<a:commandLink	ajaxSingle="true" action="#{listadoPorRangosAction.limpiarVariblesUsuarioDerevida()}">
+						<h:graphicImage value="img/close.png" styleClass="hidelink"	id="mpSolicitudUsuariosDerivadolink" />
+					</a:commandLink>
+					<rich:componentControl for="mpSolicitudUsuariosDerivado"
+						attachTo="mpSolicitudUsuariosDerivadolink" operation="hide"
+						event="onclick" />
+				</h:form>
+			</h:panelGroup>
+		</f:facet>
+		<h:form id = "frm_solicitud_usuario_derivado">
+		<rich:panel>
+			<f:facet name="header"><h:outputText value="Información de Solicitud"	style="padding-right:15px;" /></f:facet>	
+				<table cellpadding="0" cellspacing="0" width="100%">
+					<tr valign="top">
+						<td>N°</td>
+						<td>Nombre</td>
+						<td>Estado</td>
+					</tr>
+					<tr valign="top">
+						<td>
+						<h:inputText id="idNumSolicitud" 
+								value="#{listadoPorRangosAction.solicitudAux.idSolictud}" 
+					          required="false"  
+						       maxlength="10"
+						       size="10" 
+						       disabled="true"/>						
+						</td>
+						<td>
+						<h:inputText id="idNombreSolicitud" 
+									value="#{listadoPorRangosAction.solicitudAux.razonSocial}" 
+						          required="false"  
+							       maxlength="120"
+							       size="50" 
+							       disabled="true"/>						
+						</td>
+						<td>
+						<h:inputText id="idEstadoSolicitud" 
+									value="#{listadoPorRangosAction.solicitudAux.estado}" 
+						          required="false"  
+							       maxlength="120"
+							       size="50" 
+							       disabled="true" />						
+						</td>
+					</tr>				
+				</table>
+		</rich:panel>
+
+
+		<rich:panel>
+				<f:facet name="header"><h:outputText value="Usuarios Asignados para de Analisis "	
+				                       style="padding-right:15px;" 
+				                       rendered="#{listadoPorRangosAction.solicitudAux.estadoEvaluacion == 'B'}" />
+									   <h:outputText value="Usuarios Asignados para Aprobación"	
+				                       style="padding-right:15px;" 
+				                       rendered="#{listadoPorRangosAction.solicitudAux.estadoEvaluacion == 'SA'}" />
+				</f:facet>
+				<a:outputPanel id="grillaHitos">
+		    	<div class="results" id="grillaUsuarioAsigandos" style="height:380px; overflow: auto;">
+			   		<h:outputText value="No existe ningun usuario asigando ha esta solicitud en esta solicitud." 
+			   		           rendered="#{empty listadoPorRangosAction.listUsuariosDerivados}"/>
+				    <rich:dataTable id="idlistaUsuarioAsignados"
+				                var="_sua"
+				              value="#{listadoPorRangosAction.listUsuariosDerivados}"
+				           rendered="#{not empty listadoPorRangosAction.listUsuariosDerivados}">
+				        <rich:column>
+				            <f:facet name="header">Usuario</f:facet>
+				            <h:outputText value="#{_sua.usuario.nombre}"/>
+				        </rich:column>
+				        <rich:column>
+				            <f:facet name="header">Fecha - Hora</f:facet>
+				            <h:outputText value="#{_sua.fechaHora}">
+				            	<s:convertDateTime pattern="dd-MM-yyyy HH:mm" />
+				            </h:outputText>
+				        </rich:column>
+				        				        <rich:column width="50px;">
+				            <f:facet name="header">Obligatorios</f:facet>
+				            <h:outputText value="Obligatorio" rendered="#{_sua.confirmacionObligatoria == true}" />
+				            <h:outputText value="No Obligatorio" rendered="#{_sua.confirmacionObligatoria == false}" />
+				        </rich:column>
+				        
+				        <rich:column style="text-align:center;">
+				            <f:facet name="header">Situación Actual</f:facet>
+							 <table cellpadding="0" cellspacing="0" width="100%" align="center">
+							 	<tr valign="top">
+							 		<td align="center" width="40px;"> 
+										<s:fragment rendered="#{_sua.estado.codEstado == 'B' or  _sua.estado.codEstado == 'SA' }">
+											<!-- en espera  -->	
+											<img src="./img/esperaIcon_tcolor.png" title="En Espera..."/>								
+										</s:fragment>
+										
+										<s:fragment rendered="#{_sua.estado.codEstado == 'AP'}">
+											<!-- condirmada  -->
+											<img src="./img/true.png" title="Aprobada"  />
+										</s:fragment>
+										<s:fragment rendered="#{_sua.estado.codEstado == 'RP'}">
+											<!-- No Confirmada  -->
+											<img src="./img/false.png" title="Rechazada"/>
+										</s:fragment>
+							 		</td>
+							 		<td width="10px;" align="left"> 
+							 			<rich:separator width="2" height="14" style="color:#2B00FF;" />
+							 		</td>
+							 		<td align="left">
+							        	<s:fragment rendered="#{_sua.estado.codEstado == 'SA'}">
+								            <s:fragment rendered="#{_sua.estado.codEstado == 'SA'}">
+								            	<h:outputText value="Pendiente de aprobación o rechazo de la solicitud"/>
+								            </s:fragment>	
+								            <s:fragment rendered="#{_sua.estado.codEstado != 'SA'}">
+								            	<h:outputText value="#{_sua.estado.desEstado}"/>
+								            </s:fragment>	
+							        	</s:fragment> 
+							        	<s:fragment rendered="#{_sua.estado.codEstado == 'B'}">
+								            <s:fragment rendered="#{_sua.estado.codEstado == 'B'}">
+								            	<h:outputText value="Pendiente de analisis de la solicitud"/>
+								            </s:fragment>	
+								            <s:fragment rendered="#{_sua.estado.codEstado != 'B'}">
+								            	<h:outputText value="#{_sua.estado.desEstado}"/>
+								            </s:fragment>					        	
+							        	</s:fragment> 
+							        	<s:fragment rendered="#{_sua.estado.codEstado != 'B' and _sua.estado.codEstado != 'SA'}">
+							        		<s:fragment rendered="#{_sua.codEstadoDerivada == 'B'}">
+							        			<h:outputText value="Analizada"/>
+							        		</s:fragment>
+							        		<s:fragment rendered="#{_sua.codEstadoDerivada != 'B' or _sua.codEstadoDerivada == null }">
+							        			<h:outputText value="#{_sua.estado.desEstado}"/>
+							        		</s:fragment>
+							        	</s:fragment> 								 		
+							 		</td>
+							 	</tr>
+							 </table>
+				        </rich:column>
+				        
+				        
+				    </rich:dataTable>
+			    </div>
+				</a:outputPanel>
+		</rich:panel>
+
+   	</h:form>
+
+	</rich:modalPanel>
+	
+</ui:composition>

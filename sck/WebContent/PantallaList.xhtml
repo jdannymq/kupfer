@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="pantallaSearch" styleClass="edit">
+
+        <rich:simpleTogglePanel label="Filtro de Búsqueda" switchType="ajax">
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Descripción</ui:define>
+                <h:inputText id="descripcion" value="#{pantallaList.pantalla.descripcion}"/>
+            </s:decorate>
+        </rich:simpleTogglePanel>
+
+        <div class="actionButtons">
+            <h:commandButton id="search" value="Buscar" action="/PantallaList.xhtml"/>
+            <s:button id="reset" value="Limpiar" includePageParams="false"/>
+        </div>
+
+    </h:form>
+
+    <rich:panel>
+        <f:facet name="header">Resultado de Búsqueda (#{empty pantallaList.resultList ? 0 : (pantallaList.paginated ? pantallaList.resultCount : pantallaList.resultList.size)})</f:facet>
+    <div class="results" id="pantallaList">
+
+    <h:outputText value="No existe ninguna pagina ingresada."
+               rendered="#{empty pantallaList.resultList}"/>
+
+    <rich:dataTable id="pantallaList"
+                var="_pantalla"
+              value="#{pantallaList.resultList}"
+           rendered="#{not empty pantallaList.resultList}">
+        <rich:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{pantallaList}"/>
+                    <ui:param name="propertyLabel" value="Id Pantalla"/>
+                    <ui:param name="propertyPath" value="pantalla.idPantalla"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_pantalla.idPantalla}"/>
+        </rich:column>
+        <rich:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{pantallaList}"/>
+                    <ui:param name="propertyLabel" value="Descripción"/>
+                    <ui:param name="propertyPath" value="pantalla.descripcion"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_pantalla.descripcion}"/>
+        </rich:column>
+        <rich:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{pantallaList}"/>
+                    <ui:param name="propertyLabel" value="codigo"/>
+                    <ui:param name="propertyPath" value="pantalla.codigo"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_pantalla.codigo}"/>
+        </rich:column>
+        <rich:column styleClass="action">
+            <f:facet name="header">Acción</f:facet>
+            <s:link view="/#{empty from ? 'Pantalla' : from}.xhtml"
+                   value="#{empty from ? 'Ver' : 'Seleccionar'}"
+             propagation="#{empty from ? 'none' : 'default'}"
+                      id="pantallaViewId">
+                <f:param name="pantallaIdPantalla"
+                        value="#{_pantalla.idPantalla}"/>
+            </s:link>
+            #{' '}
+            <s:link view="/PantallaEdit.xhtml"
+                   value="Editar"
+             propagation="none"
+                      id="pantallaEdit"
+                rendered="#{empty from}">
+                <f:param name="pantallaIdPantalla"
+                        value="#{_pantalla.idPantalla}"/>
+            </s:link>
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+
+    <div class="tableControl">
+
+        <s:link view="/PantallaList.xhtml"
+            rendered="#{pantallaList.previousExists}"
+               value="#{messages.left}#{messages.left} Primera Página"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link view="/PantallaList.xhtml"
+            rendered="#{pantallaList.previousExists}"
+               value="#{messages.left} Página Anterior"
+                  id="previousPage">
+            <f:param name="firstResult"
+                    value="#{pantallaList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link view="/PantallaList.xhtml"
+            rendered="#{pantallaList.nextExists}"
+               value="Siguiente Página #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult"
+                    value="#{pantallaList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link view="/PantallaList.xhtml"
+            rendered="#{pantallaList.nextExists}"
+               value="Ultima Página #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult"
+                    value="#{pantallaList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+
+    <s:div styleClass="actionButtons" rendered="#{empty from}">
+        <s:button view="/PantallaEdit.xhtml"
+                    id="create"
+           propagation="none"
+                 value="Crear Página Nueva">
+            <f:param name="pantallaIdPantalla"/>
+        </s:button>
+    </s:div>
+
+</ui:define>
+
+</ui:composition>

@@ -1,0 +1,20 @@
+package org.domain.sck.entity.enums;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public enum AccionesType {
+	OBSERVACIONES,DEVOLVER, ADJUNTAR, DERIVAR, RECHAZAR,IMPRIMIR,ANALIZAR,APROBAR,LOGS,HITOS,CONCEPTOS,ANULAR;
+	
+	
+	private static final List<AccionesType> acciones = new ArrayList<AccionesType>();
+	
+	static {
+		acciones.addAll(Arrays.asList(AccionesType.values()));
+	}
+
+	public static List<AccionesType> getAcciones() {
+		return acciones;
+	}
+}

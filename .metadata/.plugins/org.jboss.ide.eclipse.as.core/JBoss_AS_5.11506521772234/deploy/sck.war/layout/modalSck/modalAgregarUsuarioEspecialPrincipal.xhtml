@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	
+	<rich:modalPanel id="mpAgregarUsuarioEspecialPrincipal" autosized="true" width="600">
+		<f:facet name="header">
+			<h:outputText value="Ingreso de Usuario Especiales"	style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:form>
+					<a:commandLink	ajaxSingle="true" reRender="correosAgragado,listaConceptoNegocioList" action="#{respuestaSolicitudAction.agregarUsuarioEspecialPrincipal()}">
+						<h:graphicImage value="img/close.png" styleClass="hidelink"	id="mpAgregarUsuarioEspecialPrincipallink" />
+					</a:commandLink>
+					<rich:componentControl for="mpAgregarUsuarioEspecialPrincipal"
+						attachTo="mpAgregarUsuarioEspecialPrincipallink" operation="hide"
+						event="onclick" 
+						/>
+				</h:form>
+			</h:panelGroup>
+		</f:facet>
+		<rich:panel>
+			<h:form id = "frm_agregar_usuarios_especiales_principal">
+			
+				<a:outputPanel id="panelDatosUsuarioEspeciales" >
+					<table cellpadding="0" cellspacing="0" border="0" width="100%">
+						<tr>
+							<td >Nombre :</td>
+							<td >
+							  <h:inputText 	id="nombreUsuario" value="#{respuestaSolicitudAction.nombreUsuario}" 
+										   style="text-align: left; width:95%;"
+										/>								
+							</td>
+							<td>Correo :</td>
+							<td>
+							  <h:inputText 	id="correoElectronico" value="#{respuestaSolicitudAction.correoElectronico}" 
+										style="text-align: left; width:95%;"
+										
+										/>								
+							</td>
+							<td>
+							<a:commandButton value="Agregar" 
+							                action="#{respuestaSolicitudAction.revisarToIngresarToListaPrincipal()}"
+				         		          reRender="agregarUsuario,listaUsuarioCorreoList,nombreUsuario,correoElectronico" 
+				         	            process="nombreUsuario,correoElectronico"/>								
+							<a:commandButton value="Salir" 
+							                action="#{respuestaSolicitudAction.agregarUsuarioEspecialPrincipal()}"
+				         		          reRender="idUsuariosCorreosVentaPuntual,mpAgregarUsuarioEspecialPrincipal,listaConceptoNegocioList" 
+				         	            oncomplete="#{rich:component('mpAgregarUsuarioEspecialPrincipal')}.hide()"/>	
+
+							</td>
+						</tr>	
+						<tr>
+							<td colspan="5" height="10px;">
+							
+							
+							</td>
+						</tr>							
+					</table>
+				</a:outputPanel>
+	    		<a:outputPanel id="agregarUsuario" >
+		    		<h:messages  globalOnly="true" styleClass="message"
+			            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
+		        </a:outputPanel>
+		        
+				<a:outputPanel id="listaUsuarioCorreoList">
+					<rich:panel>
+					        <f:facet name="header">Resultados (#{respuestaSolicitudAction.listaUsuariosEspecialesPrincipal.size()})</f:facet>
+					    	<div class="results" >
+					   		<h:outputText value="No ha Agregado ningun usuario a la grilla." rendered="#{empty respuestaSolicitudAction.listaUsuariosEspecialesPrincipal}"/>
+							    <rich:dataTable id="idUsuarioEspeciales"
+							                var="_socio"
+							              value="#{respuestaSolicitudAction.listaUsuariosEspecialesPrincipal}"
+							           rendered="#{not empty respuestaSolicitudAction.listaUsuariosEspecialesPrincipal}">
+							        <rich:column>
+							            <f:facet name="header">Nombre</f:facet>
+							            <h:outputText value="#{_socio.nombre}"/>
+							        </rich:column>
+							        
+							        <rich:column>
+							            <f:facet name="header">Correo Electronico</f:facet>
+							            <h:outputText value="#{_socio.correo}"/>
+							        </rich:column>
+							        
+							        <rich:column styleClass="action">
+							            <f:facet name="header">Acción</f:facet>
+										<a:commandButton value="Eliminar" 
+										                action="#{respuestaSolicitudAction.eliminarUsuarioEspecialPrincipal(_socio)}"
+						         		              reRender="idUsuarioEspeciales,frm_agregar_usuarios_especiales" />		
+			
+							        </rich:column>
+							    </rich:dataTable>
+					   		</div>
+					 </rich:panel>
+	   			 </a:outputPanel>
+			</h:form>
+		</rich:panel>
+	</rich:modalPanel>
+	
+</ui:composition>

@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	
+	<rich:modalPanel id="mpRechazoFormularioSolicitud" autosized="true" width="800" height="570">
+		<f:facet name="header">
+			<h:outputText value="Formulario para Rechazo de Solicitudes"	style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:form>
+					<a:commandLink	ajaxSingle="true" 
+					    reRender="panelGeneral" >
+						<h:graphicImage value="img/close.png" styleClass="hidelink"	id="mpRechazoFormularioSolicitudlink" />
+					</a:commandLink>
+					<rich:componentControl for="mpRechazoFormularioSolicitud"
+						attachTo="mpRechazoFormularioSolicitudlink" operation="hide"
+						event="onclick" 
+						/>
+				</h:form>
+			</h:panelGroup>
+		</f:facet>
+		<rich:panel>
+			<f:facet name="header"> Motivos de Rechazo </f:facet>
+			<h:form id = "frm_motivoRechazo">
+				<a:outputPanel id="panelDatosMR" >
+					<table cellpadding="0" cellspacing="0" border="0" width="100%">
+						<tr>
+							<td width="500px;">Motivos de Rechazos</td>
+							<td width="20px;"> </td>
+							<td></td>
+						</tr>
+						<tr>
+							<td colspan="3" width="100%" align="center">
+							  <a:outputPanel id="seleccionMotivosRechazos">
+								        <rich:listShuttle id="idListaMotivoRechazo" sourceValue="#{respuestaSolicitudAction.listaMotivosRechazos}"
+									            targetValue="#{respuestaSolicitudAction.listaMotivosRechazosSeleccionado}" var="motivoRechazo" listsHeight="100"
+									            sourceListWidth="250" targetListWidth="250" sourceCaptionLabel="Listas Motivo Disponible"
+									            targetCaptionLabel="Listas Motivos Seleccionados" orderControlsVisible="false" fastOrderControlsVisible="false" > 
+								            <ui:include src="/layout/facetSelectionLists.xhtml" />
+								            <s:convertEntity/>
+								            <rich:column>
+								                <h:outputText value="#{motivoRechazo.desRechazo}"></h:outputText>
+								            </rich:column>
+										</rich:listShuttle>				
+							  </a:outputPanel>						
+							</td>
+						</tr>							
+							
+						<tr>
+							<td width="500px;">
+							   <ui:remove>
+								<h:selectOneMenu id="idCboMotivos"
+ 								                 value="#{respuestaSolicitudAction.motivoRechazo}" 
+ 								                 style="width:480px;">
+		               			<s:selectItems id="listaAuxMotivo" value="#{respuestaSolicitudAction.listaMotivosRechazos}" 
+		               			                 var="_Motivo"  
+		               			               label="#{_Motivo.desRechazo}" 
+		               			               noSelectionLabel="Seleccione Motivo..." 
+		               			               hideNoSelectionLabel="true" />
+		               			               <s:convertEntity/> 
+								       			   	<a:support event="onchange" 
+								                         reRender="idCboMotivos"
+								             			      ajaxSingle="true" 
+								             			      action="#{respuestaSolicitudAction.obtenerMotivoRechazo()}" />			               			               
+		               			               
+		              			</h:selectOneMenu>	
+		              		  </ui:remove>								
+							</td>
+							<td width="20px;">
+					
+							</td>
+							<td align="center"> 
+								<a:commandButton value="Agregar" 
+												ajaxSingle="true"
+								                action="#{respuestaSolicitudAction.agregarMotivoRechazoListaRechazo()}"
+					         		          reRender="frm_motivoRechazo,listaMotivoRechazoList,listaAuxMotivo,panelDatosMR,mensajeDerivacionOut,seleccionMotivosRechazos" 
+					         		          process="seleccionMotivosRechazos"
+					         	           		/>		
+								<a:commandButton value="Agregar Todos" 
+												ajaxSingle="true"
+								                action="#{respuestaSolicitudAction.agregarTodosMotivoRechazosListaAnalisisDerivacion()}"
+					         		          reRender="frm_motivoRechazo,seleccionMotivosRechazos,listaMotivoRechazoList,listaAuxMotivo,panelDatosMR,mensajeDerivacionOut" 
+					         	           		process="seleccionMotivosRechazos"/>						         	           						
+							</td>
+						</tr>	
+					</table>
+				</a:outputPanel>
+
+		        
+				<a:outputPanel id="listaMotivoRechazoList">
+				<rich:panel>
+
+				    	<div class="results" id="motivoRechazoList" style="border:1px solid #000000;padding:3px; height:130px; overflow: auto;">
+				   			<h:outputText value="No ha Agregado ningun usuario a la grilla." rendered="#{empty respuestaSolicitudAction.listaMotivosRechazosAgregados}"/>
+						    <rich:dataTable id="idMotivoRechazoList"
+						                var="_uc"
+						              value="#{respuestaSolicitudAction.listaMotivosRechazosAgregados}"
+						           rendered="#{not empty respuestaSolicitudAction.listaMotivosRechazosAgregados}"
+						            >
+						        <rich:column>
+						            <f:facet name="header">Descripción</f:facet>
+						            <h:outputText value="#{_uc.desRechazo}"/>
+						        </rich:column>					        
+						        <rich:column styleClass="action">
+						            <f:facet name="header">
+										<a:commandButton value="Eliminar Todos" 
+														ajaxSingle="true"
+										                action="#{respuestaSolicitudAction.eliminarTodosMotivoRechazosLista()}"
+							         		          reRender="frm_motivoRechazo,seleccionMotivosRechazos,listaMotivoRechazoList,listaAuxMotivo,panelDatosAD,mensajeDerivacionOut" 
+							         	           		/>	
+						            </f:facet>
+									<a:commandButton value="Eliminar" 
+									                action="#{respuestaSolicitudAction.eliminarMotivoRechazo(_uc)}"
+									                ajaxSingle="true"
+					         		              reRender="listaMotivoRechazoList,frm_motivoRechazo,seleccionMotivosRechazos" />		
+		
+						        </rich:column>
+						    </rich:dataTable>
+				    	</div>
+				 </rich:panel>
+	   			 </a:outputPanel>
+	
+				<rich:panel style="height:220px;">
+					<f:facet name="header" ><strong>Mensaje</strong></f:facet>
+					<a:outputPanel id="observacionesfinalMotivo">
+						<table cellpadding="0" cellspacing="0" border="0" style="height:173px;" width="100%">
+							<tr>
+								<td width="100%" height="100px;">
+								<h:inputTextarea id="idObservacionesfinalesMotivo" value="#{respuestaSolicitudAction.mensajeRechazoSolicitud}" 
+	      									rows="2" 
+	      									style="width:99%; height:80%;"
+	      									disabled="false">
+									<a:support event="onchange" 
+									         reRender="idObservacionesfinalesMotivo"
+									      ajaxSingle="true" 
+									      action="#{respuestaSolicitudAction.actualizarElMensajeRechazo()}" 
+									       />	      									
+	      						</h:inputTextarea>			
+	      									 																									
+								</td>
+							</tr>
+							<tr>
+								<td width="100%" height="40px;">
+						    		<a:outputPanel id="mensajeDerivacionOut" >
+							    		<h:messages  globalOnly="true" styleClass="message"
+								            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
+							        </a:outputPanel>	
+								</td>
+							</tr>
+							<tr>
+								<td width="100%" height="23px;" align="center">
+											<s:fragment rendered="#{respuestaSolicitudAction.habilitarCheckEnvio() == true}">
+												<h:selectBooleanCheckbox id="enviacorreoRechazo" value="#{respuestaSolicitudAction.wvarEnviaCorreo}" />
+												<label>¿Envía el Correo?</label>
+											</s:fragment>									
+								
+						    				 <a:commandButton value="Enviar" 
+						    				 	action="#{respuestaSolicitudAction.rechazarSolicitudes()}"
+						    				 	reRender="mpRechazoSolicitud,panelGeneral,mensajeDerivacionOut,mpMensajeRespuestaRechazar"
+				                           	 	ajaxSingle="true" 
+				                           	 	oncomplete="if (#{respuestaSolicitudAction.habilitaMensajeDerivacion == false}) {#{rich:component('mpMensajeRespuestaRechazar')}.show()}"
+				                           	 	title="Rechazar Solicitud"
+				                           	 	style="width:75px;"
+				                           	 	process="idObservacionesfinalesMotivo,enviacorreoRechazo"
+				                			  />
+																								
+						    				 <a:commandButton value="Cerrar" 
+						    				 	action="#{respuestaSolicitudAction.cerrarMotivoRechazar()}"
+						    				 	reRender="mpRechazoSolicitud"
+				                           	 	ajaxSingle="true" 
+				                           	 	oncomplete="#{rich:component('mpRechazoSolicitud')}.hide()"
+				                           	 	title="Cerrar Solicitud"
+				                           	 	style="width:75px;"
+				                			  />
+								</td>
+							</tr>
+						</table>
+					</a:outputPanel>
+				</rich:panel>
+	   			 
+			</h:form>
+		</rich:panel>
+	</rich:modalPanel>
+	
+</ui:composition>

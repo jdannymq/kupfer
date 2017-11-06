@@ -1,0 +1,135 @@
+package org.domain.sck.dto;
+
+import java.io.Serializable;
+import java.util.List;
+
+import org.domain.sck.entity.LcredTipoSolicitud;
+
+public class PorcentajeDTO implements Serializable{
+
+	private String usuario; 
+	private long cumplidas;
+	private long noCumplidas;
+	private double porcentajes;
+	private long totalSolicitudesIndividual;
+	private LcredTipoSolicitud tipoSolicitud;
+	private List<PorcentajeDTO> listasProcentajeTipoSolicitudes;
+	
+	private boolean ventasNormal;
+	private boolean ventaEnCuotas;
+	private boolean nominadas;
+	private boolean innomindas;
+	private boolean riesgoKupfer;
+	private boolean riesgoPago;
+	private boolean bloqueoDesbloqueo;
+	private boolean creacionDm;
+	private boolean prorogas;
+	
+	
+	/* sets y gets*/
+	
+	public boolean isVentasNormal() {
+		return ventasNormal;
+	}
+	public void setVentasNormal(boolean ventasNormal) {
+		this.ventasNormal = ventasNormal;
+	}
+	public boolean isVentaEnCuotas() {
+		return ventaEnCuotas;
+	}
+	public void setVentaEnCuotas(boolean ventaEnCuotas) {
+		this.ventaEnCuotas = ventaEnCuotas;
+	}
+	public boolean isNominadas() {
+		return nominadas;
+	}
+	public void setNominadas(boolean nominadas) {
+		this.nominadas = nominadas;
+	}
+	public boolean isInnomindas() {
+		return innomindas;
+	}
+	public void setInnomindas(boolean innomindas) {
+		this.innomindas = innomindas;
+	}
+	public boolean isRiesgoKupfer() {
+		return riesgoKupfer;
+	}
+	public void setRiesgoKupfer(boolean riesgoKupfer) {
+		this.riesgoKupfer = riesgoKupfer;
+	}
+	public boolean isRiesgoPago() {
+		return riesgoPago;
+	}
+	public void setRiesgoPago(boolean riesgoPago) {
+		this.riesgoPago = riesgoPago;
+	}
+	public boolean isBloqueoDesbloqueo() {
+		return bloqueoDesbloqueo;
+	}
+	public void setBloqueoDesbloqueo(boolean bloqueoDesbloqueo) {
+		this.bloqueoDesbloqueo = bloqueoDesbloqueo;
+	}
+	public boolean isCreacionDm() {
+		return creacionDm;
+	}
+	public void setCreacionDm(boolean creacionDm) {
+		this.creacionDm = creacionDm;
+	}
+	public boolean isProrogas() {
+		return prorogas;
+	}
+	public void setProrogas(boolean prorogas) {
+		this.prorogas = prorogas;
+	}
+	public String getUsuario() {
+		return usuario;
+	}
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
+	}
+	public long getCumplidas() {
+		return cumplidas;
+	}
+	public void setCumplidas(long cumplidas) {
+		this.cumplidas = cumplidas;
+	}
+	public long getNoCumplidas() {
+		return noCumplidas;
+	}
+	public void setNoCumplidas(long noCumplidas) {
+		this.noCumplidas = noCumplidas;
+	}
+	public double getPorcentajes() {
+		return porcentajes;
+	}
+	public void setPorcentajes(double porcentajes) {
+		this.porcentajes = porcentajes;
+	}
+	public long getTotalSolicitudesIndividual() {
+		return totalSolicitudesIndividual;
+	}
+	public void setTotalSolicitudesIndividual(long totalSolicitudesIndividual) {
+		this.totalSolicitudesIndividual = totalSolicitudesIndividual;
+	}
+	public LcredTipoSolicitud getTipoSolicitud() {
+		return tipoSolicitud;
+	}
+	public void setTipoSolicitud(LcredTipoSolicitud tipoSolicitud) {
+		this.tipoSolicitud = tipoSolicitud;
+	}
+	public List<PorcentajeDTO> getListasProcentajeTipoSolicitudes() {
+		return listasProcentajeTipoSolicitudes;
+	}
+	public void setListasProcentajeTipoSolicitudes(
+			List<PorcentajeDTO> listasProcentajeTipoSolicitudes) {
+		this.listasProcentajeTipoSolicitudes = listasProcentajeTipoSolicitudes;
+	}
+
+	
+
+	
+
+	
+	
+}

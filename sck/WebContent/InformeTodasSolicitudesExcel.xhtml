@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<e:workbook xmlns:e="http://jboss.com/products/seam/excel"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:h="http://java.sun.com/jsf/html" >
+
+	<e:worksheet name="Informe Todas Solicitudes" startColumn="0" startRow="0" value="#{generarSolicitudAction.listaTodasSolicitudesDto}" var="data">
+
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="N° Solicitud" />
+			</f:facet>
+			<e:cell value="#{data.idSolictud}" />
+		</e:column>
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Fecha Solicitud" />
+			</f:facet>
+			<e:cell value="#{data.fechaEmision}" />
+		</e:column>
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Rut cliente" />
+			</f:facet>
+			<e:cell value="#{data.rut}" />
+		</e:column>
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Razón Social" />
+			</f:facet>
+			<e:cell value="#{data.razonSocial}" />
+		</e:column>		
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Emisor" />
+			</f:facet>
+			<e:cell value="#{data.emisor}" />
+		</e:column>	
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Tipo Solicitud" />
+			</f:facet>
+			<e:cell value="#{data.despTipoSolictud}" />
+		</e:column>				
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Monto de Negocio" />
+			</f:facet>
+			<e:cell value="#{data.monto}" />
+		</e:column>	
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Seguro" />
+			</f:facet>
+			<e:cell value="#{data.montoAsegurado}" />
+		</e:column>	
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Peak de Crédito" />
+			</f:facet>
+			<e:cell value="#{data.peakCredito}" />
+		</e:column>			
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Riesgo Kupfer" />
+			</f:facet>
+			<e:cell value="#{data.montoRiegoKupfer}" />
+		</e:column>			
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Forma de Pago" />
+			</f:facet>
+			<e:cell value="#{data.condicionPago}" />
+		</e:column>			
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Estado" />
+			</f:facet>
+			<e:cell value="#{data.estado}" />
+		</e:column>	
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Sucursal" />
+			</f:facet>
+			<e:cell value="#{data.sucursal}" />
+		</e:column>	
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Canal de Venta" />
+			</f:facet>
+			<e:cell value="#{data.canal}" />
+		</e:column>	
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Fecha Resolución" />
+			</f:facet>
+			<e:cell value="#{data.fechaSalida}" />
+		</e:column>	
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Usuario Proceso" />
+			</f:facet>
+			<e:cell value="#{data.usuarioProceso}" />
+		</e:column>	
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Sociedad" />
+			</f:facet>
+			<e:cell value="#{data.sociedad}" />
+		</e:column>	
+
+
+	</e:worksheet>
+
+
+</e:workbook>

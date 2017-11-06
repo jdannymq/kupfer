@@ -1,0 +1,127 @@
+package org.domain.sck.dto;
+
+import java.io.Serializable;
+import java.util.List;
+public class PlanillaDTO implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private long idSolictud; 
+	private String fechaEmision;
+	private String horaEmision;
+	private String rut;
+	private String razonSocial;
+	private double monto;
+	private String tipoSolicitud;
+	private String despTipoSolictud;
+	private String aprobadores;
+	private String conceptosInvolucrados;
+	private long totalDeMinutosestado;
+	private String descripcionEstado;
+	private String tiempo;
+	private String tiempoTotal;
+	private List<PlanillaHitosDTO> listaHitos;
+	
+	
+
+	public long getIdSolictud() {
+		return idSolictud;
+	}
+	public void setIdSolictud(long idSolictud) {
+		this.idSolictud = idSolictud;
+	}
+	public String getRut() {
+		return rut;
+	}
+	public void setRut(String rut) {
+		this.rut = rut;
+	}
+	public String getRazonSocial() {
+		return razonSocial;
+	}
+	public void setRazonSocial(String razonSocial) {
+		this.razonSocial = razonSocial;
+	}
+	public String getDespTipoSolictud() {
+		return despTipoSolictud;
+	}
+	public void setDespTipoSolictud(String despTipoSolictud) {
+		this.despTipoSolictud = despTipoSolictud;
+	}
+	public double getMonto() {
+		return monto;
+	}
+	public void setMonto(double monto) {
+		this.monto = monto;
+	}
+	public String getTipoSolicitud() {
+		return tipoSolicitud;
+	}
+	public void setTipoSolicitud(String tipoSolicitud) {
+		this.tipoSolicitud = tipoSolicitud;
+	}
+	public String getAprobadores() {
+		return aprobadores;
+	}
+	public void setAprobadores(String aprobadores) {
+		this.aprobadores = aprobadores;
+	}
+	public String getConceptosInvolucrados() {
+		return conceptosInvolucrados;
+	}
+	public void setConceptosInvolucrados(String conceptosInvolucrados) {
+		this.conceptosInvolucrados = conceptosInvolucrados;
+	}
+	public long getTotalDeMinutosestado() {
+		return totalDeMinutosestado;
+	}
+	public void setTotalDeMinutosestado(long totalDeMinutosestado) {
+		this.totalDeMinutosestado = totalDeMinutosestado;
+	}
+	public String getDescripcionEstado() {
+		return descripcionEstado;
+	}
+	public void setDescripcionEstado(String descripcionEstado) {
+		this.descripcionEstado = descripcionEstado;
+	}
+	public String getTiempo() {
+		return tiempo;
+	}
+	public void setTiempo(String tiempo) {
+		this.tiempo = tiempo;
+	}
+	public String getTiempoTotal() {
+		return tiempoTotal;
+	}
+	public void setTiempoTotal(String tiempoTotal) {
+		this.tiempoTotal = tiempoTotal;
+	}
+	public List<PlanillaHitosDTO> getListaHitos() {
+		return listaHitos;
+	}
+	public void setListaHitos(List<PlanillaHitosDTO> listaHitos) {
+		this.listaHitos = listaHitos;
+	}
+	public String getFechaEmision() {
+		return fechaEmision;
+	}
+	public void setFechaEmision(String fechaEmision) {
+		this.fechaEmision = fechaEmision;
+	}
+	public String getHoraEmision() {
+		return horaEmision;
+	}
+	public void setHoraEmision(String horaEmision) {
+		this.horaEmision = horaEmision;
+	}
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+	
+	
+	
+	
+	
+}

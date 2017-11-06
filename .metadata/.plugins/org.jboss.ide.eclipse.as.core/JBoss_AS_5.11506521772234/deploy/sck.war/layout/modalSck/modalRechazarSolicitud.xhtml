@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	<rich:modalPanel id="mpRechazarSolicitud" autosized="true" width="400" height="100">
+    	 <f:facet name="header">
+            <h:outputText value="Rechazar Solicitud" style="padding-right:15px;" />
+        </f:facet>
+    	<f:facet name="controls">
+            <h:panelGroup>
+               	<h:graphicImage value="img/close.png" styleClass="hidelink" id="mpRechazarSolicitudhidelink" />
+                <rich:componentControl for="mpRechazarSolicitud" attachTo="mpRechazarSolicitudhidelink"
+                   	operation="hide" event="onclick" />
+            </h:panelGroup>
+        </f:facet>
+        <h:form id="frm_rechazar">
+          <s:fragment rendered="#{respuestaSolicitudAction.usuarioCargoAux.administrador ==  false}">
+		        <h:panelGrid id="escrituraRechazar" columns="1" cellpadding="0" cellspacing="5">
+		        	<h:outputLabel value="¿Está seguro de rechazar la solicitud seleccionada.?" style="font-size:14px; font-weight: bold;"/>
+				</h:panelGrid>
+				<table cellpadding="0" cellspacing="0" width="100%">
+					<tr>
+						<td align="center">
+					        <h:panelGrid id="ingresar" columns="3" cellpadding="0" cellspacing="5" columnClasses="col_top">
+				        		<a:commandButton  value="Si" 
+				        						 ajaxSingle="true"
+				        	                reRender="mpRechazoFormularioSolicitud,mpRechazarSolicitud"
+				        	                oncomplete="#{rich:component('mpRechazoFormularioSolicitud')}.show()"
+				        		            /> 
+				        		            
+				        		<a:commandButton action="#{respuestaSolicitudAction.salirAnulacionSolicitud()}" 
+				        						 value="No" 
+				        						 ajaxSingle="true"
+				        	                reRender="mpRechazarSolicitud"
+				        	                disabled="false"
+				        		            oncomplete="if (#{respuestaSolicitudAction.salirDelMensaje==true}) {#{rich:component('mpRechazarSolicitud')}.hide()}" 
+				        		            />
+							</h:panelGrid>					
+						
+						</td>				
+					</tr>
+				</table>
+			</s:fragment>
+			<s:fragment rendered="#{respuestaSolicitudAction.usuarioCargoAux.administrador ==  true}">
+		        <h:panelGrid id="escrituraRechazarAdR" columns="1" cellpadding="0" cellspacing="5">
+		        	<h:outputLabel value="¿Está seguro de rechazar la solicitud seleccionada.?" style="font-size:14px; font-weight: bold;"/>
+				</h:panelGrid>
+				<table cellpadding="0" cellspacing="0" width="100%">
+					<tr>
+						<td align="center">
+					        <h:panelGrid id="ingresarAdR" columns="3" cellpadding="0" cellspacing="5" columnClasses="col_top">
+				        		<a:commandButton  value="Si" 
+				        						 ajaxSingle="true"
+				        	                reRender="mpRechazoFormularioSolicitud,mpRechazarSolicitud"
+				        	                oncomplete="#{rich:component('mpRechazoFormularioSolicitud')}.show()"
+				        		            /> 
+				        		            
+				        		<a:commandButton action="#{respuestaSolicitudAction.salirAnulacionSolicitud()}" 
+				        						 value="No" 
+				        						 ajaxSingle="true"
+				        	                reRender="mpRechazarSolicitud"
+				        	                disabled="false"
+				        		            oncomplete="if (#{respuestaSolicitudAction.salirDelMensaje==true}) {#{rich:component('mpRechazarSolicitud')}.hide()}" 
+				        		            />
+							</h:panelGrid>					
+						
+						</td>				
+					</tr>
+					<ui:remove>
+					<tr>
+						<td align="center">
+								 <h:selectOneRadio id="logicEnvioToNoEnvioAdR"  
+									   value="#{respuestaSolicitudAction.envioToNoEnvioCorreo}"
+									   dir="ltr" disabled="false" layout="lineDirection">
+									 <f:selectItem itemLabel="Envio de Correo" itemValue="Envio"/>
+									 <f:selectItem itemLabel="No Envio de Correo" itemValue="NoEnvio"/>
+					       			   	<a:support event="onchange" 
+				                         reRender="logicEnvioToNoEnvio"
+				             			      ajaxSingle="true" 
+				             			      action="#{respuestaSolicitudAction.seleccionarEnvioDeCorreoAndNoEnvio()}" 
+				             			     />	
+								 </h:selectOneRadio>   
+						</td>				
+					</tr>					
+					</ui:remove>
+				</table>
+			
+			 
+			
+			</s:fragment> 
+        </h:form>
+    </rich:modalPanel>
+    
+</ui:composition>

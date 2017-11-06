@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+      login-required="true">
+      
+      <restrict>#{identity.menu.listUsuario == true}</restrict>
+
+   <param name="firstResult" value="#{usuariosList.firstResult}"/>
+   <param name="sort" value="#{usuariosList.orderColumn}"/>
+   <param name="dir" value="#{usuariosList.orderDirection}"/>
+   <param name="logic" value="#{usuariosList.restrictionLogicOperator}"/>
+
+   <param name="from"/>
+   <param name="login" value="#{usuariosList.usuarios.login}"/>
+   <param name="pass" value="#{usuariosList.usuarios.pass}"/>
+   <param name="nom" value="#{usuariosList.usuarios.nom}"/>
+   <param name="ape" value="#{usuariosList.usuarios.ape}"/>
+
+</page>

@@ -1,0 +1,11 @@
+#File used by hibernate tools to override <datasource> and other container specific settings in persistence.xml
+hibernate.connection.password=Kupfer2011
+hibernate.connection.username=sa
+hibernate.connection.driver_class=com.microsoft.sqlserver.jdbc.SQLServerDriver
+hibernate.dialect=org.hibernate.dialect.SQLServerDialect
+hibernate.connection.url=jdbc:sqlserver://localhost:1433;databaseName=[SCORING_PRD]
+
+hibernate.connection.provider_class=org.hibernate.connection.DriverManagerConnectionProvider
+hibernate.datasource=
+hibernate.transaction.manager_lookup_class=
+

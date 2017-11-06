@@ -1,0 +1,31 @@
+package org.domain.sck.entity.emuns;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public enum TipoSolicitudType {
+	
+	V1N("1N"), V1C("1C"), LC1("2I"), LC2("2N"), LC3("2R"), CR1("3R"),CR2("3P"),CRP3("3RP"),CRP4("3CC"), OS1("4B"),OS2("4D"),OS("4BD"),OS3("4DM"),OS4("4PR")   ;
+	
+	private String nombre;
+
+	private TipoSolicitudType(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public String getNombre() {
+		return nombre;
+	}
+	
+	
+	private static final List<TipoSolicitudType> tipos = new ArrayList<TipoSolicitudType>();
+	
+	static {
+		tipos.addAll(Arrays.asList(TipoSolicitudType.values()));
+	}
+
+	public static List<TipoSolicitudType> getTipos() {
+		return tipos;
+	}
+}

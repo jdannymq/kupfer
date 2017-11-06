@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/layout/template.xhtml"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:p="http://primefaces.prime.com.tr/ui">
+    
+  <ui:define name="body">
+ <h:form id="frmSeleccion">
+    <rich:panel id="panelGeneral">
+        <f:facet name="header">Solicitudes Para Liberar</f:facet>
+			<div style="float:left; width: 100%">
+    			<table cellpadding="0" cellspacing="0" border="0" style="font-size:10px;" width="100%">
+    				<tr >
+    					<td width="100%;" height="20px;"> 
+				    		<a:outputPanel id="panelMensaje" >
+					    		<h:messages  globalOnly="true" styleClass="message"
+						            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
+					        </a:outputPanel>    					
+    					</td>
+    				</tr>	
+    				<tr >
+    					<td width="100%;" height="10px;"  style="font-size:13px; font-weight:bold"> 
+							Lista de Solicitudes en estado de Aprobación 					
+    					</td>
+    				</tr>	
+    				<tr >
+    					<td width="100%;" >
+    					  <a:outputPanel id="grillaSolicictud">
+						    <div class="results" id="solicitudesList" style="height:180px; overflow: auto; border:1px solid #000000;padding:3px;">
+						    	<h:outputText value="No existen solicitudes para liberar ." rendered="#{empty liberarSolicitudEnviadaAprobacionAction.listaSolicitudesDto}"/>
+							    <rich:dataTable id="solicitudList"
+							                var="_sol"
+							              value="#{liberarSolicitudEnviadaAprobacionAction.listaSolicitudesDto}"
+							           rendered="#{not empty liberarSolicitudEnviadaAprobacionAction.listaSolicitudesDto}"
+							           style="font-size:7px; width:100%;">
+							           
+							        <rich:column  style="font-size:9px;">
+							            <f:facet name="header">Nº</f:facet>
+							            <h:outputText value="#{_sol.idSolictud}"/>
+							        </rich:column>
+							        <rich:column width="75px;" style="text-align: center; font-size:9px;">
+							            <f:facet name="header">Fecha Sol. </f:facet>
+							            <h:outputText value="#{_sol.fechaEmision}">
+							            	<s:convertDateTime pattern="dd-MM-yy HH:mm" />
+							            </h:outputText>
+							        </rich:column>
+							        <rich:column style="font-size:9px;">
+							            <f:facet name="header">Razon Social</f:facet>
+							            <h:outputText value="#{_sol.razonSocial}"/>
+							        </rich:column>
+							        <rich:column style="font-size:9px;" width="100px;" >
+							            <f:facet name="header">Tipo Sol.</f:facet>
+							            <h:outputText value="#{_sol.despTipoSolictud}"/>
+							        </rich:column>
+							        <rich:column style="text-align: center;font-size:9px;">
+							            <f:facet name="header">Negocio</f:facet>
+							            <h:outputText value="#{_sol.monto}">
+							            	<f:convertNumber type="currency" currencySymbol="$ "/>
+							            </h:outputText>
+							        </rich:column>
+							        <rich:column style="text-align: center; font-size:9px;">
+							            <f:facet name="header">Seguro</f:facet>
+							            <h:outputText value="#{_sol.montoAsegurado}">
+							            	<f:convertNumber type="currency" currencySymbol="$ "/>
+							           </h:outputText>
+							        </rich:column>
+							        <rich:column style="text-align: center; font-size:9px;">
+							            <f:facet name="header">Riesgo Küpfer</f:facet>
+							            <h:outputText value="#{_sol.montoRiegoKupfer}">
+							            	<f:convertNumber type="currency" currencySymbol="$ "/>
+							            </h:outputText>
+							        </rich:column>							        
+							        <rich:column style="font-size:9px;">
+							            <f:facet name="header">Estado</f:facet>
+							            <h:outputText value="#{_sol.estado}"/>
+							        </rich:column>
+							        <rich:column style="font-size:9px;">
+							            <f:facet name="header">Usuario Actual</f:facet>
+							            <h:outputText value="#{_sol.usuarioProceso}"/>
+							        </rich:column>
+
+							        <rich:column style="text-align: center; font-size:9px;">
+							            <f:facet name="header">Aprobador(es)</f:facet>
+										<h:selectOneMenu id="idCboAprobador"
+					                		          value="#{_sol.derivado}"
+					                		       required="false"
+					                		          style="width :150px;">
+					                		          
+					                  	    <s:selectItems value="#{_sol.listaDerivados}" 
+					                  	                     var="_ldd" 
+					                  	    hideNoSelectionLabel="true" 
+					                  	        noSelectionLabel="Seleccionar..."
+					               			               label="#{_ldd.usuario.nombre}"  
+					               			               />
+					               			    <s:convertEntity/>           
+					       			   	<a:support event="onchange" 
+					                         reRender="idCboAprobador"
+					             			      ajaxSingle="true" 
+					             			      action="#{liberarSolicitudEnviadaAprobacionAction.obtenerObjetoSolicitudDerivadoUsuario(_sol)}" />											               			               
+										</h:selectOneMenu>		
+
+							        </rich:column>
+							        <rich:column style="font-size:9px;">
+							            <f:facet name="header">Derivada</f:facet>
+										<h:selectOneMenu id="idCboDeriva"
+					                		          value="#{_sol.usuarioAsignar}"
+					                		       required="false"
+					                		          style="width :150px;">
+					                  	    <s:selectItems value="#{liberarSolicitudEnviadaAprobacionAction.listaUsuarios}" 
+					                  	                     var="_lu" 
+					                  	    hideNoSelectionLabel="true" 
+					                  	        noSelectionLabel="Seleccionar..."
+					               			               label="#{_lu.nombre}"  
+					               			               />
+					               			    <s:convertEntity/>           
+					       			   	<a:support event="onchange" 
+					                         reRender="idCboDeriva"
+					             			      ajaxSingle="true" 
+					             			      action="#{liberarSolicitudEnviadaAprobacionAction.obtenerObjetoUsuario(_sol)}" />											               			               
+										</h:selectOneMenu>								            
+							        </rich:column>
+							        <rich:column styleClass="action" style="font-size:9px;">
+							            <f:facet name="header">Acción</f:facet>
+							            <a:commandLink action="#{liberarSolicitudEnviadaAprobacionAction.reAsignarSolicitudDerivadaUsuario(_sol)}" 
+							                           value="Reasignar Solicitud"
+							                            reRender="frmSeleccion,grillaSolicictud,panelMensaje">
+							                <f:param name="logIdSolicitud"
+							                        value="#{_sol.idSolictud}"/>							            
+							            </a:commandLink>
+							        </rich:column>
+							    </rich:dataTable>
+						    </div>    					
+    					  </a:outputPanel>
+    					</td>
+					</tr>
+    				<tr >
+    					<td width="100%;" height="10px;" style="font-size:13px; font-weight:bold"> 
+							Lista de Solicitudes en estado de Análisis 					
+    					</td>
+    				</tr>					
+    				<tr >
+    					<td width="100%;" >
+    					  <a:outputPanel id="grillaSolicictudAnalisis">
+						    <div class="results" id="solicitudesListAnalisis" style="height:180px; overflow: auto; border:1px solid #000000;padding:3px;">
+						    	<h:outputText value="No existen solicitudes para liberar en estado de analisis ." rendered="#{empty liberarSolicitudEnviadaAprobacionAction.listaSolicitudesDtoAnalisis}"/>
+							    <rich:dataTable id="solicitudListAnalisis"
+							                var="_sol"
+							              value="#{liberarSolicitudEnviadaAprobacionAction.listaSolicitudesDtoAnalisis}"
+							           rendered="#{not empty liberarSolicitudEnviadaAprobacionAction.listaSolicitudesDtoAnalisis}"
+							           style="font-size:7px; width:100%;">
+							           
+							        <rich:column  style="font-size:9px;">
+							            <f:facet name="header">Nº</f:facet>
+							            <h:outputText value="#{_sol.idSolictud}"/>
+							        </rich:column>
+							        <rich:column width="75px;" style="text-align: center; font-size:9px;">
+							            <f:facet name="header">Fecha Sol. </f:facet>
+							            <h:outputText value="#{_sol.fechaEmision}">
+							            	<s:convertDateTime pattern="dd-MM-yy HH:mm" />
+							            </h:outputText>
+							        </rich:column>
+							        <rich:column style="font-size:9px;">
+							            <f:facet name="header">Razon Social</f:facet>
+							            <h:outputText value="#{_sol.razonSocial}"/>
+							        </rich:column>
+							        <rich:column style="font-size:9px;" width="100px;" >
+							            <f:facet name="header">Tipo Sol.</f:facet>
+							            <h:outputText value="#{_sol.despTipoSolictud}"/>
+							        </rich:column>
+							        <rich:column style="text-align: center;font-size:9px;">
+							            <f:facet name="header">Negocio</f:facet>
+							            <h:outputText value="#{_sol.monto}">
+							            	<f:convertNumber type="currency" currencySymbol="$ "/>
+							            </h:outputText>
+							        </rich:column>
+							        <rich:column style="text-align: center; font-size:9px;">
+							            <f:facet name="header">Seguro</f:facet>
+							            <h:outputText value="#{_sol.montoAsegurado}">
+							            	<f:convertNumber type="currency" currencySymbol="$ "/>
+							           </h:outputText>
+							        </rich:column>
+							        <rich:column style="text-align: center; font-size:9px;">
+							            <f:facet name="header">Riesgo Küpfer</f:facet>
+							            <h:outputText value="#{_sol.montoRiegoKupfer}">
+							            	<f:convertNumber type="currency" currencySymbol="$ "/>
+							            </h:outputText>
+							        </rich:column>							        
+							        <rich:column style="font-size:9px;">
+							            <f:facet name="header">Estado</f:facet>
+							            <h:outputText value="#{_sol.estado}"/>
+							        </rich:column>
+							        <rich:column style="font-size:9px;">
+							            <f:facet name="header">Usuario Actual</f:facet>
+							            <h:outputText value="#{_sol.usuarioProceso}"/>
+							        </rich:column>
+
+							        <rich:column style="text-align: center; font-size:9px;">
+							            <f:facet name="header">Aprobador(es)</f:facet>
+										<h:selectOneMenu id="idCboAprobador"
+					                		          value="#{_sol.derivado}"
+					                		       required="false"
+					                		          style="width :150px;">
+					                  	    <s:selectItems value="#{_sol.listaDerivados}" 
+					                  	                     var="_ldd" 
+					                  	    hideNoSelectionLabel="true" 
+					                  	        noSelectionLabel="Seleccionar..."
+					               			               label="#{_ldd.usuario.nombre}"  
+					               			               />
+					               			    <s:convertEntity/>           
+					       			   	<a:support event="onchange" 
+					                         reRender="idCboAprobador"
+					             			      ajaxSingle="true" 
+					             			      action="#{liberarSolicitudEnviadaAprobacionAction.obtenerObjetoSolicitudDerivadoUsuario(_sol)}" />											               			               
+										</h:selectOneMenu>		
+
+							        </rich:column>
+							        <rich:column style="font-size:9px;">
+							            <f:facet name="header">Derivada</f:facet>
+										<h:selectOneMenu id="idCboDeriva"
+					                		          value="#{_sol.usuarioAsignar}"
+					                		       required="false"
+					                		          style="width :150px;">
+					                  	    <s:selectItems value="#{liberarSolicitudEnviadaAprobacionAction.listaUsuarios}" 
+					                  	                     var="_lu" 
+					                  	    hideNoSelectionLabel="true" 
+					                  	        noSelectionLabel="Seleccionar..."
+					               			               label="#{_lu.nombre}"  
+					               			               />
+					               			    <s:convertEntity/>           
+					       			   	<a:support event="onchange" 
+					                         reRender="idCboDeriva"
+					             			      ajaxSingle="true" 
+					             			      action="#{liberarSolicitudEnviadaAprobacionAction.obtenerObjetoUsuario(_sol)}" />											               			               
+										</h:selectOneMenu>								            
+							        </rich:column>
+							        <rich:column styleClass="action" style="font-size:9px;">
+							            <f:facet name="header">Acción</f:facet>
+							            <a:commandLink action="#{liberarSolicitudEnviadaAprobacionAction.reAsignarSolicitudDerivadaUsuario(_sol)}" 
+							                           value="Reasignar Solicitud"
+							                            reRender="frmSeleccion,grillaSolicictud,grillaSolicictudAnalisis,panelMensaje">
+							                <f:param name="logIdSolicitud"
+							                        value="#{_sol.idSolictud}"/>							            
+							            </a:commandLink>
+							        </rich:column>
+							    </rich:dataTable>
+						    </div>    					
+    					  </a:outputPanel>
+    					</td>
+					</tr>					
+					
+    			</table>
+		  </div>
+		<div style="clear:both"/>
+    </rich:panel>
+    </h:form>
+     <a:status onstart="abrirModal();" onstop="cerrarModal();"></a:status>
+</ui:define>
+
+</ui:composition>

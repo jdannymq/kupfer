@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    template="/layout/template.xhtml">
+
+    <ui:define name="body">
+    	<rich:panel style="width:100%;" >
+    		<f:facet name="header" >Listado de Estado de Solicitudes</f:facet>
+    		<h:form id="frmSeleccion">
+    			<table cellpadding="0" cellspacing="0" border="0" style="font-size:7px;">
+    				<tr >
+    					<td width="100%" >
+						    <div class="results" id="solicitudesList">
+						    	<h:outputText value="No existen solicitudes pendientes de aprobaciones." rendered="#{empty listadosSolicitudesEstadosAction.listaSolicitudesDto}"/>
+							    <rich:dataTable id="solicitudList"
+							                var="_sol"
+							              value="#{listadosSolicitudesEstadosAction.listaSolicitudesDto}"
+							           rendered="#{not empty listadosSolicitudesEstadosAction.listaSolicitudesDto}"
+							           style="font-size:7px;">
+							        <rich:column  style="font-size:9px;">
+							            <f:facet name="header">Nº</f:facet>
+							            <h:outputText value="#{_sol.idSolictud}"/>
+							        </rich:column>
+							        <rich:column width="75px;" style="text-align: center; font-size:9px;">
+							            <f:facet name="header">Fecha Sol. </f:facet>
+							            <h:outputText value="#{_sol.fechaEmision}">
+							            	<s:convertDateTime pattern="dd-MM-yy HH:mm" />
+							            </h:outputText>
+							        </rich:column>
+							        <rich:column style="font-size:9px;">
+							            <f:facet name="header">Rut Cliente</f:facet>
+							            <h:outputText value="#{_sol.rut}"/>
+							        </rich:column>
+							        <rich:column style="font-size:9px;">
+							            <f:facet name="header">Razon Social</f:facet>
+							            <h:outputText value="#{_sol.razonSocial}"/>
+							        </rich:column>
+							        <rich:column style="font-size:9px;">
+							            <f:facet name="header">Tipo Solicitud</f:facet>
+							            <h:outputText value="#{_sol.despTipoSolictud}"/>
+							        </rich:column>
+							        <rich:column style="text-align: center;font-size:9px;">
+							            <f:facet name="header">Negocio</f:facet>
+							            <h:outputText value="#{_sol.monto}">
+							            	<f:convertNumber type="currency" currencySymbol="$ "/>
+							            </h:outputText>
+							        </rich:column>
+							        <rich:column style="text-align: center; font-size:9px;">
+							            <f:facet name="header">Seguro</f:facet>
+							            <h:outputText value="#{_sol.montoAsegurado}">
+							            	<f:convertNumber type="currency" currencySymbol="$ "/>
+							           </h:outputText>
+							        </rich:column>
+							        <rich:column style="text-align: center; font-size:9px;">
+							            <f:facet name="header">Riesgo Küpfer</f:facet>
+							            <h:outputText value="#{_sol.montoRiegoKupfer}">
+							            	<f:convertNumber type="currency" currencySymbol="$ "/>
+							            </h:outputText>
+							        </rich:column>							        
+								    <rich:column style="font-size:9px;">
+							            <f:facet name="header">F.Pago</f:facet>
+							            <h:outputText value="#{_sol.condicionPago}"/>
+							        </rich:column>
+							        <rich:column style="font-size:9px;">
+							            <f:facet name="header">Sucursal</f:facet>
+							            <h:outputText value="#{_sol.sucursal}"/>
+							        </rich:column>
+							        <rich:column style="font-size:9px;">
+							            <f:facet name="header">Canal</f:facet>
+							            <h:outputText value="#{_sol.canal}"/>
+							        </rich:column>
+							        <rich:column style="text-align: center; font-size:9px;">
+							            <f:facet name="header">F. Resolución</f:facet>
+							            <h:outputText value="#{_sol.fechaSalida}">
+							            	<s:convertDateTime pattern="dd-MM-yy" />
+							            </h:outputText>
+							        </rich:column>
+							        <rich:column style="font-size:9px;">
+							            <f:facet name="header">Estado</f:facet>
+							            <h:outputText value="#{_sol.estado}"/>
+							        </rich:column>
+							        <rich:column style="font-size:9px;">
+							            <f:facet name="header">Proceso</f:facet>
+							            <h:outputText value="#{_sol.proceso}"/>
+							        </rich:column>
+							        <rich:column style="font-size:9px;">
+							            <f:facet name="header">Usuario Proceso</f:facet>
+							            <h:outputText value="#{_sol.usuarioProceso}"/>
+							        </rich:column>
+
+							        <rich:column styleClass="action" style="font-size:9px;">
+							            <f:facet name="header">Acción</f:facet>
+							            <a:commandLink action="#{listadosSolicitudesAction.sacarLogSolicitud(_sol)}" 
+							                           value="Log"
+							                            oncomplete="#{rich:component('mpConsultarLogs')}.show()"
+							                            reRender="mpConsultarLogs">
+							                <f:param name="logIdSolicitud"
+							                        value="#{_sol.idSolictud}"/>							            
+							            </a:commandLink>
+							            #{' '}
+							            <a:commandLink action="#{listadosSolicitudesAction.sacarLogHitos(_sol)}" 
+							                           value="Hitos"
+							                           oncomplete="#{rich:component('mpConsultarHitos')}.show()"
+							                           reRender="mpConsultarHitos">
+							                <f:param name="logIdSolicitud"
+							                        value="#{_sol.idSolictud}"/>							            
+							            </a:commandLink>							            
+ 										#{' '}		
+ 										
+			    						<s:link view="/RespuestaSolicitud.xhtml" 
+			    						       value="Aprobar/Rechazar" 
+			    						      	  id="respuestaId"
+									includePageParams="false"
+					     				  propagation="none" 
+					     				  rendered="#{_sol.evaluar == false}"
+					     				 >
+								                <f:param name="idSolicitud"
+								                        value="#{_sol.idSolictud}"/>
+								                <f:param name="tipoSolicitud"
+								                        value="#{_sol.tipoSolicitud}"/>								                        				     				  
+								                <f:param name="pagina"
+								                        value="ListaEstado"/>	
+				     				  </s:link> 
+				     				  
+				     				  
+				     				  <h:outputLabel value="En Evaluación." rendered="#{_sol.evaluar == true}" />
+				     				  
+							        </rich:column>
+							    </rich:dataTable>
+						    </div>    					
+    					</td>
+					</tr>
+    			</table>
+	    	</h:form>
+    	</rich:panel>
+		<a:status onstart="abrirModal();" onstop="cerrarModal();"></a:status>
+		<ui:include src="/layout/modalSck/modalConsultarHitos.xhtml"/>	
+		<ui:include src="/layout/modalSck/modalConsultarLogs.xhtml" />
+
+				
+		
+		
+    </ui:define>
+
+</ui:composition>

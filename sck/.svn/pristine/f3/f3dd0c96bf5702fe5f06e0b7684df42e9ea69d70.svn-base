@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	
+	<rich:modalPanel id="mpConsultarProductos" autosized="true" width="800">
+		<f:facet name="header">
+			<h:outputText value="Consulta de Productos Agregados"	style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:form>
+					<a:commandLink	ajaxSingle="true">
+						<h:graphicImage value="img/close.png" styleClass="hidelink"	id="mpConsultarProductoslink" />
+					</a:commandLink>
+					<rich:componentControl for="mpConsultarProductos"
+						attachTo="mpConsultarProductoslink" operation="hide"
+						event="onclick" />
+				</h:form>
+			</h:panelGroup>
+		</f:facet>
+		<rich:panel>
+			<h:form id = "frm_consultaProductos">
+		    	<div class="results" id="grillaProductos">
+			   		<h:outputText value="No ha Agregado ningun producto a la grilla." rendered="#{empty generarSolicitudAction.listaProductosagregados}"/>
+				    <rich:dataTable id="idProductosAgregados"
+				                var="_pr"
+				              value="#{generarSolicitudAction.listaProductosagregados}"
+				           rendered="#{not empty generarSolicitudAction.listaProductosagregados}">
+				        <rich:column>
+				            <f:facet name="header">Codigo De Producto</f:facet>
+				            <h:outputText value="#{_pr.codigo}"/>
+				        </rich:column>
+				        
+				        <rich:column>
+				            <f:facet name="header">Descripción de Producto </f:facet>
+				            <h:outputText value="#{_pr.descripcion}"/>
+				        </rich:column>
+				    </rich:dataTable>
+			    </div>
+			</h:form>
+		</rich:panel>
+	</rich:modalPanel>
+	
+</ui:composition>

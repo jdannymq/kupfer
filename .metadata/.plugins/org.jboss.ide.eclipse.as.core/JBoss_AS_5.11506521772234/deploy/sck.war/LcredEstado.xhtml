@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <rich:panel>
+        <f:facet name="header">Detalle del Ingreso o Modificación </f:facet>
+
+        <s:decorate id="codEstado" template="layout/display.xhtml">
+            <ui:define name="label">Codigo Estado</ui:define>
+            <h:outputText value="#{lcredEstadoHome.instance.codEstado}"/>
+        </s:decorate>
+
+        <s:decorate id="desEstado" template="layout/display.xhtml">
+            <ui:define name="label">Descripción Estado</ui:define>
+            <h:outputText value="#{lcredEstadoHome.instance.desEstado}"/>
+        </s:decorate>
+
+        <s:decorate id="cierraProceso" template="layout/display.xhtml">
+            <ui:define name="label">Cierra Proceso</ui:define>
+            <h:outputText value="#{lcredEstadoHome.instance.cierraProceso}"/>
+        </s:decorate>
+
+        <s:decorate id="grupoBarraAnalista" template="layout/display.xhtml">
+            <ui:define name="label">Grupo Barra Analista</ui:define>
+            <h:outputText value="#{lcredEstadoHome.instance.grupoBarraAnalista}"/>
+        </s:decorate>
+
+        <s:decorate id="grupoBarraEjecutivo" template="layout/display.xhtml">
+            <ui:define name="label">Grupo Barra Ejecutivo</ui:define>
+            <h:outputText value="#{lcredEstadoHome.instance.grupoBarraEjecutivo}"/>
+        </s:decorate>
+
+        <div style="clear:both"/>
+
+    </rich:panel>
+
+    <div class="actionButtons">
+
+        <s:button view="/LcredEstadoEdit.xhtml"
+                    id="edit"
+                 value="Editar"/>
+
+        <s:button view="/#{empty lcredEstadoFrom ? 'LcredEstadoList' : lcredEstadoFrom}.xhtml"
+                    id="done"
+                 value="Volver"/>
+
+    </div>
+
+</ui:define>
+
+</ui:composition>

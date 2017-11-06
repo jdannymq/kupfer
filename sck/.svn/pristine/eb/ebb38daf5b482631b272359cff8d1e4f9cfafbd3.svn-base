@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    template="/layout/template.xhtml">
+
+<ui:define name="body">
+	<h:form>
+    <rich:panel>
+        <f:facet name="header">Página Para Asignar Tipo de Pagos A Forma de Pago</f:facet>
+			<table cellpadding="0" cellspacing="0" border="0" width="100%">
+				<tr>
+					<td align="left"> Tipo de Pagos </td>
+					<td align="left"> Tipo de Solicitud </td>
+					<td align="left" colspan="3"> </td>
+				</tr>
+				<tr>
+					<td align="left" width="350px;">
+						<h:selectOneMenu id="idComboTipoPago"
+	                		          value="#{asociarTipoAndFormaPagoAction.tipoFormaPago}"
+	                		       required="false"
+	                		          style="width :300px;">
+	                  	    <s:selectItems value="#{asociarTipoAndFormaPagoAction.listaTipoFormaPago}" 
+	                  	                     var="_usu" 
+	                  	    hideNoSelectionLabel="true" 
+	                  	        noSelectionLabel="Seleccionar Tipo de Pago..."
+	               			               label="#{_usu.descripcion}"/>
+	               			    <s:convertEntity/>
+	       			   	<a:support event="onchange" 
+	                         reRender="idComboTipoPago"
+	             			      ajaxSingle="true" 
+	             			      action="#{asociarTipoAndFormaPagoAction.obtenerTipoFormaPago()}" />		 
+						</h:selectOneMenu>							
+					</td>
+					
+					<td align="left" width="350px;">
+						<h:selectOneMenu id="idComboTipoSolicitud"
+	                		          value="#{asociarTipoAndFormaPagoAction.tipoSolicitud}"
+	                		       required="false"
+	                		          style="width :300px;">
+	                  	    <s:selectItems value="#{asociarTipoAndFormaPagoAction.listaTipoSolictudes}" 
+	                  	                     var="_tipo" 
+	                  	    hideNoSelectionLabel="true" 
+	                  	        noSelectionLabel="Seleccionar Tipo Solicitud..."
+	               			               label="#{_tipo.desTipoSolicitud}"/>
+	               			    <s:convertEntity/>
+	       			   	<a:support event="onchange" 
+	                         reRender="idComboTipoSolicitud"
+	             			      ajaxSingle="true" 
+	             			      action="#{asociarTipoAndFormaPagoAction.obtenerTipoSolicitud()}" 
+	             			      process="idComboTipoSolicitud"/>		 
+						</h:selectOneMenu>							
+					</td>
+					
+					<td align="left" colspan="1" width="150px;">
+						<a:commandButton action="#{asociarTipoAndFormaPagoAction.consultarFormaPago()}" 
+						                  value="Consultar" 
+						             ajaxSingle="true"
+						                reRender="idComboTipoPago,mensaje,grillas,idComboTipoSolicitud,idListaUsuarioTipo"
+						                status="ajaxStatus"
+						                title="Consultar La Información..."
+						                />						
+						<a:commandButton action="#{asociarTipoAndFormaPagoAction.limpiarTotal()}" 
+						                  value="Limpiar" 
+						                  title="Limpiar la Página..."
+						             ajaxSingle="true"
+						                reRender="idComboTipoPago,mensaje,grillas,idComboTipoSolicitud,idListaUsuarioTipo"
+						                status="ajaxStatusLimpiar"/>						
+					 </td>
+					<td align="left" colspan="2" > 
+						<a:outputPanel id="mensaje">
+						 <span class="required" >
+							 <h:outputLabel  
+							 value="#{asociarTipoAndFormaPagoAction.mensaje}"  rendered="#{asociarTipoAndFormaPagoAction.mensaje != null}"/></span>
+						 </a:outputPanel>
+					</td>
+				</tr>
+				<tr>
+					<td align="left" colspan="5"> &nbsp;</td>
+				</tr>	
+				
+				<tr>
+					<td align="center" colspan="4" >
+					<a:outputPanel id="idTipoFormaPago">
+						<rich:panel >
+							<f:facet name="header">Seleccionar Forma de Pagos</f:facet>
+						        <rich:listShuttle id="idListaUsuarioTipo" sourceValue="#{asociarTipoAndFormaPagoAction.listaFormaPagos}"
+							            targetValue="#{asociarTipoAndFormaPagoAction.listaFormaPagosSeleccionados}" var="tipo" listsHeight="100"
+							            sourceListWidth="250" targetListWidth="250" sourceCaptionLabel="Listas Tipo de Forma de Pago Disponible"
+							            targetCaptionLabel="Listas Forma de Pago Seleccionado" orderControlsVisible="false" fastOrderControlsVisible="false" > 
+						            <ui:include src="/layout/facetSelectionLists.xhtml" />
+						            <s:convertEntity/>
+						            <rich:column>
+						                <h:outputText value="#{tipo.descripcion}"></h:outputText>
+						            </rich:column>
+								</rich:listShuttle>				
+						</rich:panel>
+							<a:commandButton action="#{asociarTipoAndFormaPagoAction.asignarFormaPago()}" 
+						                  value="Asignar Tipos de Forma de Pagos" 
+						             ajaxSingle="true"
+						                reRender="idTipoFormaPago,mensaje,grillas"
+						                status="ajaxStatusAgregar"
+						                title="Asignar Tipo de Usuario..."
+						                process="idListaUsuarioTipo"/>	
+					       </a:outputPanel>
+					 </td>
+				</tr>				
+				<tr>
+					<td align="left" colspan="4"> &nbsp;	</td>
+				</tr>				
+				<tr>
+					<td align="left" colspan="4">
+						<a:outputPanel id="grillas" style="width:100%;">
+						   <rich:panel id="grillaUsuarioTipo">
+						    <f:facet name="header">Resultado (#{asociarTipoAndFormaPagoAction.listaFormaPagosEncabezado.size()})</f:facet>
+						    <div class="results" id="usuarioTipoList">
+									<table cellpadding="0" cellspacing="0" border="0" width="100%">
+										<tr valign="top" >
+											<td align="center"><strong> Grilla de Tipo de Pagos Asociados </strong></td>
+										</tr>
+										<tr valign="top">
+											<td style="border:1px solid #000000;padding:3px;"> 
+											<div class="results" style="height:200px; overflow: auto;"  >
+											   <h:outputText value="No se asignado ninguna asociación."
+											               rendered="#{asociarTipoAndFormaPagoAction.listaFormaPagosEncabezado.size() == 0}"/>
+											
+												    <rich:dataTable id="usuarioNuevoList"
+												                var="_pr"
+												              value="#{asociarTipoAndFormaPagoAction.listaFormaPagosEncabezado}"
+												           rendered="#{not empty asociarTipoAndFormaPagoAction.listaFormaPagosEncabezado}">
+												
+												        <rich:column style="text-align: center;" width="50px;">
+												            <f:facet name="header">Id</f:facet>
+												            <h:outputText value="#{_pr.idEncabezado}"/>
+												        </rich:column>
+												        <rich:column style="text-align: center;" width="100px;">
+												            <f:facet name="header">Forma Pago</f:facet>
+												            <h:outputText value="#{_pr.tipoFormaPago.descripcion}"/>
+												        </rich:column>
+												        												        
+												        <rich:column>
+												            <f:facet name="header">Descripción</f:facet>
+												            <h:outputText value="#{_pr.descripcion}"/>
+												        </rich:column>       
+												        <rich:column>
+												            <f:facet name="header">Tipo de Solicitud</f:facet>
+												            <h:outputText value="#{_pr.tipo.desTipoSolicitud}"/>
+												        </rich:column> 
+												        
+												        <rich:column style="text-align: center;">
+												            <f:facet name="header">Acción</f:facet>
+															<a:commandButton action="#{asociarTipoAndFormaPagoAction.eliminarFormaPagoEncabezado(_pr)}" 
+															                  value="Eliminar" 
+															             ajaxSingle="true"
+															                reRender="idTipoFormaPago,mensaje,grillas"
+															                status="ajaxStatusEliminar"
+															                title="Eliminar Forma de Pago Asociado..."
+															                />													            
+												        </rich:column> 
+												    </rich:dataTable>
+											   </div>    
+											</td>
+										</tr>
+									</table>
+						    </div>
+						   </rich:panel>						
+						</a:outputPanel>
+					</td>
+				</tr>	
+			</table>
+        <div style="clear:both"/>
+    </rich:panel>
+		<a:outputPanel id="cargarFormaPago" ajaxRendered="false">
+			 <a:region renderRegionOnly="true">
+		    	<a:status id="ajaxStatus"
+			   	     onstart="#{rich:component('waitPanelcargarFormaPagos')}.show('',{top:'350px', left:'570px',height:'60px', width:'235px'})"
+			          onstop="#{rich:component('waitPanelcargarFormaPagos')}.hide()" />	 
+			 </a:region>
+		</a:outputPanel>   
+	 	<a:outputPanel id="agregar" ajaxRendered="false">
+			 <a:region renderRegionOnly="true">
+		    	<a:status id="ajaxStatusAgregar"
+			   	     onstart="#{rich:component('waitPanelAgregar')}.show('',{top:'350px', left:'570px',height:'60px', width:'235px'})"
+			          onstop="#{rich:component('waitPanelAgregar')}.hide()" />	 
+			 </a:region>
+		</a:outputPanel>   
+	    <a:outputPanel id="limpiarPagina" ajaxRendered="false">
+			 <a:region renderRegionOnly="true">
+		    	<a:status id="ajaxStatusLimpiar"
+			   	     onstart="#{rich:component('waitPanelLimpiar')}.show('',{top:'350px', left:'570px',height:'60px', width:'235px'})"
+			          onstop="#{rich:component('waitPanelLimpiar')}.hide()" />	 
+			 </a:region>
+		</a:outputPanel>  
+	 	<a:outputPanel id="eliminar" ajaxRendered="false">
+			 <a:region renderRegionOnly="true">
+		    	<a:status id="ajaxStatusEliminar"
+			   	     onstart="#{rich:component('waitPanelEliminar')}.show('',{top:'350px', left:'570px',height:'60px', width:'235px'})"
+			          onstop="#{rich:component('waitPanelEliminar')}.hide()" />	 
+			 </a:region>
+		</a:outputPanel> 
+	</h:form>
+
+	<rich:modalPanel id="waitPanelAgregar" style="text-align:center;" styleClass="reporte_tablas" >
+     	<h:outputText value="Asociando la Información..." style="font-size:16px;"/>
+     	<h:graphicImage value="/img/connect_active_nuevo.gif" />
+    </rich:modalPanel>	
+	<rich:modalPanel id="waitPanelcargarFormaPagos" style="text-align:center;" styleClass="reporte_tablas" >
+     	<h:outputText value="Cargado Información..." style="font-size:16px;"/>
+     	<h:graphicImage value="/img/connect_active_nuevo.gif" />
+    </rich:modalPanel>	
+	<rich:modalPanel id="waitPanelLimpiar" style="text-align:center;" styleClass="reporte_tablas" >
+     	<h:outputText value="Limpiando Página..." style="font-size:16px;"/>
+     	<h:graphicImage value="/img/connect_active_nuevo.gif" />
+    </rich:modalPanel>		
+	<rich:modalPanel id="waitPanelEliminar" style="text-align:center;" styleClass="reporte_tablas" >
+     	<h:outputText value="Eliminado Resgistro..." style="font-size:16px;"/>
+     	<h:graphicImage value="/img/connect_active_nuevo.gif" />
+    </rich:modalPanel>		
+</ui:define>
+
+</ui:composition>

@@ -1,0 +1,56 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <rich:panel>
+        <f:facet name="header">Detalle de la Sociedad</f:facet>
+
+        <s:decorate id="idSociedad" template="layout/display.xhtml">
+            <ui:define name="label">Id Sociedad</ui:define>
+            <h:outputText value="#{sociedadHome.instance.idSociedad}">
+                <f:convertNumber/>
+            </h:outputText>
+        </s:decorate>
+
+        <s:decorate id="codigoSociedad" template="layout/display.xhtml">
+            <ui:define name="label">Código Sociedad</ui:define>
+            <h:outputText value="#{sociedadHome.instance.codigoSociedad}"/>
+        </s:decorate>
+
+        <s:decorate id="razonSocial" template="layout/display.xhtml">
+            <ui:define name="label">Razón social</ui:define>
+            <h:outputText value="#{sociedadHome.instance.razonSocial}"/>
+        </s:decorate>
+
+        <s:decorate id="rut" template="layout/display.xhtml">
+            <ui:define name="label">Rut</ui:define>
+            <h:outputText value="#{sociedadHome.instance.rut}" />
+        </s:decorate>
+
+        <div style="clear:both"/>
+
+    </rich:panel>
+
+    <div class="actionButtons">
+
+        <s:button view="/SociedadEdit.xhtml"
+                    id="edit"
+                 value="Editar"/>
+
+        <s:button view="/#{empty sociedadFrom ? 'SociedadList' : sociedadFrom}.xhtml"
+                    id="done"
+                 value="Volver"/>
+
+    </div>
+
+</ui:define>
+
+</ui:composition>

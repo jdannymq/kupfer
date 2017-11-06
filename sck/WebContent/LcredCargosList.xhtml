@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="lcredCargosSearch" styleClass="edit">
+
+        <rich:simpleTogglePanel label="Filtro de Búsqueda de Cargos" switchType="ajax">
+			<h:panelGrid cellpadding="0" cellspacing="0" columns="5">
+	            <s:decorate template="/layout/display.xhtml">
+	                <ui:define name="label">Codigo Cargo</ui:define>
+	                <h:inputText id="codCargo" value="#{lcredCargosList.lcredCargos.codCargo}"/>
+	            </s:decorate>
+	
+	            <s:decorate template="/layout/display.xhtml">
+	                <ui:define name="label">Descripcíon Cargo</ui:define>
+	                <h:inputText id="desCargo" value="#{lcredCargosList.lcredCargos.desCargo}"/>
+	            </s:decorate>
+	
+	            <s:decorate template="/layout/display.xhtml">
+	                <ui:define name="label"></ui:define>
+	                <h:selectOneRadio id="logic" value="#{lcredCargosList.restrictionLogicOperator}" styleClass="radio">
+	                    <f:selectItem itemLabel="Todos" itemValue="and"/>
+	                    <f:selectItem itemLabel="Cualquiera" itemValue="or"/>
+	                </h:selectOneRadio>
+	            </s:decorate>
+			</h:panelGrid>
+        <div class="actionButtons">
+            <h:commandButton id="search" value="Buscar" title="Buscar" action="/LcredCargosList.xhtml"/>
+            <s:button id="reset" value="Limpiar" title="Limpiar" includePageParams="false"/>
+        </div>
+        </rich:simpleTogglePanel>
+
+
+
+    </h:form>
+	<br/>
+    <rich:panel>
+        <f:facet name="header">Resultados (#{empty lcredCargosList.resultList ? 0 : (lcredCargosList.paginated ? lcredCargosList.resultCount : lcredCargosList.resultList.size)})</f:facet>
+    <div class="results" id="lcredCargosList">
+
+    <h:outputText value="La búsqueda no produjo resultados de cargos" rendered="#{empty lcredCargosList.resultList}"/>
+
+    <rich:dataTable id="lcredCargosList"
+                var="_lcredCargos"
+              value="#{lcredCargosList.resultList}"
+           rendered="#{not empty lcredCargosList.resultList}">
+        <rich:column style="text-align: center;">
+            <f:facet name="header">
+                <ui:include src="/layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{lcredCargosList}"/>
+                    <ui:param name="propertyLabel" value="Codigo"/>
+                    <ui:param name="propertyPath" value="lcredCargos.codCargo"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_lcredCargos.codCargo}"/>
+        </rich:column>
+        <rich:column>
+            <f:facet name="header">
+                <ui:include src="/layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{lcredCargosList}"/>
+                    <ui:param name="propertyLabel" value="Descripción"/>
+                    <ui:param name="propertyPath" value="lcredCargos.desCargo"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_lcredCargos.desCargo}"/>
+        </rich:column>
+        <rich:column  style="text-align: center; width:100px;">
+            <f:facet name="header">
+                <ui:include src="/layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{lcredCargosList}"/>
+                    <ui:param name="propertyLabel" value="Nivel Cargo"/>
+                    <ui:param name="propertyPath" value="lcredCargos.nivelCargo"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_lcredCargos.nivelCargo}"/>
+        </rich:column>
+        <rich:column  style="text-align: center; width:100px;">
+            <f:facet name="header">
+                <ui:include src="/layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{lcredCargosList}"/>
+                    <ui:param name="propertyLabel" value="Nivel Siguiente"/>
+                    <ui:param name="propertyPath" value="lcredCargos.nivelSiguiente"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_lcredCargos.nivelSiguiente}"/>
+        </rich:column>
+        <rich:column  style="text-align: center;  width:100px;">
+            <f:facet name="header">
+                <ui:include src="/layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{lcredCargosList}"/>
+                    <ui:param name="propertyLabel" value="Zona"/>
+                    <ui:param name="propertyPath" value="lcredCargos.detalleZona"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="NO" rendered="#{_lcredCargos.detalleZona=='N'}"/>
+            <h:outputText value="SI" rendered="#{_lcredCargos.detalleZona=='S'}"/>
+        </rich:column>
+        <rich:column  style="text-align: center;  width:100px;">
+            <f:facet name="header">
+                <ui:include src="/layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{lcredCargosList}"/>
+                    <ui:param name="propertyLabel" value="Sucursal"/>
+                    <ui:param name="propertyPath" value="lcredCargos.detalleSucursal"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="NO" rendered="#{_lcredCargos.detalleSucursal=='N'}"/>
+            <h:outputText value="SI" rendered="#{_lcredCargos.detalleSucursal=='S'}"/>
+        </rich:column>
+        <rich:column  style="text-align: center; width:100px;">
+            <f:facet name="header">
+                <ui:include src="/layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{lcredCargosList}"/>
+                    <ui:param name="propertyLabel" value="Negocio"/>
+                    <ui:param name="propertyPath" value="lcredCargos.detalleNegocio"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="NO" rendered="#{_lcredCargos.detalleNegocio=='N'}"/>
+            <h:outputText value="SI" rendered="#{_lcredCargos.detalleNegocio=='S'}"/>            
+        </rich:column>
+        <rich:column  style="text-align: center; width:100px;">
+            <f:facet name="header">
+                <ui:include src="/layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{lcredCargosList}"/>
+                    <ui:param name="propertyLabel" value="Concepto"/>
+                    <ui:param name="propertyPath" value="lcredCargos.detalleConcepto"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="NO" rendered="#{_lcredCargos.detalleConcepto=='N'}"/>
+            <h:outputText value="SI" rendered="#{_lcredCargos.detalleConcepto=='S'}"/>              
+        </rich:column>
+        <rich:column  style="text-align: center; width:50px;">
+            <f:facet name="header">
+                <ui:include src="/layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{lcredCargosList}"/>
+                    <ui:param name="propertyLabel" value="Ind Borrado"/>
+                    <ui:param name="propertyPath" value="lcredCargos.indBorrado"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_lcredCargos.indBorrado}"/>
+        </rich:column>
+        <rich:column styleClass="action">
+            <f:facet name="header">Acción</f:facet>
+            <s:link view="/#{empty from ? 'LcredCargos' : from}.xhtml"
+                   value="#{empty from ? 'Ver' : 'Seleccionar'}"
+             propagation="#{empty from ? 'none' : 'default'}"
+                      id="lcredCargosViewId">
+                <f:param name="lcredCargosCodCargo"
+                        value="#{_lcredCargos.codCargo}"/>
+            </s:link>
+            #{' '}
+            <s:link view="/LcredCargosEdit.xhtml"
+                   value="Editar"
+             propagation="none"
+                      id="lcredCargosEdit"
+                rendered="#{empty from}">
+                <f:param name="lcredCargosCodCargo"
+                        value="#{_lcredCargos.codCargo}"/>
+            </s:link>
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+
+    <div class="tableControl">
+
+        <s:link view="/LcredCargosList.xhtml"
+            rendered="#{lcredCargosList.previousExists}"
+               value="#{messages.left}#{messages.left} Primera Página"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link view="/LcredCargosList.xhtml"
+            rendered="#{lcredCargosList.previousExists}"
+               value="#{messages.left} Página Anterior"
+                  id="previousPage">
+            <f:param name="firstResult"
+                    value="#{lcredCargosList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link view="/LcredCargosList.xhtml"
+            rendered="#{lcredCargosList.nextExists}"
+               value="Siguiente Página #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult"
+                    value="#{lcredCargosList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link view="/LcredCargosList.xhtml"
+            rendered="#{lcredCargosList.nextExists}"
+               value="Utima Página #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult"
+                    value="#{lcredCargosList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+
+    <s:div styleClass="actionButtons" rendered="#{empty from}">
+        <s:button view="/LcredCargosEdit.xhtml"
+                    id="create"
+           propagation="none"
+                 value="Crear Cargo">
+            <f:param name="lcredCargosCodCargo"/>
+        </s:button>
+    </s:div>
+
+</ui:define>
+
+</ui:composition>

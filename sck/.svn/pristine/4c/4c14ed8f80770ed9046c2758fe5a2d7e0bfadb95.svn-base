@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<e:workbook xmlns:e="http://jboss.com/products/seam/excel"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:h="http://java.sun.com/jsf/html" >
+
+	<e:worksheet name="Informe de Servicios" startColumn="0" startRow="0" value="#{nivelServicioAction.listaPlanillaFinal}" var="data">
+
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Nº Solicitud" />
+			</f:facet>
+			<e:cell value="#{data.idSolictud}" />
+		</e:column>
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Fecha Solicitud" />
+			</f:facet>
+			<e:cell value="#{data.fechaEmision}" />
+		</e:column>
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Rut cliente" />
+			</f:facet>
+			<e:cell value="#{data.rut}" />
+		</e:column>
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Razón Social" />
+			</f:facet>
+			<e:cell value="#{data.razonSocial}" />
+		</e:column>		
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Monto" />
+			</f:facet>
+			<e:cell value="#{data.monto}" />
+		</e:column>	
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Tipo Solicitud" />
+			</f:facet>
+			<e:cell value="#{data.tipoSolicitud}" />
+		</e:column>				
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Aprobadores" />
+			</f:facet>
+			<e:cell value="#{data.aprobadores}" />
+		</e:column>	
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Conceptos" />
+			</f:facet>
+			<e:cell value="#{data.conceptosInvolucrados}" />
+		</e:column>			
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Estado" />
+			</f:facet>
+			<e:cell value="#{data.descripcionEstado}" />
+		</e:column>			
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Tiempo" />
+			</f:facet>
+			<e:cell value="#{data.totalTimeAsHHMMSS}" />
+		</e:column>	
+		
+	</e:worksheet>
+</e:workbook>

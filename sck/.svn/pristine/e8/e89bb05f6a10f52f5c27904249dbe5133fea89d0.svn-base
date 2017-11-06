@@ -1,0 +1,403 @@
+package org.domain.sck.session;
+
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+
+import modelo.SapSystem;
+
+
+import org.domain.sck.dto.MenuDTO;
+import org.domain.sck.dto.ParametroUsuarioDTO;
+import org.domain.sck.dto.UsuarioSegurDTO;
+import org.domain.sck.entity.LcredCargos;
+import org.domain.sck.entity.LcredPerfiles;
+import org.domain.sck.entity.LcredUsuarioNivelEnc;
+import org.domain.sck.entity.LcredUsuarioNivelEncId;
+import org.domain.sck.entity.TipoPantalla;
+import org.domain.sck.entity.TipoUsuario;
+import org.domain.sck.entity.UsuarioCargo;
+import org.domain.sck.entity.UsuarioTipo;
+import org.domain.sck.entity.Usuariosegur;
+import org.domain.sck.entity.enums.EstadoEntityType;
+import org.domain.sck.seam.CustomIdentity;
+import org.domain.sck.seam.GlobalParameters;
+import org.domain.sck.session.service.scoring.ScoringService;
+import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.Logger;
+import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.web.RequestParameter;
+import org.jboss.seam.faces.FacesMessages;
+import org.jboss.seam.international.StatusMessage.Severity;
+import org.jboss.seam.log.Log;
+import org.jboss.seam.security.Credentials;
+
+import conexion.Connect;
+
+@Name("authenticator")
+public class Authenticator
+{
+	@Logger Log log;
+	@In CustomIdentity identity;
+	@In Credentials credentials;
+	
+	@In(value="#{entityManager}")
+	EntityManager entityManager;
+	
+	@In ScoringService scoringService;
+	
+	@In GlobalParameters globalParameters;
+	
+	private String codigoSistemaProduccion = "300";
+	
+	@RequestParameter(value="producciondesarrollo")
+	String producciondesarrollo;
+	
+	private List<LcredPerfiles> listaPerfiles;
+	
+
+	
+    @SuppressWarnings("unchecked")
+	public boolean authenticate()
+    {
+        log.debug("authenticating {0}", credentials.getUsername());
+        SapSystem system = null;
+    	Connect connect = null;     
+        if(credentials.getUsername() != null && !"".equals(credentials.getUsername())){
+
+        	if((credentials.getUsername().toLowerCase()).equals("administrador")){
+        		log.debug("Usted es Administrador ");
+        	}else{
+	        	log.debug("pasa por clave sap el usuario {0}", credentials.getUsername());
+//		    		system = new SapSystem(globalParameters.getNameSap(),
+//		    				globalParameters.getIpSap(), globalParameters.getClientSap(), 
+//		    				globalParameters.getSystemNumberSap(),
+//		    				credentials.getUsername(),
+//		    				credentials.getPassword()); 
+	
+	    		 system = new SapSystem(globalParameters.getNameSap(),
+	    				globalParameters.getIpSap(), globalParameters.getClientSap(), 
+	    				globalParameters.getSystemNumberSap(),
+	    				"intranet",
+	    				"informat");     		
+   		
+	    		
+	    		
+	    	 	
+	    		try{
+	    			log.debug("antes de conectar a sap");
+	    			connect = new Connect(system);
+	    			log.debug("despues de la coneccion.");
+	    		}catch (Exception e) {
+	    			log.debug("no conecta con la clave sap");
+	    			e.printStackTrace();
+	    			connect = null;
+	    		}
+	    		
+	    		if(connect != null){
+	    			log.debug("existe conexion {0}", connect.toString());
+	    			connect = null;
+	    		}else{
+					FacesMessages.instance().add(org.jboss.seam.international.StatusMessage.Severity.ERROR,"El usuario no existe en la base de datos de SAP o clave no corresponde...!!!!");
+					connect = null;
+					return false;
+	    		}
+        	}
+
+        	UsuarioSegurDTO usuarioAux = scoringService.sacarDatosSessionUsuario(credentials.getUsername().trim());
+    		UsuarioCargo usuarioCargo = null;
+    		if(usuarioAux != null){
+	    	   Usuariosegur usuario = null;
+	    	   	   try{
+	    	   		   usuario = entityManager.find(Usuariosegur.class, usuarioAux.getIdPersonal());
+	    	    		if(usuario.getAlias().equals("ADMINISTRADOR") || usuario.getAlias().equals("administrador")){
+	    	    			if(usuario.getPassword() != null && !usuario.getPassword().equals(credentials.getPassword().trim())){
+	    	 					   FacesMessages.instance().add(Severity.ERROR,"Error, la clave de acceso es incorrecta. #0",credentials.getUsername().trim());
+	    	 					   return false;	
+	    	    			}
+	    	    		}
+    	    			if(usuario.getEliminado() != null && usuario.getEliminado().booleanValue() == true){
+ 	 					   FacesMessages.instance().add(Severity.ERROR,"Error, el usuario no tiene cuenta activa en el sistema, usuario:#0",credentials.getUsername().trim());
+ 	 					   return false;	
+    	    			}	    	    		
+	    	   	   }catch (Exception e) {
+	    	   		   log.error("Error al sacar los datos del usuario #0", e.getMessage());
+ 					   FacesMessages.instance().add(Severity.ERROR,"Error al sacar los datos del usuario #0",credentials.getUsername().trim());
+ 					   return false;		    	   		   
+	    	   	   }
+	    	   	   
+	    	   	   try{
+	    	   			usuarioCargo = scoringService.getUsuarioCargo(usuarioAux.getIdPersonal());
+	    	   			if(usuarioCargo != null){
+	    	   				identity.setUsuarioCargo(usuarioCargo);
+	    	   				String query=null;
+	    	   				try{
+	    	   					if(usuario != null){
+	    	   						query = " select ut from UsuarioTipo ut " +
+	    	   						"  where ut.usuario.alias=:usu " ;
+	    	   						log.debug("usuario #0",usuario.getAlias());
+	    	   					    List<UsuarioTipo> listaUsuarioTipos = (List<UsuarioTipo>)
+	    	   						    entityManager.createQuery(query)
+	    	   						    			 .setParameter("usu",usuario.getAlias())
+	    	   										 .getResultList();	
+	    	   					    if(listaUsuarioTipos == null || listaUsuarioTipos.size() == 0){
+	    		            			  List<TipoUsuario> listaTipoUsuarios = (List<TipoUsuario>)
+	  		            					    entityManager.createQuery(" select t from TipoUsuario t where t.idTipo in (1,5,6,7,10) and t.estado=:estadoAux ")
+	  		            					    	.setParameter("estadoAux",EstadoEntityType.ACTIVO)
+	  		            					    	.getResultList();	
+		  		            			  if(listaTipoUsuarios != null){
+		  		            					for(TipoUsuario tipo: listaTipoUsuarios){
+		  		            						if(tipo != null){
+		  		            							UsuarioTipo nuevo = new UsuarioTipo();
+		  		            							nuevo.setTipoUsuario(tipo);
+		  		            							nuevo.setUsuario(usuario);
+		  		            							entityManager.persist(nuevo);
+		  		            						}
+		  		            					}
+		  		            					entityManager.flush(); 
+		  		            			  }	    	   					    	
+	    	   					    }
+	    	   					}
+	    	   				}catch (Exception e) {
+	    	   					log.error("Error, al sacar la lista de usuarios asigandos.", e.getMessage());
+	    	   				}
+	    	   				
+	    	   				
+	    	   				
+	    	   			}else{
+	    	   			      LcredCargos cargoAux = scoringService.getCargo("010");
+	    	   				/*crear objeto */
+	            			  usuarioCargo = new UsuarioCargo();
+	            			  usuarioCargo.setCargo(cargoAux);
+	            			  usuarioCargo.setAdministrador(false);
+	            			  usuarioCargo.setConcepto(null);
+	            			  usuarioCargo.setEnvioAutomatico(false);
+	            			  usuarioCargo.setNegocio(null);
+	            			  usuarioCargo.setSucursal(null);
+	            			  usuarioCargo.setUsuario(usuario);
+	            			  usuarioCargo.setZona(null);
+
+	            			  try{
+		            			  entityManager.persist(usuarioCargo);
+		            			  entityManager.flush();
+		            			  entityManager.refresh(usuarioCargo);
+		            			  identity.setUsuarioCargo(usuarioCargo);
+		            			  
+		            			  List<TipoUsuario> listaTipoUsuarios = (List<TipoUsuario>)
+		            					    entityManager.createQuery(" select t from TipoUsuario t where t.idTipo in (1,5,6,7,10) and t.estado=:estadoAux ")
+		            					    	.setParameter("estadoAux",EstadoEntityType.ACTIVO)
+		            					    	.getResultList();	
+		            			  if(listaTipoUsuarios != null){
+		            					for(TipoUsuario tipo: listaTipoUsuarios){
+		            						if(tipo != null){
+		            							UsuarioTipo nuevo = new UsuarioTipo();
+		            							nuevo.setTipoUsuario(tipo);
+		            							nuevo.setUsuario(usuario);
+		            							entityManager.persist(nuevo);
+		            						}
+		            					}
+		            					entityManager.flush(); 
+		            			  }
+		            			  
+		            		  }catch (Exception eUc) {
+	            				   log.error("Error, al persistir el objeto de UsuarioCargo para un usuario que no tiene perfil #0 ", eUc.getMessage());
+		     					   FacesMessages.instance().add(Severity.WARN,"Advertencia: No se pudo agregar los datos del usuario  #0 ",usuario.getNombre());
+		     					   return false;		            				  
+							  }		    	    	   				
+	    	   			}
+	    	   	   }catch (Exception e) {
+	    	   		   log.error("Error al sacar los datos del usuario #0", e.getMessage());
+ 					   FacesMessages.instance().add(Severity.ERROR,"Error al sacar los datos del usuario #0",credentials.getUsername().trim());
+ 					   return false;		    	   		   
+	    	   	   }
+	    	   	   
+	    	   	  //analsis de lo ingresado 
+            	  identity.guardarValores(usuario);
+	        	  MenuDTO menuPrincipal = new MenuDTO();
+	        	  ParametroUsuarioDTO parametros = new ParametroUsuarioDTO();
+	              List<UsuarioTipo>  listaUsuarioRol = (List<UsuarioTipo>)
+	                              entityManager.createQuery("select ut from UsuarioTipo ut where ut.usuario.idPersonal=:usuarioIdAux")
+	                              .setParameter("usuarioIdAux", usuario.getIdPersonal())
+	                              .getResultList();
+	              
+	              if(listaUsuarioRol != null && listaUsuarioRol.size() > 0){
+	            	  for(UsuarioTipo usuRol : listaUsuarioRol){
+	            		  if(usuRol != null && usuRol.getTipoUsuario().getEstado().equals(EstadoEntityType.ACTIVO)){
+	            			  
+	        	              List<TipoPantalla>  listaRolPantalla = (List<TipoPantalla>)
+                              entityManager.createQuery("select tp from TipoPantalla tp where tp.tipoUsuario.idTipo=:tipoAux")
+                              .setParameter("tipoAux", usuRol.getTipoUsuario().getIdTipo())
+                              .getResultList();
+	        	              
+	        	              if(listaRolPantalla != null){
+	        	            	  for(TipoPantalla p: listaRolPantalla){
+	        	            		  if(p != null){
+	        	            			  menuPrincipal.habilitarMenu(p.getPantalla()); 
+	        	            			  menuPrincipal.hablitarPantalla(p.getPantalla());
+	        	            		  }
+	        	            	  }
+	        	            	  
+	        	              }
+	            		  }
+	            	  }
+	            	  identity.setMenu(menuPrincipal);
+	            	  LcredUsuarioNivelEnc lcred = null;
+	            	  try{
+	            		  try{
+	            		  	   lcred = (LcredUsuarioNivelEnc)
+	            		  			   entityManager.createQuery("select lune from LcredUsuarioNivelEnc lune " +
+	            		  										" where lune.id.idUsuario=:usuarioIdAux")
+	                          .setParameter("usuarioIdAux", usuario.getAlias().trim())
+	                          .getSingleResult();
+	            		  	   if(lcred != null){
+	            		  		   log.debug("nombre : #1", lcred.getId().getIdUsuario());
+	            		  	   }else{
+	            		  		   lcred = scoringService.obtenerLcredUsuarioNivelEnc(credentials.getUsername());
+	            		  		   if(lcred == null){
+	            		  			   lcred = scoringService.obtenerLcredUsuarioNivelEncNativo(credentials.getUsername());
+	            		  			   if(lcred != null){
+	            		  				 log.debug("nombre : #0", lcred.getId().getIdUsuario()); 
+	            		  			   }
+	            		  		   }
+	            		  	   }
+	            		  	  
+	            		  }catch (Exception e) {
+	            			  
+	            			  String caracter = "N";
+	            			  lcred = new LcredUsuarioNivelEnc();
+	            			  LcredUsuarioNivelEncId id = new LcredUsuarioNivelEncId();
+	            			  id.setAdministrador(caracter.charAt(0));
+	            			  id.setEnvioAutomOtrasSolc(caracter.charAt(0));
+	            			  id.setIdUsuario(usuario.getAlias());
+	            			  id.setNombreUsuario(usuario.getNombre());
+	            			  id.setCorreo(usuario.getCorreo());
+	            			  LcredCargos cargoAux = scoringService.getCargo("010");
+	            			  if(cargoAux != null){
+		            			  /*primera carga de objeto de LcredUsuarioNivelEnc*/
+	            				  id.setCargo(cargoAux.getCodCargo());
+		            			  lcred.setId(id);
+		            			  try{
+			            			  entityManager.persist(lcred);
+			            			  entityManager.flush();
+			            			  entityManager.refresh(lcred);
+		            			  }catch (Exception eUc) {
+		            				   log.error("Error, al persistir el objeto de LcredUsuarioNivelEnc para un usuario que no tiene perfil #0", eUc.getMessage());
+			     					   FacesMessages.instance().add(Severity.WARN,"Advertencia: no se pudo agregar los datos del usuario  #0",usuario.getNombre());
+			     					   return false;		            				  
+								  }
+	            			  }else{
+		     					   FacesMessages.instance().add(Severity.WARN,"El usuario no tiene cargo definido, el cargo es  #0",usuario.getCargo().trim());
+		     					   return false;
+	            			  }
+	            		  }
+            		 
+	            		  if(lcred != null){
+	            			 parametros.setTipoUsuario("I");
+	            			 identity.setLcredUsuarioNivelEnc(lcred);
+	            		  	 identity.setUsuarioSegur(scoringService.sacarDatosSessionUsuario(lcred.getId().getIdUsuario()));
+	            		  	 identity.setListaPerfiles(sacarDatosPerfiles(lcred.getId().getIdUsuario()));
+	            		  	 if(identity.getListaPerfiles() == null){
+	            		  		parametros.setTipoUsuario("T");
+	            		  	 }
+	            		  	 parametros.setNivelCargo(sacarDatosCargo(lcred.getId().getIdUsuario()));
+	            		  	 if(parametros.getNivelCargo() == 0){
+            					  FacesMessages.instance().add(Severity.ERROR,"Usuario Sin Nivel de Cargo, No puede Ejecutar este proceso...!!!");
+            						return false;			            		  		 
+	            		  	 }
+
+//		            		     List<Object[]>	lista = entityManager
+//		            		    		 .createNativeQuery("EXEC SCORING_II.dbo.lcred_busca_sucursales @usuario ='"+lcred.getId().getIdUsuario()+"', @sociedad = '1000' ").getResultList();
+//		            		  	 if(lista == null){
+//	            					  FacesMessages.instance().add(Severity.ERROR,"Usuario Sin Sucursal Asignada.. Verifique...!!!");
+//	            					  return false;			            		  		 
+//		            		  	 }
+	            		  
+	            		  }else{
+	            			  parametros.setTipoUsuario("E");
+	            			  identity.setUsuarioSegur(scoringService.sacarDatosSessionUsuario(usuario.getAlias()));
+	            			  if(identity.getUsuarioSegur() != null){
+	            				  if(identity.getUsuarioSegur().getAlias() == null){
+	            					  FacesMessages.instance().add(Severity.ERROR,"Usuario no definido en el sistema.. Verifique...!!!");
+	            						return false;		            					  
+	            				  }
+	            				  if(identity.getUsuarioSegur().getCorreo() == null){
+	            					  FacesMessages.instance().add(Severity.ERROR,"Usuario sin correo electrónico asignado.. Verifique!!!");
+	            						return false;		            					  
+	            				  }
+	            			  }
+	            			  parametros.setTipoUsuario("V");
+	            		  }
+	            	  }catch (Exception e) {log.error("Error, al sacar los datos del usuario que se logeo", e.getMessage());}
+	              }else{
+	            	  menuPrincipal.habilitarPorDefecto();
+	            	  identity.setMenu(menuPrincipal);
+	              }
+
+
+	              return true;
+	        }else{
+				FacesMessages.instance().add(org.jboss.seam.international.StatusMessage.Severity.INFO,"Usuario no Existe en la la base de datos...!!!!");
+	        }  
+        }else{
+        	FacesMessages.instance().add(org.jboss.seam.international.StatusMessage.Severity.INFO,"Debe ingresar el usuario para entrar al sistema...!!!!");
+        }
+        return false;
+    }
+
+
+
+	
+	@SuppressWarnings("unchecked")
+	public List<String> sacarDatosPerfiles(String user){
+		List<String> datos = null;
+    	try{
+		  	List<Object> array = (List<Object>)entityManager
+		  			     .createNativeQuery("select distinct(perfil) as perfiles from [lcred_usuario_nivel_det] where id_usuario=:username " +
+		  			     		" and concepto='Perfil' and cod_concepto IN ('APRREC','GENSOL')")
+		  			          .setParameter("username", user)
+		  			          .getResultList();
+		  	if(array != null && array.size() > 0){
+		  		datos = new ArrayList<String>(0);
+		  		for(Object o :array){
+		  			datos.add(o.toString());
+		  		}
+		  	}
+    		
+    	}catch (Exception e) {
+    		e.printStackTrace();
+    		log.error("Error, al sacar la lista de los perfiles #0 ", e.getMessage());
+		}
+    	return datos;
+    }
+	public int sacarDatosCargo(String user){
+		
+    	try{
+		  	Object obj = (Object)entityManager
+		  			     .createNativeQuery("select nivel_cargo from lcred_v_nivel_cargo_usuario where id_usuario=:username ")
+		  			          .setParameter("username", user)
+		  			          .getSingleResult();
+		  	if(obj != null){
+		  		try{
+		  			return Integer.parseInt(obj.toString());
+		  		}catch (Exception e) {
+					log.error("Error, al transformar el cargo a numero #0 ", e.getMessage());
+		  			return 0;
+				}
+		  	}else{
+		  		return 0;
+		  	}
+    		
+    	}catch (Exception e) {
+    		log.error("Error, al sacar los datos del usuario de la base de datos segur #0 ", e.getMessage());
+		}
+    	return 0;
+    }	
+	public String getCodigoSistemaProduccion() {
+		return codigoSistemaProduccion;
+	}
+	public void setCodigoSistemaProduccion(String codigoSistemaProduccion) {
+		this.codigoSistemaProduccion = codigoSistemaProduccion;
+	}
+}

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	
+	<rich:modalPanel id="mpAgregarConceptoNegocio" autosized="true" width="800">
+		<f:facet name="header">
+			<h:outputText value="Conceptos de Negocios"	style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:form>
+					<a:commandLink	ajaxSingle="true" reRender="conceptoInv,montoPotencial,idUsuariosCorreosLCAux" 
+						action="#{generarSolicitudAction.generarStringConceptoAsociado()}">
+						<h:graphicImage value="img/close.png" styleClass="hidelink"	id="mpAgregarConceptoNegociolink" />
+					</a:commandLink>
+					<rich:componentControl for="mpAgregarConceptoNegocio"
+						attachTo="mpAgregarConceptoNegociolink" operation="hide"
+						event="onclick" 
+						/>
+				</h:form>
+			</h:panelGroup>
+		</f:facet>
+		<rich:panel>
+			<h:form id = "frm_agregarProductos">
+			
+				<a:outputPanel id="panelDatos" >
+					<table cellpadding="0" cellspacing="0" border="0" width="100%">
+						<tr>
+							<td width="500px;">Conceptos</td>
+							<td width="20px;"> </td>
+							<td></td>
+						</tr>	
+						<tr>
+							<td colspan="3" width="100%" align="center">
+							  <a:outputPanel id="seleccionMotivosRechazos">
+								        <rich:listShuttle id="idListaConceptos" sourceValue="#{generarSolicitudAction.listaCboConceptoNegocio}"
+									            targetValue="#{generarSolicitudAction.listaCboConceptoNegocioSeleccion}" var="conceptoNegocioNew" listsHeight="100"
+									            sourceListWidth="250" targetListWidth="250" sourceCaptionLabel="Listas Conceptos Disponible"
+									            targetCaptionLabel="Listas Conceptos Seleccionados" orderControlsVisible="false" fastOrderControlsVisible="false" > 
+								            <ui:include src="/layout/facetSelectionLists.xhtml" />
+								            <s:convertEntity/>
+								            <rich:column>
+								                <h:outputText value="#{conceptoNegocioNew.descripcion}"></h:outputText>
+								            </rich:column>
+										</rich:listShuttle>				
+							  </a:outputPanel>						
+							</td>
+						</tr>							
+						
+						<tr>
+							<td width="500px;">
+							</td>
+							<td width="20px;">
+							</td>
+							<td align="center"> 
+								<a:commandButton value="Agregar" 
+								                action="#{generarSolicitudAction.agregarConceptoListaReserva()}"
+					         		          reRender="agregarConceptoNegocio,listaConceptoNegocioList,seleccionMotivosRechazos" 
+					         	            oncomplete="if (#{generarSolicitudAction.mensajeExplicativo == null}) {alert('Concepto Agregado con exito!');}"
+					         	            process="idListaConceptos"/>							
+							</td>
+						</tr>	
+						<tr>
+							<td colspan="3" height="10px;"></td>
+						</tr>							
+					</table>
+				
+				
+				</a:outputPanel>
+	    		<a:outputPanel id="agregarConceptoNegocio" >
+		    		<h:messages  globalOnly="true" styleClass="message"
+			            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
+		        </a:outputPanel>
+		        
+				<a:outputPanel id="listaConceptoNegocioList">
+					<rich:panel>
+					        <f:facet name="header">Resultados (#{generarSolicitudAction.listaSelConceptoNegocio.size()})</f:facet>
+					    	<div class="results"  style="height:200px; overflow: auto;" >
+					   		<h:outputText value="No ha Agregado ningun concepto a la grilla." rendered="#{empty generarSolicitudAction.listaSelConceptoNegocio}"/>
+							    <rich:dataTable id="idCnAgregados"
+							                var="_concepto"
+							              value="#{generarSolicitudAction.listaSelConceptoNegocio}"
+							           rendered="#{not empty generarSolicitudAction.listaSelConceptoNegocio}">
+							        <rich:column>
+							            <f:facet name="header">Negocio </f:facet>
+							            <h:outputText value="#{_concepto.conceptoNegocio.desNegocio}"/>
+							        </rich:column>
+							        <rich:column>
+							            <f:facet name="header">Concepto</f:facet>
+							            <h:outputText value="#{_concepto.conceptoNegocio.concepto}"/>
+							        </rich:column>
+							        <rich:column>
+							            <f:facet name="header">Descripción de Concepto </f:facet>
+							            <h:outputText value="#{_concepto.conceptoNegocio.descripcion}"/>
+							        </rich:column>
+							        <ui:remove>
+								        <rich:column style="text-align: right;">
+								            <f:facet name="header">Monto </f:facet>
+								            <h:outputText value="#{_concepto.monto}">
+								            	<f:convertNumber type="currency" currencySymbol="" locale="#{globalLocale}"/>
+								            </h:outputText>
+								        </rich:column>	
+							        </ui:remove>
+							        <rich:column styleClass="action">
+							            <f:facet name="header">Acción</f:facet>
+										<a:commandButton value="Eliminar" 
+										                action="#{generarSolicitudAction.eliminarConceptoNegocioListaAgregado(_concepto)}"
+						         		              reRender="frm_agregarProductos,seleccionMotivosRechazos" />		
+			
+							        </rich:column>
+							    </rich:dataTable>
+					   		</div>
+					    
+					    
+					 </rich:panel>
+	   			 </a:outputPanel>
+			</h:form>
+		</rich:panel>
+	</rich:modalPanel>
+	
+</ui:composition>

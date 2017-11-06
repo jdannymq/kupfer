@@ -1,0 +1,144 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	<rich:modalPanel id="mpAgregarClienteDM" autosized="true" width="800">
+    	 <f:facet name="header">
+            <h:outputText value="Agregar Cliente DM" style="padding-right:15px;" />
+        </f:facet>
+    	<f:facet name="controls">
+            <h:panelGroup>
+            	<h:form>
+					<a:commandLink action="#{generarSolicitudAction.limpiarClienteDM}" ajaxSingle="true">
+						<h:graphicImage value="img/close.png" styleClass="hidelink" id="mpAgregarClienteDMhidelink" />
+					</a:commandLink>
+					<rich:componentControl for="mpAgregarClienteDM" attachTo="mpAgregarClienteDMhidelink"
+                   		operation="hide" event="onclick" />
+				</h:form>
+            </h:panelGroup>
+        </f:facet>
+        <h:form id="frm_AgregarClienteDM">
+        	 <rich:panel>
+        	 	<f:facet name="header">Informacion de Cliente  </f:facet>
+        	 	<h:panelGrid columns="2">
+		        	<s:decorate template="/layout/edit.xhtml">
+						<ui:define name="label">Rut (xxxxxxxx-x)</ui:define>
+						<h:inputText id="idRutClienteDM" 
+									value="#{generarSolicitudAction.clienteDM.id.rut}" 
+						          required="false"  
+							       maxlength="10"
+							       size="10" 
+							       disabled="true">
+						</h:inputText>	       
+		 			</s:decorate>        	 	
+		        	<s:decorate template="/layout/edit.xhtml">
+						<ui:define name="label">Nombre</ui:define>
+						<h:inputText id="idNombreClienteDM" 
+									value="#{generarSolicitudAction.clienteDM.id.nombre}" 
+						          required="false"  
+							       maxlength="120"
+							       size="50" 
+							       disabled="true" >
+						</h:inputText>	        	
+					</s:decorate>        	 	
+        	 	</h:panelGrid>
+        	 
+        	 </rich:panel>     
+        	 
+        	 <rich:panel>
+        	 	<f:facet name="header">Informacion de Comercial  </f:facet>
+        	 	<h:panelGrid columns="3">
+		        	<s:decorate template="/layout/edit.xhtml">
+						<ui:define name="label">Oficina Venta</ui:define>
+						<h:inputText id="idOficinaClienteDM" 
+									value="#{generarSolicitudAction.clienteDM.id.oficinaVentas}" 
+						          required="false"  
+							       maxlength="20"
+							       size="10" >
+						</h:inputText>	
+		        	</s:decorate>        	 	
+	 	        	<s:decorate template="/layout/edit.xhtml">
+						<ui:define name="label">Zona</ui:define>
+						<h:inputText id="idzonaClienteDM" 
+									value="#{generarSolicitudAction.clienteDM.id.zona}" 
+						          required="false"  
+							       maxlength="10"
+							       size="10" >
+						</h:inputText>	
+		        	</s:decorate>
+		        	<s:decorate template="/layout/edit.xhtml">
+						<ui:define name="label">Sector</ui:define>
+						<h:inputText id="idOficinaClienteDM" 
+									value="#{generarSolicitudAction.clienteDM.id.sector}" 
+						          required="false"  
+							       maxlength="30"
+							       size="10" >
+						</h:inputText>	
+		        	</s:decorate>
+		        	<s:decorate template="/layout/edit.xhtml">
+						<ui:define name="label">Lista de Precio</ui:define>
+						<h:inputText id="idOficinaClienteDM" 
+									value="#{generarSolicitudAction.clienteDM.id.listaPrecio}" 
+						          required="false"  
+							       maxlength="10"
+							       size="10" >
+						</h:inputText>	
+		        	</s:decorate>		        	
+	 	        	<s:decorate template="/layout/edit.xhtml">
+						<ui:define name="label">Rut v.Telefono</ui:define>
+						<h:inputText id="idRutvTefefonoDM" 
+									value="#{generarSolicitudAction.clienteDM.id.vendTelefono}" 
+						          required="false"  
+							       maxlength="20"
+							       size="10" >
+							       <ui:remove>
+								       <a:support event="onchange" ajaxSingle="true" 
+								                 action="#{generarSolicitudAction.validarRuts(1)}" 
+								               reRender="idRutvTefefonoDM,mensajeDM"/>	
+							       </ui:remove>        						       
+						</h:inputText>	
+		        	</s:decorate>
+		        	<s:decorate template="/layout/edit.xhtml">
+						<ui:define name="label">Rut v.Terreno</ui:define>
+						<h:inputText id="idTerrenoClienteDM" 
+									value="#{generarSolicitudAction.clienteDM.id.vendTerreno}" 
+						          required="false"  
+							       maxlength="20"
+							       size="10" >
+							       <ui:remove>
+								       <a:support event="onchange" ajaxSingle="true" 
+								                 action="#{generarSolicitudAction.validarRuts(2)}" 
+								               reRender="idTerrenoClienteDM,mensajeDM"/>
+							       </ui:remove>        									       
+						</h:inputText>	
+		        	</s:decorate> 			        	
+        	 	</h:panelGrid>
+        	 </rich:panel>	        	 
+		    <h:panelGrid columns="2">
+
+		        	<a:commandButton action="#{generarSolicitudAction.guardarClienteDMToListaClienteDM}" 
+		        	                  value="Guardar Cliente DM" 
+		        	               reRender="idCreacionDMList,idClienteCreacionDM,mensajeDM,idUsuariosCorreosOSAux3"
+       							 oncomplete="if (#{empty facesContext.maximumSeverity}) {#{rich:component('mpAgregarClienteDM')}.hide()}" /> 	
+	        	
+	        	
+
+	        	       	
+	        	
+	        	
+        	</h:panelGrid>
+        	<a:outputPanel id="mensajeDM">
+				<h:panelGrid columns="1">
+				        <h:outputLabel value="#{generarSolicitudAction.mensajeCreacionDm}" />				
+				</h:panelGrid>
+			</a:outputPanel>
+        </h:form>
+    </rich:modalPanel>
+	
+</ui:composition>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="lcredEstado" styleClass="edit">
+        <rich:panel>
+            <f:facet name="header">#{lcredEstadoHome.managed ? 'Editar' : 'Agregar'} Estado</f:facet>
+
+
+            <s:decorate id="codEstadoField" template="layout/edit.xhtml">
+                <ui:define name="label">Código Estado</ui:define>
+                <h:inputText id="codEstado"
+                       disabled="#{lcredEstadoHome.managed}"
+                       required="true"
+                           size="2"
+                      maxlength="2"
+                          value="#{lcredEstadoHome.instance.codEstado}">
+                    <a:support event="onblur" reRender="codEstadoField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="desEstadoField" template="layout/edit.xhtml">
+                <ui:define name="label">Descripción estado</ui:define>
+                <h:inputText id="desEstado"
+                           size="30"
+                      maxlength="30"
+                          value="#{lcredEstadoHome.instance.desEstado}">
+                    <a:support event="onblur" reRender="desEstadoField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="cierraProcesoField" template="layout/edit.xhtml">
+                <ui:define name="label">Cierra Proceso</ui:define>
+                <h:inputText id="cierraProceso"
+                           size="2"
+                      maxlength="2"
+                          value="#{lcredEstadoHome.instance.cierraProceso}">
+                    <a:support event="onblur" reRender="cierraProcesoField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="grupoBarraAnalistaField" template="layout/edit.xhtml">
+                <ui:define name="label">Grupo Barra Analista</ui:define>
+                <h:inputText id="grupoBarraAnalista"
+                          value="#{lcredEstadoHome.instance.grupoBarraAnalista}">
+                    <a:support event="onblur" reRender="grupoBarraAnalistaField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="grupoBarraEjecutivoField" template="layout/edit.xhtml">
+                <ui:define name="label">Grupo Barra Ejecutivo</ui:define>
+                <h:inputText id="grupoBarraEjecutivo"
+                          value="#{lcredEstadoHome.instance.grupoBarraEjecutivo}">
+                    <a:support event="onblur" reRender="grupoBarraEjecutivoField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+            <div style="clear:both">
+                <span class="required">*</span>
+               campos requeridos
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Guardar"
+                         action="#{lcredEstadoHome.persist}"
+                       disabled="#{!lcredEstadoHome.wired}"
+                       rendered="#{!lcredEstadoHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="Modificar"
+                         action="#{lcredEstadoHome.update}"
+                       rendered="#{lcredEstadoHome.managed}"/>
+			<ui:remove>
+            <h:commandButton id="delete"
+                          value="Delete"
+                         action="#{lcredEstadoHome.remove}"
+                      immediate="true"
+                       rendered="#{lcredEstadoHome.managed}"/>
+			</ui:remove>
+            <s:button id="cancelEdit"
+                   value="Cancelar"
+             propagation="end"
+                    view="/LcredEstado.xhtml"
+                rendered="#{lcredEstadoHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="Cancelar"
+             propagation="end"
+                    view="/#{empty lcredEstadoFrom ? 'LcredEstadoList' : lcredEstadoFrom}.xhtml"
+                rendered="#{!lcredEstadoHome.managed}"/>
+
+        </div>
+    </h:form>
+
+</ui:define>
+
+</ui:composition>

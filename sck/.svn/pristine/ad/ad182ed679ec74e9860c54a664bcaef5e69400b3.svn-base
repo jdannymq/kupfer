@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	
+	
+	<rich:modalPanel id="mpHistorialAproRecha" autosized="true" width="300">
+		<f:facet name="header">
+			<h:outputText value="Consulta a lo Aprobadores de Solicitud"	style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:form>
+					<a:commandLink	ajaxSingle="true" action="#{respuestaSolicitudAction.limpiarAprobadoresAndUsuarioRechazos()}">
+						<h:graphicImage value="img/close.png" styleClass="hidelink"	id="mpHistorialAproRechalink" />
+					</a:commandLink>
+					<rich:componentControl for="mpHistorialAproRecha"
+						attachTo="mpHistorialAproRechalink" operation="hide"
+						event="onclick" />
+				</h:form>
+			</h:panelGroup>
+		</f:facet>
+		<h:form id = "frm_consulta_Aprobador_rechazo">
+		<rich:panel>
+			<f:facet name="header"><h:outputText value="Información de Solicitud"	style="padding-right:15px;" /></f:facet>
+				<table cellpadding="0" cellspacing="0" width="100%;" >
+					<tr>
+						<td>Numero de Solicitud</td>
+						<td> 
+							<h:inputText id="idNumSolicitud" 
+										value="#{respuestaSolicitudAction.solicitudAntiguaDTO.solicitud.id.numSolicitud}" 
+							          required="false"  
+								       maxlength="10"
+								       size="10" 
+								       disabled="true">						
+						</td>
+					</tr>
+					<tr>
+						<td>Tipo de Solicitud</td>
+						<td> 
+							<h:inputText id="idTipoSolicitud" 
+										value="#{respuestaSolicitudAction.solicitudAntiguaDTO.solicitud.desTiposol}" 
+							          required="false"  
+								       maxlength="120"
+								       size="50" 
+								       disabled="true" >						
+						
+						</td>
+					</tr>
+					<tr>
+						<td>Fecha de Solicitud</td>
+						<td> 
+								<h:inputText value="#{respuestaSolicitudAction.solicitudAntiguaDTO.solicitud.id.fecSolicitud}" >
+												<s:convertDateTime pattern="dd-MM-yyyy" />
+								</h:inputText>						
+						</td>
+					</tr>
+					<tr>
+						<td>Hora de Solicitud</td>
+						<td> 
+							<h:inputText value="#{respuestaSolicitudAction.solicitud.hraSolicitud}">
+												<s:convertDateTime pattern="HH:mm:ss" />
+							</h:inputText>								
+						</td>
+					</tr>					
+				</table>
+
+		</rich:panel>
+		<rich:panel>
+			<f:facet name="header"><h:outputText value="Información de Aprobación"	style="padding-right:15px;" /></f:facet>
+				<table cellpadding="0" cellspacing="0" width="100%;" >
+					<tr>
+						<td>Fecha de Aprobación</td>
+						<td> 
+								<h:inputText value="#{respuestaSolicitudAction.solicitudAntiguaDTO.hitosAprobacion.fechaHora}" >
+												<s:convertDateTime pattern="dd-MM-yyyy" />
+								</h:inputText>						
+						</td>
+					</tr>
+					<tr>
+						<td>Hora de Aprobación</td>
+						<td> 
+							<h:inputText value="#{respuestaSolicitudAction.solicitudAntiguaDTO.hitosAprobacion.fechaHora}">
+												<s:convertDateTime pattern="HH:mm:ss" />
+							</h:inputText>								
+						</td>
+					</tr>
+				</table>	
+		</rich:panel>
+
+		<rich:panel>
+				<f:facet name="header"><h:outputText value="Aprobadores de la Solicitud"	style="padding-right:15px;" /></f:facet>
+				<a:outputPanel id="grillaAprobadores">
+		    	<div class="results" id="grillaProductos" style="height:380px; overflow: auto;">
+			   		<h:outputText value="No existe registro de los aprobadores de la solicitud." 
+			   		           rendered="#{empty respuestaSolicitudAction.solicitudAntiguaDTO.listaAprobadores}"/>
+				    <rich:dataTable id="idlistaAprobadores"
+				                var="_sp"
+				              value="#{respuestaSolicitudAction.solicitudAntiguaDTO.listaAprobadores}"
+				           rendered="#{not empty respuestaSolicitudAction.solicitudAntiguaDTO.listaAprobadores}">
+				        <rich:column>
+				            <f:facet name="header">Usuario</f:facet>
+				            <h:outputText value="#{_sp}"/>
+				        </rich:column>
+				    </rich:dataTable>
+			    </div>
+				</a:outputPanel>
+		</rich:panel>
+
+   	</h:form>
+
+	</rich:modalPanel>
+	
+</ui:composition>

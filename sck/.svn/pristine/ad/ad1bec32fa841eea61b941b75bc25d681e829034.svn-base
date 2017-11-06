@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	
+	<rich:modalPanel id="mpConsultarCuentaCorriente" height="500" width="1200" style="overflow: scroll; width:100%; height:100%;">
+		<f:facet name="header">
+			<h:outputText value="Consulta de Cuenta Corriente"	style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:form>
+					<a:commandLink action="#{visualizarSolicitudAction.limpiarDatos()}"
+							ajaxSingle="true">
+							<h:graphicImage value="img/close.png" styleClass="hidelink"
+							id="mpConsultarCuentaCorrientehidelink" />
+					</a:commandLink>
+		            <rich:componentControl for="mpConsultarCuentaCorriente" attachTo="mpConsultarCuentaCorrientehidelink"
+		                   	operation="hide" event="onclick" />
+		        </h:form>
+			</h:panelGroup>
+		</f:facet>
+		<rich:panel>
+			<h:form id = "frm_consultaCuentaCorriente">
+				<table cellpadding="0" cellspacing="0" border="0" width="100%">
+					<tr>
+						<td width="300px;"> Nombre</td>
+						<td width="200px;"> Fecha Historial </td>	
+						<td width="200px;"> Fecha Actual </td>
+						<td> </td>				
+					</tr>
+					<tr>
+						<td align="left"> 
+							<h:inputText id="idNombreClienteDM" 
+										value="#{visualizarSolicitudAction.cliente.razonSocial}" 
+								       maxlength="45"
+								       size="45" 
+								       disabled="true">
+							</h:inputText>	        	
+						</td>
+						<td align="left"> 
+	     					<h:selectOneMenu id="idFechasDeuda" value="#{visualizarSolicitudAction.fechaDeauda}" style="width:150px;">
+	                			<s:selectItems value="#{visualizarSolicitudAction.listaFechas}" 
+	                			                 var="_fechad"  
+	                			               label="#{_fechad}" 
+	                			               noSelectionLabel="Seleccione Fecha..." 
+	                			               hideNoSelectionLabel="true"
+	                			                >
+	                			</s:selectItems>               
+					       			   	<a:support event="onchange" 
+					                         reRender="idFechasDeuda,idGrilla,panelMensajeModel,idFechaActual"
+					             			      ajaxSingle="true" 
+					             			      action="#{visualizarSolicitudAction.consultarInformacionCtaCteFechaDeterminada()}" />					                			               
+	                			               
+	                		</h:selectOneMenu>	   	
+						</td>
+						<td align="left"> 
+	   						 	<rich:calendar id="idFechaActual"
+	   						 	               value="#{visualizarSolicitudAction.fechaActualCtaCte}"
+	   						 	               datePattern="dd/MM/yyyy"
+	   						 	               disabled="true">
+	   										
+	   							</rich:calendar>      	
+						</td>						
+						
+						<td align="center"> 
+							     <a:commandButton value="Guardar Historial" 
+		                           	 	ajaxSingle="false" 
+		                            	action="#{visualizarSolicitudAction.guardarInformacionCtaCte}" 
+		                            	reRender="idGrilla,panelMensajeModel,idFechasDeuda"
+		                            	rendered="false"
+		                			  />	
+								<h:commandButton value="Exportar Excel">
+									<p:dataExporter type="XLS" target="cuentaCorriente" excludeColumns="2"
+									fileName="Informacion_de_#{visualizarSolicitudAction.clienteTarget.rut}" >
+									</p:dataExporter>
+								</h:commandButton>	
+									                			  				
+							     <a:commandButton value="Actualizar" 
+		                           	 	ajaxSingle="false" 
+		                            	action="#{visualizarSolicitudAction.limpiarInformacionCtaCteFechaDeterminada()}" 
+		                            	reRender="idGrilla,panelMensajeModel,idFechasDeuda,idFechaActual"
+		                            	process="idFechaActual"
+		                			  />						
+
+
+						</td>						
+					</tr>
+					<tr>
+						<td colspan="4" height="20px;"> 
+				     		<a:outputPanel id="panelMensajeModel" >
+					    		<h:messages  globalOnly="true" styleClass="message"
+						            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
+					        </a:outputPanel>   						
+						</td>
+					</tr>
+					
+					
+					<tr>
+						<td colspan="4" style="border:1px solid #000000;padding:3px; " > 
+						   <a:outputPanel id="idGrilla">
+					    	<div class="results" id="grillaCuentaCorriente">
+						   		<h:outputText value="No existe ningun documentos en la cuenta corriente del cliente." rendered="#{empty visualizarSolicitudAction.ctaCteList}"/>
+							    <rich:dataTable id="idDocumentoCuentaCorriente" 
+							                var="_dp"
+							              value="#{visualizarSolicitudAction.ctaCteList}"
+							           rendered="#{not empty visualizarSolicitudAction.ctaCteList}"
+							           
+							           >
+								        <rich:column width="50px;" style="text-align:center;">
+								            <f:facet name="header">Cod.Cliente</f:facet>
+											 <h:outputText value="#{_dp.codCliente}"/>
+				
+								        </rich:column>
+								        <rich:column width="50px;" style="text-align:center;">
+								            <f:facet name="header">Docto Contable</f:facet>
+								            <h:outputText value="#{_dp.dctoContable}"/>
+								        </rich:column>	
+								        <rich:column width="50px;" style="text-align: center;">
+								            <f:facet name="header">Fecha.Contab</f:facet>
+								            <h:outputText value="#{_dp.fechaCont}">
+								            	<s:convertDateTime type="date" dateStyle="short" pattern="dd/MM/yyyy"/>
+								            </h:outputText>
+								        </rich:column>
+								        <rich:column width="50px;" style="text-align:center;">
+								            <f:facet name="header">CL</f:facet>
+								            <h:outputText value="#{_dp.claseDoc}"/>
+								        </rich:column>
+								        <rich:column width="50px;" style="text-align:center;">
+								            <f:facet name="header">Nro Docto</f:facet>
+								            <h:outputText value="#{_dp.numDcto}"/>
+								        </rich:column>					       
+								        <rich:column width="50px;" style="text-align:center;">
+								            <f:facet name="header">Nro Factura</f:facet>
+								            <h:outputText value="#{_dp.numFactura}"/>
+								        </rich:column>
+							        	<rich:column width="50px;" style="text-align: center;">
+								            <f:facet name="header">Fecha.Vcto</f:facet>
+								            <h:outputText value="#{_dp.fechaVcto}">
+								            	<s:convertDateTime type="date" dateStyle="short" pattern="dd/MM/yyyy"/>
+								            </h:outputText>
+								        </rich:column>	
+								        		        
+								        <rich:column width="50px;" style="text-align:center;">
+								            <f:facet name="header">Ind CME</f:facet>
+								            <h:outputText value="#{_dp.indCME}"/>
+								        </rich:column>
+								         <rich:column width="50px;" style="text-align:center;">
+								            <f:facet name="header">Referencia</f:facet>
+								            <h:outputText value="#{_dp.referencia}"/>
+								        </rich:column>
+								        		
+								        <rich:column width="100px;" style="text-align:right;">
+								            <f:facet name="header">Monto</f:facet>
+								            <h:outputText value="#{_dp.monto}">
+						            			<f:convertNumber currencySymbol="$" groupingUsed="#{true}"
+					  									maxFractionDigits="0" type="currency"/> 				            
+								            </h:outputText>
+								        </rich:column>
+								        <rich:column width="50px;" style="text-align:center;">
+								            <f:facet name="header">Texto</f:facet>
+								            <h:outputText value="#{_dp.texto}"/>
+								        </rich:column>				        
+								        <rich:column width="50px;" style="text-align:center;">
+								            <f:facet name="header">Dias Mora</f:facet>
+								            <h:outputText value="#{_dp.diasMora}"/>
+								        </rich:column>					        
+								 </rich:dataTable>
+								 
+								<p:dataTable id="cuentaCorriente" var="_dp" value="#{visualizarSolicitudAction.ctaCteList}" styleClass="expText">
+								        <p:column width="50" style="text-align:center;">
+								            <f:facet name="header"><h:outputText value="Cod.Cliente" /></f:facet>
+											 <h:outputText value="#{_dp.codCliente}"/>
+								        </p:column>
+								        <p:column  width="50" style="text-align:center;">
+								            <f:facet name="header"><h:outputText value="Docto Contable" /></f:facet>
+								            <h:outputText value="#{_dp.dctoContable}"/>
+								        </p:column>	
+							        	<p:column width="50" style="text-align: center;">
+								            <f:facet name="header"><h:outputText value="Fecha.contable" /></f:facet>
+								            <h:outputText value="#{_dp.fechaCont}">
+								            	<s:convertDateTime type="date" dateStyle="short" pattern="dd/MM/yyyy"/>
+								            </h:outputText>
+								        </p:column>								        
+								        <p:column width="50" style="text-align: center;">
+								            <f:facet name="header"><h:outputText value="Fecha Contable" /></f:facet>
+								            <h:outputText value="#{_dp.fechaCont}">
+								            	<s:convertDateTime type="date" dateStyle="short" pattern="dd/MM/yyyy"/>
+								            </h:outputText>
+								        </p:column>
+								        <p:column width="50" style="text-align:center;">
+								            <f:facet name="header"><h:outputText value="CL" /></f:facet>
+								            <h:outputText value="#{_dp.claseDoc}"/>
+								        </p:column>	
+								        <p:column width="50" style="text-align:center;">
+								            <f:facet name="header"><h:outputText value="Nro Docto" /></f:facet>
+								            <h:outputText value="#{_dp.numDcto}"/>
+								        </p:column>					       
+								        <p:column width="50" style="text-align:center;">
+								            <f:facet name="header"><h:outputText value="Nro Factura" /></f:facet>
+								            <h:outputText value="#{_dp.numFactura}"/>
+								        </p:column>
+							        	<p:column width="50" style="text-align: center;">
+								            <f:facet name="header"><h:outputText value="Fecha.Vcto" /></f:facet>
+								            <h:outputText value="#{_dp.fechaVcto}">
+								            	<s:convertDateTime type="date" dateStyle="short" pattern="dd/MM/yyyy"/>
+								            </h:outputText>
+								        </p:column>	
+								        <p:column width="50" style="text-align:center;">
+								            <f:facet name="header"><h:outputText value="Ind CME" /></f:facet>
+								            <h:outputText value="#{_dp.indCME}"/>
+								        </p:column>
+								        <p:column width="50" style="text-align:center;">
+								            <f:facet name="header"><h:outputText value="Referencia" /></f:facet>
+								            <h:outputText value="#{_dp.referencia}"/>
+								        </p:column>
+								        <p:column width="100" style="text-align:right;">
+								            <f:facet name="header"><h:outputText value="Monto" /></f:facet>
+								            <h:outputText value="#{_dp.monto}">
+						            			<f:convertNumber currencySymbol="$" groupingUsed="#{true}"
+					  									maxFractionDigits="0" type="currency"/> 				            
+								            </h:outputText>
+								        </p:column>
+								        <p:column width="50" style="text-align:center;">
+								            <f:facet name="header"><h:outputText value="Texto #{' '}" /></f:facet>
+								            <h:outputText value="#{_dp.texto}"/>
+								        </p:column>				        
+								        <p:column width="50" style="text-align:center;">
+								            <f:facet name="header"><h:outputText value="Dias Mora" /></f:facet>
+								            <h:outputText value="#{_dp.diasMora}"/>
+								        </p:column>					        
+		    					</p:dataTable>
+						    </div>					
+						   </a:outputPanel>
+						</td>
+					</tr>				
+				</table>
+			</h:form>
+		</rich:panel>
+	</rich:modalPanel>
+	
+</ui:composition>

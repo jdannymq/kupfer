@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:p="http://primefaces.prime.com.tr/ui"
+    template="layout/template.xhtml">
+	
+	<ui:define name="body">
+	<div class="divTitular"><h1>Canales</h1></div>
+	
+			<h:form id="frm_canales">
+				<s:button view="/GenerarSolicitud.xhtml" propagation="none" value="Volver" ></s:button>
+				
+				<h:messages id="messagesEsp" globalOnly="false" styleClass="message"
+		            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
+		            rendered="#{showGlobalMessages != 'false'}" />
+		            
+				<a:commandButton value="Agregar Canal" ajaxSingle="true" action="#{canalAction.initGuardarCanal()}" 
+					reRender="frm_canales_modal" oncomplete="#{rich:component('mpCanal')}.show();" />
+				
+				<rich:panel id="rpCanales">
+					<f:facet name="label">Canales</f:facet>
+						<rich:extendedDataTable id="dtCanales" value="#{mantenedorMaestroAction_canales}" var="_canales" noDataLabel="No se encuentran canales" >
+							
+							<f:facet name="header">Codigo</f:facet>
+							<rich:column sortBy="#{_canales.codigo}" label="codigo"  width="30%;" style="text-align: center;">
+								<f:facet name="header">codigo</f:facet>
+								<h:outputText value="#{_canales.codigo}" >
+								</h:outputText>
+							</rich:column>
+							<rich:column filterBy="#{_canales.descripcion}" sortBy="#{_canales.descripcion}" label="Descripción" width="30%;" style="text-align: center;">
+								<f:facet name="header">Descripción</f:facet>
+								<h:outputText value="#{_canales.descripcion}" />
+							</rich:column>
+
+							<rich:column sortBy="#{_canales.disabled}" label="Activo" width="30%;" style="text-align: center;">
+								<f:facet name="header">Activo</f:facet>
+								<h:outputText value="#{_canales.disabled ? 'No':'Si'}" />
+							</rich:column>
+							<rich:column  width="30%;" style="text-align: center;">
+							<f:facet name="header">Accion</f:facet>
+								<a:commandLink value="Editar" ajaxSingle="true" action="#{canalAction.editFeriado(_canales)}" 
+									oncomplete="#{rich:component('mpCanal')}.show();" reRender="frm_canales_modal" />
+								#{'/'}
+								<a:commandLink value="Desactivar" rendered="#{!_canales.disabled}" ajaxSingle="true" action="#{canalAction.cambiarActivoCanal(true,_canales)}" 
+									reRender="rpCanales" />
+								<a:commandLink value="Activar" rendered="#{_canales.disabled}" ajaxSingle="true" action="#{canalAction.cambiarActivoCanal(false,_canales)}" 
+									reRender="rpCanales" />
+							</rich:column>								
+						</rich:extendedDataTable>
+				</rich:panel>
+			</h:form>
+		 <a:status onstart="abrirModal();" onstop="cerrarModal();"></a:status>	
+		<ui:include src="/layout/modalSck/modalCanal.xhtml" />  
+	</ui:define>
+</ui:composition>
+

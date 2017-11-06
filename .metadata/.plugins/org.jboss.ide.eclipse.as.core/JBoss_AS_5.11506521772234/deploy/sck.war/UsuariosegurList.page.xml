@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd">
+
+   <param name="firstResult" value="#{usuariosegurList.firstResult}"/>
+   <param name="sort" value="#{usuariosegurList.orderColumn}"/>
+   <param name="dir" value="#{usuariosegurList.orderDirection}"/>
+   <param name="logic" value="#{usuariosegurList.restrictionLogicOperator}"/>
+
+   <param name="from"/>
+   <param name="alias" value="#{usuariosegurList.usuariosegur.alias}"/>
+   <param name="anexo" value="#{usuariosegurList.usuariosegur.anexo}"/>
+   <param name="anexoIp" value="#{usuariosegurList.usuariosegur.anexoIp}"/>
+   <param name="cargo" value="#{usuariosegurList.usuariosegur.cargo}"/>
+   <param name="ceco" value="#{usuariosegurList.usuariosegur.ceco}"/>
+   <param name="celular" value="#{usuariosegurList.usuariosegur.celular}"/>
+   <param name="centro" value="#{usuariosegurList.usuariosegur.centro}"/>
+   <param name="correo" value="#{usuariosegurList.usuariosegur.correo}"/>
+   <param name="descSuc" value="#{usuariosegurList.usuariosegur.descSuc}"/>
+   <param name="nombre" value="#{usuariosegurList.usuariosegur.nombre}"/>
+   <param name="password" value="#{usuariosegurList.usuariosegur.password}"/>
+   <param name="rut" value="#{usuariosegurList.usuariosegur.rut}"/>
+
+</page>

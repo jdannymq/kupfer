@@ -1,0 +1,269 @@
+package org.domain.sck.session.action;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+
+import org.domain.sck.base.GlobalService;
+import org.domain.sck.entity.MatrizMedicion;
+import org.domain.sck.entity.MatrizMontos;
+import org.domain.sck.entity.MatrizPlazoPromedioPagos;
+import org.domain.sck.entity.emuns.TiempoType;
+import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.Factory;
+import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.Logger;
+import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Out;
+import org.jboss.seam.annotations.Scope;
+import org.jboss.seam.faces.FacesMessages;
+import org.jboss.seam.international.StatusMessage.Severity;
+import org.jboss.seam.log.Log;
+import org.jboss.seam.ui.util.Faces;
+
+@Name(value = "matrizAction")
+@Scope(ScopeType.CONVERSATION)
+@SuppressWarnings({ "unused", "unchecked" })
+public class MatrizAction {
+
+	@Logger
+	Log log;
+	
+	@In GlobalService globalService;
+	
+	
+	@In(value="#{entityManager}")
+	EntityManager entityManager;
+	
+	/*****************Variables**********************************************************************/
+	private MatrizMontos montoMatrizTarget = new MatrizMontos();
+	public MatrizMontos getMontoMatrizTarget() {return montoMatrizTarget;}
+	public void setMontoMatrizTarget(MatrizMontos montoMatrizTarget) {this.montoMatrizTarget = montoMatrizTarget;}
+
+	private MatrizPlazoPromedioPagos plazoMatrizTarget = new MatrizPlazoPromedioPagos();
+	public MatrizPlazoPromedioPagos getPlazoMatrizTarget() {return plazoMatrizTarget;}
+	public void setPlazoMatrizTarget(MatrizPlazoPromedioPagos plazoMatrizTarget) {this.plazoMatrizTarget = plazoMatrizTarget;}
+	
+	private MatrizMedicion matrizMedicionTargeted = new MatrizMedicion();
+	public MatrizMedicion getMatrizMedicionTargeted() {return matrizMedicionTargeted;}
+	public void setMatrizMedicionTargeted(MatrizMedicion matrizMedicionTargeted) {this.matrizMedicionTargeted = matrizMedicionTargeted;}
+	
+	private boolean editando = false;
+	public boolean isEditando() {return editando;}
+	public void cambiarEstado(boolean bool) {editando = bool;}
+	
+	private Long rango_inicial;
+	private Long rango_final;
+	private String rango_descripcion;
+	private boolean rango_disabled = false;
+	
+	public Long getRango_inicial() {return rango_inicial;}
+	public void setRango_inicial(Long rango_inicial) {this.rango_inicial = rango_inicial;}
+	public Long getRango_final() {return rango_final;}
+	public void setRango_final(Long rango_final) {this.rango_final = rango_final;}
+	public String getRango_descripcion() {return rango_descripcion;}
+	public void setRango_descripcion(String rango_descripcion) {this.rango_descripcion = rango_descripcion;}
+	public boolean isRango_disabled() {return rango_disabled;}
+	public void setRango_disabled(boolean rango_disabled) {this.rango_disabled = rango_disabled;}
+	
+	/************************Mantenedor de montos de la matriz****************************************/
+	@Out(value="matrizAction_montosList", required=false)
+	private List<MatrizMontos> matrizMontosList;
+	
+	@Factory(value = "matrizAction_montosList", autoCreate = true)
+	public void cargarMontosPagoMatriz() {
+		matrizMontosList = new ArrayList<MatrizMontos>();
+		matrizMontosList = entityManager.createQuery("from MatrizMontos")
+		.getResultList();
+	}
+	
+	public void guardarMontoMatriz(){
+		List<MatrizMontos> coincidencia = entityManager.createQuery("from MatrizMontos where ( :inicial between monto_inicial and monto_final ) or (:final between monto_inicial and monto_final) ")
+				.setParameter("inicial", rango_inicial)
+				.setParameter("final", rango_final)
+				.getResultList();
+		if(coincidencia == null || coincidencia.size() == 0) {
+			montoMatrizTarget.setMonto_inicial(rango_inicial);
+			montoMatrizTarget.setMonto_final(rango_final);
+			montoMatrizTarget.setDescripcion(rango_descripcion);
+			montoMatrizTarget.setDisabled(rango_disabled);
+			entityManager.persist(montoMatrizTarget);
+			entityManager.flush();
+			montoMatrizTarget = new MatrizMontos();
+			cargarMontosPagoMatriz();
+		}
+		else {
+			FacesMessages.instance().add(Severity.ERROR, "Uno de los montos ingresados esta entre un rango de montos ya existentes!");
+			
+		}
+	}
+	
+	public void guardarEdicionMontoMatriz(){
+		List<MatrizMontos> coincidencia = entityManager.createQuery("from MatrizMontos where (( :inicial between monto_inicial and monto_final ) or (:final between monto_inicial and monto_final)) and system_id <> :id")
+				.setParameter("inicial", rango_inicial)
+				.setParameter("final", rango_final)
+				.setParameter("id", montoMatrizTarget.getSystem_id())
+				.getResultList();
+		
+		if(coincidencia == null || coincidencia.size() == 0) {
+			montoMatrizTarget.setMonto_inicial(rango_inicial);
+			montoMatrizTarget.setMonto_final(rango_final);
+			montoMatrizTarget.setDescripcion(rango_descripcion);
+			entityManager.merge(montoMatrizTarget);
+			entityManager.flush();
+			montoMatrizTarget = new MatrizMontos();
+			cargarMontosPagoMatriz();
+		}
+		else {
+			FacesMessages.instance().add(Severity.ERROR, "Uno de los montos ingresados esta entre un rango de montos ya existentes!");
+			
+		}
+	}
+	
+	public void cargarMontoMatrizEditar(MatrizMontos monto, boolean edicion){
+		montoMatrizTarget = monto;
+		rango_inicial = montoMatrizTarget.getMonto_inicial();
+		rango_final = montoMatrizTarget.getMonto_final();
+		rango_disabled = montoMatrizTarget.getDisabled();
+		rango_descripcion = montoMatrizTarget.getDescripcion();
+		cambiarEstado(true);
+	}
+	
+	public void limpiarMatrizMonto() {
+		rango_inicial = null;
+		rango_final = null;
+		rango_descripcion = null;
+		rango_disabled = false;
+	}
+	
+	/************************Mantenedor de plazos de la matriz****************************************/
+	@Out(value="matrizAction_plazosList", required=false)
+	private List<MatrizPlazoPromedioPagos> matrizPlazoList;
+	
+	
+	@Factory(value = "matrizAction_plazosList", autoCreate = true)
+	public void cargarPlazosMatriz() {
+		matrizPlazoList = new ArrayList<MatrizPlazoPromedioPagos>();
+		matrizPlazoList = entityManager.createQuery("from MatrizPlazoPromedioPagos")
+		.getResultList();
+	}
+				
+	public void guardarPlazoMatriz(){
+		List<MatrizPlazoPromedioPagos> coincidencia = entityManager.createQuery("from MatrizPlazoPromedioPagos where ( :inicial between plazo_inicial and plazo_final ) or (:final between plazo_inicial and plazo_final) ")
+				.setParameter("inicial", rango_inicial)
+				.setParameter("final", rango_final)
+				.getResultList();
+		
+		if(coincidencia == null || coincidencia.size() == 0) {
+			plazoMatrizTarget.setPlazo_inicial(rango_inicial);
+			plazoMatrizTarget.setPlazo_final(rango_final);
+			plazoMatrizTarget.setDescripcion(rango_descripcion);
+			plazoMatrizTarget.setDisabled(rango_disabled);
+			entityManager.persist(plazoMatrizTarget);
+			entityManager.flush();
+			plazoMatrizTarget = new MatrizPlazoPromedioPagos();
+			cargarPlazosMatriz();
+		}
+		else {
+			FacesMessages.instance().add(Severity.ERROR, "Uno de los plazos ingresados esta entre un rango de plazos ya existentes!");
+			
+		}
+	}
+	
+	public void guardarEdicionPlazoMatriz(){
+		List<MatrizMontos> coincidencia = entityManager.createQuery("from MatrizPlazoPromedioPagos where (( :inicial between plazo_inicial and plazo_final ) or (:final between plazo_inicial and plazo_final)) and system_id <> :id")
+				.setParameter("inicial", rango_inicial)
+				.setParameter("final", rango_final)
+				.setParameter("id", montoMatrizTarget.getSystem_id())
+				.getResultList();
+		
+		if(coincidencia == null || coincidencia.size() == 0) {
+			plazoMatrizTarget.setPlazo_inicial(rango_inicial);
+			plazoMatrizTarget.setPlazo_inicial(rango_final);
+			plazoMatrizTarget.setDescripcion(rango_descripcion);
+			plazoMatrizTarget.setDisabled(rango_disabled);
+			entityManager.merge(plazoMatrizTarget);
+			entityManager.flush();
+			plazoMatrizTarget = new MatrizPlazoPromedioPagos();
+			cargarPlazosMatriz();
+		}
+		else {
+			FacesMessages.instance().add(Severity.ERROR, "Uno de los plazos ingresados esta entre un rango de plazos ya existentes!");
+		}
+	}
+	
+	public void cargarPlazoMatrizEditar(MatrizPlazoPromedioPagos plazo, boolean edicion){
+		plazoMatrizTarget = plazo;
+		rango_inicial = plazoMatrizTarget.getPlazo_inicial();
+		rango_final = plazoMatrizTarget.getPlazo_final();
+		rango_disabled = plazoMatrizTarget.getDisabled();
+		rango_descripcion = plazoMatrizTarget.getDescripcion();
+		cambiarEstado(true);
+	}
+	
+	public void limpiarMatrizPlazo() {
+		rango_inicial = null;
+		rango_final = null;
+		rango_descripcion = null;
+		rango_disabled = false;
+	}
+	
+	/*******************************Mantenedor de la matriz*******************************************/	
+	
+	@Out(value="matrizAction_MedicionList", required=false)
+	private List<MatrizMedicion> matrizMedicionList;
+		
+	@Factory(value = "matrizAction_MedicionList", autoCreate = true)
+	public void cargarMatricesMedicion() {
+		matrizMedicionList = entityManager.createQuery("from MatrizMedicion")
+				.getResultList();
+		
+		//Segun el tiempo seleccionado muestro el tiempo en la unidad correspondiente
+		for (MatrizMedicion aux : matrizMedicionList) {
+			if(aux.getUnidadTiempo() == TiempoType.H)
+				aux.setTiempo(aux.getTiempo() / 60);
+			else if(aux.getUnidadTiempo() == TiempoType.D)
+				aux.setTiempo(aux.getTiempo() / 60 / 9);
+		}
+		
+	}
+	
+	public void cargarMatrizEditar(MatrizMedicion matriz){
+		matrizMedicionTargeted = matriz;
+		cambiarEstado(true);
+	}
+	
+	public void limpiarMatrizMedicion() {
+		matrizMedicionTargeted  = new MatrizMedicion();
+	}
+	
+	
+	public void guardarMatrizMedicion(){
+		//el tiempo debe almacenarse siempre en minutos
+		if(matrizMedicionTargeted.getUnidadTiempo() == TiempoType.D)
+			matrizMedicionTargeted.setTiempo(matrizMedicionTargeted.getTiempo() * 60 * 9); //transforma los dias en minutos, y asumiendo que se trabajan solo 9 horas diaras
+		else if(matrizMedicionTargeted.getUnidadTiempo() == TiempoType.H)
+			matrizMedicionTargeted.setTiempo(matrizMedicionTargeted.getTiempo() * 60); //transforma las horas en minutos
+			
+		entityManager.persist(matrizMedicionTargeted);
+		entityManager.flush();
+		matrizMedicionTargeted = new MatrizMedicion();
+		cargarMatricesMedicion();
+	}
+	
+	public void guardarEdicionMatrizMedicion(){
+		//el tiempo debe almacenarse siempre en minutos
+		if(matrizMedicionTargeted.getUnidadTiempo() == TiempoType.D)
+			matrizMedicionTargeted.setTiempo(matrizMedicionTargeted.getTiempo() * 60 * 9); //transforma los dias en minutos, y asumiendo que se trabajan solo 9 horas diaras
+		else if(matrizMedicionTargeted.getUnidadTiempo() == TiempoType.H)
+			matrizMedicionTargeted.setTiempo(matrizMedicionTargeted.getTiempo() * 60); //transforma las horas en minutos
+				
+		entityManager.merge(matrizMedicionTargeted);
+		entityManager.flush();
+		matrizMedicionTargeted = new MatrizMedicion();
+		cargarMatricesMedicion();
+	}
+	
+	
+}

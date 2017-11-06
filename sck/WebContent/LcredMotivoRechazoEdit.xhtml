@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="lcredMotivoRechazo" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{lcredMotivoRechazoHome.managed ? 'Editar' : 'Agregar'} Motivo Rechazo</f:facet>
+
+
+            <s:decorate id="codRechazoField" template="/layout/edit.xhtml" >
+                <ui:define name="label">Codigo rechazo</ui:define>
+                <h:inputText id="codRechazo"
+                       required="true"
+                       disabled="#{lcredMotivoRechazoHome.managed}"
+                          value="#{lcredMotivoRechazoHome.instance.codRechazo}"
+                          onkeypress="return isNumberKey(event);"
+                          size="3"
+                          maxlength="3">
+                    <a:support event="onblur" reRender="codRechazoField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="desRechazoField" template="/layout/edit.xhtml">
+                <ui:define name="label">Descripción Rechazo</ui:define>
+                <h:inputTextarea id="desRechazo"
+                               cols="80"
+                               rows="2"
+                              value="#{lcredMotivoRechazoHome.instance.desRechazo}">
+                           	<a:support event="onblur" reRender="desRechazoField" bypassUpdates="true" ajaxSingle="true"/>   
+                </h:inputTextarea>              
+                              
+            </s:decorate>
+
+
+            <s:decorate id="indBorradoField" template="/layout/edit.xhtml">
+                <ui:define name="label">Ind borrado</ui:define>
+                <h:inputText id="indBorrado"
+                           size="1"
+                      maxlength="1"
+                      disabled="true"
+                          value="#{lcredMotivoRechazoHome.instance.indBorrado}">
+                </h:inputText>
+            </s:decorate>
+
+            <div style="clear:both">
+                <span class="required">* Campos Requeridos</span>
+                
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Guardar"
+                         action="#{lcredMotivoRechazoHome.persist}"
+                       disabled="#{!lcredMotivoRechazoHome.wired}"
+                       rendered="#{!lcredMotivoRechazoHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="Modificar"
+                         action="#{lcredMotivoRechazoHome.update}"
+                       rendered="#{lcredMotivoRechazoHome.managed}"/>
+
+            <h:commandButton id="delete"
+                          value="Eliminar"
+                         action="#{lcredMotivoRechazoHome.remove}"
+                      immediate="true"
+                       rendered="#{lcredMotivoRechazoHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="Cancelar"
+             propagation="end"
+                    view="/LcredMotivoRechazo.xhtml"
+                rendered="#{lcredMotivoRechazoHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="Cancelar"
+             propagation="end"
+                    view="/#{empty lcredMotivoRechazoFrom ? 'LcredMotivoRechazoList' : lcredMotivoRechazoFrom}.xhtml"
+                rendered="#{!lcredMotivoRechazoHome.managed}"/>
+        </div>
+    </h:form>
+
+</ui:define>
+
+</ui:composition>

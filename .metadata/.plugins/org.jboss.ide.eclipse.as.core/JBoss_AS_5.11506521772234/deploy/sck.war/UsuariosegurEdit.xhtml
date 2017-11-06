@@ -1,0 +1,191 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="usuariosegur" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{usuariosegurHome.managed ? 'Editar' : 'Agregar'} Usuario</f:facet>
+
+
+            <s:decorate id="idPersonalField" template="layout/edit.xhtml">
+                <ui:define name="label">Id personal</ui:define>
+                <h:inputText id="idPersonal"
+                       required="true"
+                          value="#{usuariosegurHome.instance.idPersonal}"
+                           size="10"
+                           disabled="true"	>
+                    <a:support event="onblur" reRender="idPersonalField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+            <s:decorate id="rutField" template="layout/edit.xhtml">
+                <ui:define name="label">Rut</ui:define>
+                <h:inputText id="rut"
+                           size="10"
+                      maxlength="10"
+                       required="true"
+                          value="#{usuariosegurHome.instance.rut}">
+                    <a:support event="onblur" reRender="rutField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText> Ej: XXXXXXXX-X
+            </s:decorate>            
+            
+ 			<s:decorate id="nombreField" template="layout/edit.xhtml">
+                <ui:define name="label">Nombre</ui:define>
+                <h:inputText id="nombre"
+                           size="40"
+                      maxlength="40"
+                       required="true"
+                          value="#{usuariosegurHome.instance.nombre}"/>
+            </s:decorate>
+
+            <s:decorate id="passwordField" template="layout/edit.xhtml">
+                <ui:define name="label">Password</ui:define>
+                <h:inputText id="password"
+                           size="20"
+                      maxlength="20"
+                       required="true"
+                          value="#{usuariosegurHome.instance.password}">
+                    <a:support event="onblur" reRender="passwordField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+            <s:decorate id="aliasField" template="layout/edit.xhtml">
+                <ui:define name="label">Alias</ui:define>
+                <h:inputText id="alias"
+                           size="20"
+                      maxlength="20"
+                       required="true"
+                          value="#{usuariosegurHome.instance.alias}">
+                    <a:support event="onblur" reRender="aliasField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="anexoField" template="layout/edit.xhtml">
+                <ui:define name="label">Anexo</ui:define>
+                <h:inputText id="anexo"
+                           size="20"
+                      maxlength="20"
+                       required="true"
+                          value="#{usuariosegurHome.instance.anexo}">
+                    <a:support event="onblur" reRender="anexoField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText> Ej: 2029
+            </s:decorate>
+           <s:decorate id="cargoField" template="layout/edit.xhtml">
+                <ui:define name="label">Cargo</ui:define>
+                <h:inputText id="cargo"
+                           size="30"
+                      maxlength="30"
+                       required="true"
+                              value="#{usuariosegurHome.instance.cargo}">
+                               <a:support event="onblur" reRender="cargoField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>  Ej: Ventas             
+            </s:decorate>
+
+            <s:decorate id="celularField" template="layout/edit.xhtml">
+                <ui:define name="label">Celular</ui:define>
+                <h:inputText id="celular"
+                           size="20"
+                      maxlength="20"
+                       required="true"
+                          value="#{usuariosegurHome.instance.celular}">
+                    <a:support event="onblur" reRender="celularField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText> Ej: 61707650
+            </s:decorate>
+
+
+            <s:decorate id="centroField" template="layout/edit.xhtml">
+                <ui:define name="label">Centro</ui:define>
+                <h:inputText id="centro"
+                           size="20"
+                      maxlength="20"
+                       required="true"
+                              value="#{usuariosegurHome.instance.centro}"> 
+                	<a:support event="onblur" reRender="centroField" bypassUpdates="true" ajaxSingle="true"/>              
+                </h:inputText> Ej: C115
+            </s:decorate>
+
+
+            <s:decorate id="correoField" template="layout/edit.xhtml">
+                <ui:define name="label">Correo</ui:define>
+                <h:inputText id="correo"
+                           size="40"
+                      maxlength="40"
+                       required="true"
+                              value="#{usuariosegurHome.instance.correo}">
+                      <a:support event="onblur" reRender="correoField" bypassUpdates="true" ajaxSingle="true"/>         
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="descSucField" template="layout/edit.xhtml">
+                <ui:define name="label">Descripción Sucursal</ui:define>
+                <h:inputText id="descSuc"
+                           size="100"
+                      maxlength="100"
+                       required="true"
+                          value="#{usuariosegurHome.instance.descSuc}">
+                    <a:support event="onblur" reRender="descSucField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+            
+           <s:decorate id="sucursalField" template="layout/edit.xhtml">
+                <ui:define name="label">Sucursal</ui:define>
+                <h:inputText id="sucursal"
+                           size="10"
+                      maxlength="10"
+                       required="true"
+                          value="#{usuariosegurHome.instance.sucursal}">
+                          
+                    <a:support event="onblur" reRender="sucursalField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText> Ej: 15
+            </s:decorate>            
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                Campos requeridos 
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Guardar"
+                         action="#{usuariosegurHome.persist}"
+                       disabled="#{!usuariosegurHome.wired}"
+                       rendered="#{!usuariosegurHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="Modificar"
+                         action="#{usuariosegurHome.update}"
+                       rendered="#{usuariosegurHome.managed}"/>
+
+
+            <s:button id="cancelEdit"
+                   value="Cancelar"
+             propagation="end"
+                    view="/Usuariosegur.xhtml"
+                rendered="#{usuariosegurHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="Cancelar"
+             propagation="end"
+                    view="/#{empty usuariosegurFrom ? 'UsuariosegurList' : usuariosegurFrom}.xhtml"
+                rendered="#{!usuariosegurHome.managed}"/>
+
+        </div>
+    </h:form>
+
+</ui:define>
+
+</ui:composition>

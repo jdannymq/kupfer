@@ -1,0 +1,2586 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    template="/layout/template.xhtml">
+
+    <ui:define name="body">
+      <script>
+		<!--
+			function volver() {
+			   event.preventDefault();
+			   history.back(1);
+			}	
+		-->
+   	</script>
+    	
+      <a:outputPanel id="panelGeneral" >
+    	<rich:panel style="text-align:center;" >
+    		<f:facet name="header" >Solicitud de Crédito Küpfer Hermanos.</f:facet>
+    		<h:form id="frmSeleccion" enctype="multipart/form-data">
+    			<table cellpadding="0" cellspacing="0" border="0" width="100%;">
+    				<tr >
+    					<td colspan="3" align="left" width="1260px;" style="font-size:15px" >
+    						<table cellpadding="0" cellspacing="0" width="100%" border="0" >
+    							<tr>
+    								<td width="15%" align="left">Número Solicitud: <strong >#{respuestaSolicitudAction.solicitud.id.numSolicitud}</strong></td>
+    								<td width="25%" align="left">	
+    									<s:fragment rendered="#{respuestaSolicitudAction.usuarioCargoLogueado.administrador == true}">
+    											<s:fragment rendered="#{respuestaSolicitudAction.usuarioCargoAux.administrador == false}">
+	    											<a:commandButton value="Activar" 
+									    				 	reRender="panelGeneral,botoneraGeneral"
+							                           	 	ajaxSingle="true" 
+							                            	action="#{respuestaSolicitudAction.activarComoAdministrador()}" 
+							                            	title="Activar Como Administrador."
+							                			  />	
+							                		<span>Función:<strong style="color:#2B00FF; font-weight:bold;">Normal</strong></span>	  
+						                		</s:fragment>	  
+						                		<s:fragment rendered="#{respuestaSolicitudAction.usuarioCargoAux.administrador == true}">	  
+	    											<a:commandButton value="Desactivar" 
+									    				 	reRender="panelGeneral,botoneraGeneral"
+							                           	 	ajaxSingle="true" 
+							                            	action="#{respuestaSolicitudAction.desactivarComoAdministrador()}" 
+							                            	title="Desactiavar como Administrador."
+							                			  />   
+							                		<span>Función:<strong style="color:#2B00FF; font-weight:bold; ">Administrador</strong></span>	   									
+    											</s:fragment>
+    									</s:fragment>
+    									
+    									<ui:remove>
+	    									<s:fragment rendered="#{respuestaSolicitudAction.usuarioCargoLogueado.administrador == false}">
+	    										<span>Función:<strong style="color:#2B00FF; font-weight:bold; ">Normal</strong></span>
+	    									</s:fragment>
+    									</ui:remove>  
+    									  								
+    								</td>
+    								<td width="25%" align="left">	
+    									<s:fragment rendered="#{respuestaSolicitudAction.solicitud.usuarioDevuelve != null}">
+    										<span>Responsable Solicitud: <strong  style="color:#2B00FF; font-weight:bold; " >#{respuestaSolicitudAction.solicitud.usuarioDevuelve}</strong></span>
+    										
+    									</s:fragment>
+    								</td>
+    								<td width="35%" align="left"><span style="color:#000000; font-weight:bold;">Estado de Solictud:</span> 
+    								                                      <h:outputLabel value="#{respuestaSolicitudAction.cliente.estadoSolicitud.toUpperCase(globalLocale)}" 
+    								                                                     style="color:#2B00FF; font-weight:bold; " rendered="#{respuestaSolicitudAction.solicitud.estado != 'A' and respuestaSolicitudAction.solicitud.estado != 'R'}"/>
+																		  <h:outputLabel value="#{respuestaSolicitudAction.cliente.estadoSolicitud.toUpperCase(globalLocale)}" 
+    								                                                     style="color:#008712; font-weight:bold; " rendered="#{respuestaSolicitudAction.solicitud.estado == 'A'}"/>    								                                                     
+																		  <h:outputLabel value="#{respuestaSolicitudAction.cliente.estadoSolicitud.toUpperCase(globalLocale)}" 
+    								                                                     style="color:#E00000; font-weight:bold; " rendered="#{respuestaSolicitudAction.solicitud.estado == 'R'}"/>  
+    								</td>
+    							</tr>
+    						</table>
+    					</td>
+					</tr>
+					<!-- enccabezado de datos -->	
+    				<tr valign="top">
+    					<td align="left" width="980px;">
+    						<rich:panel id="accionesPanel" style=" width:100%; height:78px;">
+								<f:facet name="header" >Acciones</f:facet> 
+							
+								<h:outputText value="#{respuestaSolicitudAction.mensajeGlogal}" style="color:#FF0000;" />
+								<table cellpadding="0" cellspacing="0" border="0" width="100%;">
+									<tr>
+										<td align="center">
+									        <a:outputPanel id="botoneraGeneral">
+									          
+								    				 <a:commandButton value="Observación" 
+								    				 	reRender="mpIngresoObservaciones,grillaObservacion"
+						                           	 	ajaxSingle="true" 
+						                           	 	oncomplete="#{rich:component('mpIngresoObservaciones')}.show()"
+						                            	action="#{respuestaSolicitudAction.ingresoObservaciones()}" 
+						                            	style="width:80px;"
+						                            	title="Ingreso de Observaciones"
+						                            	disabled="#{!respuestaSolicitudAction.botonera.observaiones}"
+						                			  />	
+								    				 <a:commandButton value="Devolver" 
+								    				 	reRender="mpDevolverSolicitud,escritura2,escritura3"
+						                           	 	ajaxSingle="true" 
+						                           	 	oncomplete="if (#{respuestaSolicitudAction.mensajeGlogal == null}) {#{rich:component('mpDevolverSolicitud')}.show()}else{#{rich:component('mpMensajeGlobalRespuesta')}.show()}"
+						                           	 	action="#{respuestaSolicitudAction.ingresoDevolucion()}"
+						                           	 	title="Devolver al Emisor"
+						                           	 	style="width:75px;"
+						                           	 	process="idObservacionesfinales,margenGlobal,idObservacionesfinales11,idObservacionesfinales3,idObservacionesfinales4,idObservacionesfinales5,idObservacionesfinales6"
+						                			  	disabled="#{!respuestaSolicitudAction.botonera.devolver}"
+						                			  />	
+
+												
+								    				 <a:commandButton value="Adjuntar" 
+								    				 	reRender="mpAdjuntarArchivo"
+						                           	 	ajaxSingle="true" 
+						                           	 	oncomplete="#{rich:component('mpAdjuntarArchivo')}.show()"
+						                           	 	title="Adjuntar Archivos"
+						                           	 	style="width:75px;"
+						                           	 	disabled="#{!respuestaSolicitudAction.botonera.adjuntar}"
+						                           	 	rendered="#{respuestaSolicitudAction.botonera.evaluarAdjuntarArchivo == 1}"
+						                			  />
+								    				 <a:commandButton value="Adjuntar" 
+								    				 	reRender="mpAdjuntarArchivoDespuesProceso"
+						                           	 	ajaxSingle="true" 
+						                           	 	oncomplete="#{rich:component('mpAdjuntarArchivoDespuesProceso')}.show()"
+						                           	 	title="Adjuntar Archivos"
+						                           	 	style="width:75px;"
+						                           	 	disabled="#{!respuestaSolicitudAction.botonera.adjuntar}"
+														rendered="#{respuestaSolicitudAction.botonera.evaluarAdjuntarArchivo == 2}"
+						                			  />												
+												
+								    				 <a:commandButton value="Derivar" 
+								    				 	action="#{respuestaSolicitudAction.ingresoDerivarSolicitud()}"
+								    				 	reRender="mpDestinatarioDerivacion,escritura2,escritura3,accionesPanel"
+						                           	 	ajaxSingle="true" 
+						                           	 	oncomplete="if (#{respuestaSolicitudAction.mensajeGlogal == null}) {#{rich:component('mpDestinatarioDerivacion')}.show()}else{#{rich:component('mpMensajeGlobalRespuesta')}.show()}"
+						                           	 	title="Derivar la Solicitud #{respuestaSolicitudAction.solicitud.id.numSolicitud}"
+						                           	 	style="width:75px;"
+						                           	 	disabled="#{!respuestaSolicitudAction.botonera.derivar}"
+						                			  />
+
+								    				 <a:commandButton value="Analisis" 
+								    				 	reRender="mpAnalizarSolicitud"
+						                           	 	ajaxSingle="true" 
+						                           	 	oncomplete="#{rich:component('mpAnalizarSolicitud')}.show()"
+						                           	 	title="Analizar la Solicitud #{respuestaSolicitudAction.solicitud.id.numSolicitud}"
+						                           	 	style="width:75px;"
+						                           	 	process="observacionesfinal"
+						                           	 	rendered="#{respuestaSolicitudAction.botonera.muestraBotonAnalisisToCierraAnalisis == 0}"
+						                           	 	disabled="#{!respuestaSolicitudAction.botonera.analisis}"
+						                			  />
+						                			  
+						                			  
+						                			 <!-- bototnes nuevos insertado --> 	
+									    				 <a:commandButton value="Analisis" 
+									    				 	reRender="mpAnalizarSolicitudDerivada"
+							                           	 	ajaxSingle="true" 
+							                           	 	oncomplete="#{rich:component('mpAnalizarSolicitudDerivada')}.show()"
+							                           	 	title="Analizar  la Solicitud #{respuestaSolicitudAction.solicitud.id.numSolicitud}"
+							                           	 	style="width:75px;" 
+							                           	 	rendered="#{respuestaSolicitudAction.botonera.muestraBotonAnalisisToCierraAnalisis == 1}"
+							                           	 	disabled="#{!respuestaSolicitudAction.botonera.analisis}"
+							                           	   />	
+		
+									    				  <a:commandButton value="Cerrar Analisis" 
+									    				 	reRender="mpCerrarAnalisisDerivada,escrituraAprobar,mpMensajeGlobalRespuestaDerivadaa,escritura3"
+							                           	 	ajaxSingle="true" 
+							                           	 	oncomplete="if (#{respuestaSolicitudAction.mensajeGlogal == null}) {#{rich:component('mpCerrarAnalisisDerivada')}.show()}else{#{rich:component('mpMensajeGlobalRespuestaDerivada')}.show()}"
+							                           	 	action="#{respuestaSolicitudAction.ingresoAprobarDerivada()}"
+							                           	 	title="Cierre del Analisis de Solicitud #{respuestaSolicitudDerivadaAction.solicitud.id.numSolicitud}"
+							                           	 	style="width:110px;"
+							                           	 	process="idObservacionesfinales,idObservacionesfinales6,idObservacionesfinales11,idObservacionesfinales3,idObservacionesfinales4,idObservacionesfinales5"
+							                			  	rendered="#{respuestaSolicitudAction.botonera.muestraBotonAnalisisToCierraAnalisis == 2}"
+							                			  	disabled="#{!respuestaSolicitudAction.botonera.cerrarAnalisis}"
+							                			  />	
+						                			  
+													 <!-- botones nuevos insertados -->
+											      
+								    				 <a:commandButton value="Logs" 
+								    				 	action="#{respuestaSolicitudAction.sacarLogSolicitudPagina()}"
+								    				 	reRender="mpConsultarLogsRespuesta,idgrillaLogsRespuesta"
+						                           	 	ajaxSingle="true" 
+						                           	 	oncomplete="#{rich:component('mpConsultarLogsRespuesta')}.show()"
+						                           	 	title="Revisar Logs de Solicitud #{respuestaSolicitudAction.solicitud.id.numSolicitud}"
+						                           	 	style="width:75px;"
+						                           	 	disabled="#{!respuestaSolicitudAction.botonera.logs}"
+						                			  />									        									        
+
+								    				 <a:commandButton value="Hitos" 
+								    				 	action="#{respuestaSolicitudAction.sacarLogHitosPagina()}"
+								    				 	reRender="mpConsultarHitosRespuesta"
+						                           	 	ajaxSingle="true" 
+						                           	 	oncomplete="#{rich:component('mpConsultarHitosRespuesta')}.show()"
+						                           	 	title="Revisar Hitos de Solicitud #{respuestaSolicitudAction.solicitud.id.numSolicitud}"
+						                           	 	style="width:75px;"
+						                           	 	disabled="#{!respuestaSolicitudAction.botonera.hitos}"
+						                			 />	
+
+						                		<s:fragment rendered="#{respuestaSolicitudAction.botonera.conceptos}">	  	
+								    				 <a:commandButton id="conceptoMonto"
+								    				    value="Conceptos  y Montos Cotizados" 
+						                           	 	ajaxSingle="false" 
+						                           	 	reRender="mpRevisarConceptoMontoRespuesta"
+						                           	 	oncomplete="#{rich:component('mpRevisarConceptoMontoRespuesta')}.show()"
+						                            	disabled="false"
+						                			  />
+											    </s:fragment>
+							    				 <a:commandButton value="Anular" 
+							    				 	reRender="mpAnularSolicitud,escritura3"
+					                           	 	ajaxSingle="true" 
+					                           	 	oncomplete="if (#{respuestaSolicitudAction.mensajeGlogal == null}) {#{rich:component('mpAnularSolicitud')}.show()}else{#{rich:component('mpMensajeGlobalRespuesta')}.show()}"
+					                           	 	action="#{respuestaSolicitudAction.ingresoAnular()}"
+					                           	 	title="Anular Solicitud #{respuestaSolicitudAction.solicitud.id.numSolicitud}"
+					                           	 	style="width:75px;"
+					                           	 	process="idObservacionesfinales,idObservacionesfinales11,idObservacionesfinales3,idObservacionesfinales4,idObservacionesfinales5,idObservacionesfinales6"
+					                			  	disabled="#{!respuestaSolicitudAction.botonera.anular}"
+					                			  />	
+
+						                		<s:fragment rendered="#{respuestaSolicitudAction.botonera.salir}">	 
+						                			<a href="javascript: history.go(-1)" >
+						                				<input type="button" value="Volver" style="width: 75px;" />
+						                			</a>
+						                				<!-- <input type="button" value="Volver" style="width: 75px;" onclick="volver();"/> -->
+						                			<ui:remove> 
+						                		  	 							        
+						        					<s:button view="/GenerarSolicitud.xhtml" 
+										                   id="done"
+										                   value="Volver" 								
+										                   propagation="join"
+										                   rendered="#{respuestaSolicitudAction.paginaVolver == 'Listado'}"
+										                   style="width:75px;"
+										                   action="#{generarSolicitudAction.retorno()}"
+										                   onclick="volver();" >
+															<f:param name="tabGrilla" value="#{respuestaSolicitudAction.tabGrilla}" />
+															<f:param name="tabGrillaRetorno" value="#{respuestaSolicitudAction.tabGrilla}" />
+															<f:param name="solicitudSeleccionada" value="#{respuestaSolicitudAction.solicitud.id.numSolicitud}" />	
+															<f:param name="pagina" value="Resp" />	
+													</s:button>
+						        					<s:button view="/GenerarSolicitud.xhtml" 
+										                   id="done1"
+										                   value="Volver" 								
+										                   propagation="join"
+										                   action="#{generarSolicitudAction.retorno()}"
+										                   rendered="#{respuestaSolicitudAction.paginaVolver == 'ListaEstado'}"
+										                   style="width:75px;"
+										                   onclick="volver();">
+															<f:param name="tabGrilla" value="#{respuestaSolicitudAction.tabGrilla}" />
+															<f:param name="tabGrillaRetorno" value="#{respuestaSolicitudAction.tabGrilla}" />	
+															<f:param name="solicitudSeleccionada" value="#{respuestaSolicitudAction.solicitud.id.numSolicitud}" />
+															<f:param name="pagina" value="Resp" />
+													</s:button>	
+												 	</ui:remove>
+									        	</s:fragment>
+									      </a:outputPanel>  
+										</td>
+									</tr>
+									<tr>
+										<td align="center">
+							    				 <a:commandButton value="Aprobar" 
+							    				 	reRender="mpAprobarSolicitud,escrituraAprobar,mpMensajeGlobalRespuesta,escritura3"
+					                           	 	ajaxSingle="true" 
+					                           	 	oncomplete="if (#{respuestaSolicitudAction.mensajeGlogal == null}) {#{rich:component('mpAprobarSolicitud')}.show()}else{#{rich:component('mpMensajeGlobalRespuesta')}.show()}"
+					                           	 	action="#{respuestaSolicitudAction.ingresoAprobar()}"
+					                           	 	title="Aprobar Solicitud #{respuestaSolicitudAction.solicitud.id.numSolicitud}"
+					                           	 	style="width:75px;"
+					                           	 	process="idObservacionesfinales,idObservacionesfinales11,idObservacionesfinales3,idObservacionesfinales4,idObservacionesfinales5,idObservacionesfinales6"
+					                			  	disabled="#{!respuestaSolicitudAction.botonera.aprobar}"
+					                			  	rendered="#{respuestaSolicitudAction.botonera.muestraBotonAnalisisToCierraAnalisis == 0}"
+					                			  />				                			  
+							    				 <a:commandButton value="Rechazar"
+													action="#{respuestaSolicitudAction.ingresoRechazoSolicitud()}"
+													reRender="mpRechazarSolicitud,mpMensajeGlobalRespuesta,escritura3,idObservacionesfinalesMotivo,mpRechazoFormularioSolicitud,seleccionMotivosRechazos,listaMotivoRechazoList,observacionesfinalMotivo"
+													ajaxSingle="true"
+													oncomplete="if (#{respuestaSolicitudAction.mensajeGlogal == null}) {#{rich:component('mpRechazoFormularioSolicitud')}.show()}else{#{rich:component('mpMensajeGlobalRespuesta')}.show()}"
+													title="Rechazar la Solicitud #{respuestaSolicitudAction.solicitud.id.numSolicitud}"
+													style="width:75px;"
+													process="idObservacionesfinales,idObservacionesfinales11,idObservacionesfinales3,idObservacionesfinales4,idObservacionesfinales5,idObservacionesfinales6"
+													disabled="#{!respuestaSolicitudAction.botonera.rechazar}"
+													rendered="#{respuestaSolicitudAction.botonera.muestraBotonAnalisisToCierraAnalisis == 0}" />
+
+												<!-- botones que vienen desde la derivada -->
+								    				 <a:commandButton value="Aprobar" 
+								    				 	reRender="mpAprobarSolicitudDerivada,escrituraAprobar,mpMensajeGlobalRespuestaDerivada,escritura3"
+						                           	 	ajaxSingle="true" 
+						                           	 	oncomplete="if (#{respuestaSolicitudAction.mensajeGlogal == null}) {#{rich:component('mpAprobarSolicitudDerivada')}.show()}else{#{rich:component('mpMensajeGlobalRespuestaDerivada')}.show()}"
+						                           	 	action="#{respuestaSolicitudAction.ingresoAprobarDerivada()}"
+						                           	 	title="Aprobar Individual de Solicitud #{respuestaSolicitudAction.solicitud.id.numSolicitud}"
+						                           	 	style="width:75px;"
+						                           	 	process="idObservacionesfinales,idObservacionesfinales11,idObservacionesfinales3,idObservacionesfinales4,idObservacionesfinales5,idObservacionesfinales6"
+						                			  	disabled="#{!respuestaSolicitudAction.botonera.aprobar}"
+						                			  	rendered="#{respuestaSolicitudAction.botonera.muestraBotonAnalisisToCierraAnalisis == 3}"
+						                			  />				                			  
+		
+								    				 <a:commandButton value="Rechazar" 
+								    				 	action="#{respuestaSolicitudAction.ingresoRechazoSolicitudDerivada()}"
+								    				 	reRender="mpRechazaSolicitudDerivada,escrituraAprobar,mpMensajeGlobalRespuestaDerivada,escritura3"
+						                           	 	ajaxSingle="true" 
+						                           	 	oncomplete="if (#{respuestaSolicitudAction.mensajeGlogal == null}) {#{rich:component('mpRechazaSolicitudDerivada')}.show()}else{#{rich:component('mpMensajeGlobalRespuestaDerivada')}.show()}"
+						                           	 	title="Rechazar Individual de la Solicitud #{respuestaSolicitudAction.solicitud.id.numSolicitud}"
+						                           	 	style="width:75px;"
+						                           	 	process="idObservacionesfinales,idObservacionesfinales11,idObservacionesfinales3,idObservacionesfinales4,idObservacionesfinales5,idObservacionesfinales6"
+						                			  	disabled="#{!respuestaSolicitudAction.botonera.rechazar}"
+						                			  	rendered="#{respuestaSolicitudAction.botonera.muestraBotonAnalisisToCierraAnalisis == 3}"
+						                			  />
+						                			  
+						                			  
+								    				 <a:commandButton value="Aprobar" 
+								    				 	reRender="mpAprobarSolicitudDerivada,escrituraAprobar,mpMensajeGlobalRespuestaDerivada,escritura3"
+						                           	 	ajaxSingle="true" 
+						                           	 	oncomplete="if (#{respuestaSolicitudAction.mensajeGlogal == null}) {#{rich:component('mpAprobarSolicitudDerivada')}.show()}else{#{rich:component('mpMensajeGlobalRespuestaDerivada')}.show()}"
+						                           	 	action="#{respuestaSolicitudAction.ingresoAprobarDerivada()}"
+						                           	 	title="Aprobar Individual de Solicitud #{respuestaSolicitudAction.solicitud.id.numSolicitud}"
+						                           	 	style="width:75px;"
+						                           	 	process="idObservacionesfinales,idObservacionesfinales11,idObservacionesfinales3,idObservacionesfinales4,idObservacionesfinales5,idObservacionesfinales6"
+						                			  	disabled="true"
+						                			  	rendered="#{respuestaSolicitudAction.botonera.muestraBotonAnalisisToCierraAnalisis == 1 or respuestaSolicitudAction.botonera.muestraBotonAnalisisToCierraAnalisis == 2}"
+						                			  />				                			  
+		
+								    				 <a:commandButton value="Rechazar" 
+								    				 	action="#{respuestaSolicitudAction.ingresoRechazoSolicitudDerivada()}"
+								    				 	reRender="mpRechazaSolicitudDerivada,escrituraAprobar,mpMensajeGlobalRespuestaDerivada,escritura3"
+						                           	 	ajaxSingle="true" 
+						                           	 	oncomplete="if (#{respuestaSolicitudAction.mensajeGlogal == null}) {#{rich:component('mpRechazaSolicitudDerivada')}.show()}else{#{rich:component('mpMensajeGlobalRespuestaDerivada')}.show()}"
+						                           	 	title="Rechazar Individual de la Solicitud #{respuestaSolicitudAction.solicitud.id.numSolicitud}"
+						                           	 	style="width:75px;"
+						                           	 	process="idObservacionesfinales,idObservacionesfinales11,idObservacionesfinales3,idObservacionesfinales4,idObservacionesfinales5,idObservacionesfinales6"
+						                			  	disabled="true"
+						                			  	rendered="#{respuestaSolicitudAction.botonera.muestraBotonAnalisisToCierraAnalisis == 1 or respuestaSolicitudAction.botonera.muestraBotonAnalisisToCierraAnalisis == 2}"
+						                			  />						                			  
+					                			  <!-- fin de botones de derivadas -->
+										</td>									
+									</tr>
+								</table>									 
+    						</rich:panel>
+    					</td>
+    					<td align="left"  width="280px;">
+     						<rich:panel style="height:78px;">
+								<f:facet name="header" >Datos.</f:facet>   	
+								<table cellpadding="0" cellspacing="0" border="0" width="400px;">
+									<tr>
+										<td>Emisor:</td>
+										<td><h:outputLabel value="#{respuestaSolicitudAction.usuarioEmisor}" /></td>
+										<td>Fecha:</td>
+										<td><h:outputLabel value="#{respuestaSolicitudAction.solicitud.id.fecSolicitud}" >
+												<s:convertDateTime pattern="dd-MM-yyyy" />
+											</h:outputLabel>
+										</td>
+									</tr>
+									<tr>
+										<td>Sucursal:</td>
+										<td style="font-size:11px;">
+											<h:outputLabel value="#{respuestaSolicitudAction.sucursal.codigo}" />#{' '}
+											<h:outputLabel value="#{respuestaSolicitudAction.sucursal.descripcion.toUpperCase(globalLocale)}" />
+										</td>
+										<td>Hora</td>
+										<td><h:outputLabel value="#{respuestaSolicitudAction.solicitud.hraSolicitud}">
+												<s:convertDateTime pattern="HH:mm:ss" />
+											</h:outputLabel>
+										</td>
+									</tr>
+									<tr>
+										<td>Sociedad:</td>
+										<td style="font-size:11px;">
+											<h:outputLabel value="#{respuestaSolicitudAction.sociedadAux.codigoSociedad}" />#{' ==> '}
+											<h:outputLabel value="#{respuestaSolicitudAction.sociedadAux.razonSocial}" />
+										</td>
+										<td></td>
+										<td></td>
+									</tr>
+								</table> 									    						
+    						</rich:panel>     						
+    					</td>
+    				</tr>
+  				
+    				<!-- informacion del cliente -->
+    				<tr>
+    					<td colspan="3" align="left"  width="1260px;">
+						<a:outputPanel id="opDatosCliente">
+    					   <rich:panel>
+								<f:facet name="header" >Datos Actuales Del Cliente.</f:facet> 
+								<table cellpadding="0" cellspacing="0" border="0" width="100%">
+									<tr>
+										<td width="40px;">Rut Cliente</td>
+										<td width="90px;">:&nbsp;<strong> <h:outputLabel value="#{respuestaSolicitudAction.cliente.rut}" /></strong></td>
+										<td width="40px;"></td>
+										<td width="90px;"></td>
+										<td width="40px;"></td>
+										<td width="90px;"><strong></strong></td>
+									</tr>
+									<tr>
+										<td width="40px;">Razón Social</td>
+										<td width="90px;">:&nbsp;<strong> <h:outputLabel value="#{respuestaSolicitudAction.cliente.razonSocial}" /></strong></td>
+										<td width="40px;">L.Crédito KH</td>
+										<td width="90px;">:<strong><h:outputLabel value="#{respuestaSolicitudAction.cliente.lineaCreditoKH}">
+																		<f:convertNumber type="currency" currencySymbol="$ "/>
+																   </h:outputLabel>	
+										 					</strong> </td>
+										<td width="40px;">Tipo Seguro</td>
+										<td width="90px;">:<strong><h:outputLabel value="#{respuestaSolicitudAction.cliente.seguro}" /></strong></td>
+									</tr>
+									<tr>
+										<td>Giro de Cliente</td>
+										<td>:<strong><h:outputLabel value="#{respuestaSolicitudAction.cliente.giro}" /></strong></td>
+										<td>L.Crédito KH Utilizado</td>
+										<td>:<strong><h:outputLabel value="#{respuestaSolicitudAction.cliente.lineaCreditoKHUtilizado}">
+														<f:convertNumber type="currency" currencySymbol="$ "/>
+													 </h:outputLabel>	
+											 </strong></td>
+										<td>Vigencia Seguro</td>
+										<td>:<strong><h:outputLabel value="#{respuestaSolicitudAction.cliente.vigenciaSeguro}" /></strong></td>
+									</tr>							
+									<tr>
+										<td>Dirección</td>
+										<td>:<strong><h:outputLabel value="#{respuestaSolicitudAction.cliente.direccion}" /></strong></td>
+										<td>L.Crédito KH Disponible</td>
+										<td>:<strong><h:outputLabel value="#{respuestaSolicitudAction.cliente.lineaCreditoKHDisponible}">
+														<f:convertNumber type="currency" currencySymbol="$ "/>
+													</h:outputLabel>	
+											</strong></td>
+										<td>Monto Seguro $</td>
+										<td>:<strong><h:outputLabel value="#{respuestaSolicitudAction.cliente.montoSeguro}">
+														<f:convertNumber type="currency" currencySymbol="$ "/>
+													</h:outputLabel>	
+											</strong></td>
+									</tr>	
+									<tr>
+										<td>Fono / Fax</td>
+										<td>:<strong>	<h:outputLabel value="tel: #{respuestaSolicitudAction.cliente.fono}" rendered="#{respuestaSolicitudAction.cliente.fono ne null}"/>
+												#{' '}  <h:outputLabel value="fax: #{respuestaSolicitudAction.cliente.fax}" rendered="#{respuestaSolicitudAction.cliente.fax ne null}"/>
+											</strong>	
+										</td>
+										<td>Estado L.Crédito KH</td>
+										<td>:<strong><h:outputLabel value="#{respuestaSolicitudAction.cliente.estadoLineaCreditoKH}" /></strong> </td>
+										<td>Monto Seguro UF</td>
+										<td>:<strong><h:outputLabel value="#{respuestaSolicitudAction.cliente.montoSeguroUf}">
+														<f:convertNumber type="currency" currencySymbol="$ "/>
+													</h:outputLabel>	
+										     </strong> </td>
+									</tr>	
+									<tr>
+										<td>Comuna</td>
+										<td>:<strong><h:outputLabel value="#{respuestaSolicitudAction.cliente.comuna}" /></strong> </td>
+										<td>Número RV</td>
+										<td>:<strong><h:outputLabel value="#{respuestaSolicitudAction.cliente.numeroRV}" /></strong></td>
+										<td>Ventas Prom 12 Meses</td>
+										<td>:<strong><h:outputLabel value="#{respuestaSolicitudAction.cliente.ventasProm12Meses}">
+														<f:convertNumber type="currency" currencySymbol="$ "/>
+													 </h:outputLabel>	
+										    </strong></td>
+									</tr>	
+									<tr>
+										<td>Ciudad</td>
+										<td>:<strong><h:outputLabel value="#{respuestaSolicitudAction.cliente.ciudad}" /></strong> </td>
+										<td >Condición de Pago</td>
+										<td>:<strong><h:outputLabel value="#{respuestaSolicitudAction.cliente.condicionPago}" /></strong> </td>
+										<td>Fact.Prom 12 Meses</td>
+										<td>:<strong><h:outputLabel value="#{respuestaSolicitudAction.cliente.factProm12Meses}"/>
+											</strong></td>
+									</tr>	
+									<tr>
+										<td>Suc.Cliente</td>
+										<td>:<strong><h:outputLabel value="#{respuestaSolicitudAction.cliente.sucursalCliente}" /></strong> </td>
+										<td >Clasificación Riesgo</td>
+										<td >:<strong><h:outputLabel value="#{respuestaSolicitudAction.cliente.clasificacionRiesgo}" /></strong></td>
+										<td>Cant. Meses Ventas</td>
+										<td>:<strong><h:outputLabel value="#{respuestaSolicitudAction.cliente.cantMesesVentas}"/>	
+												</strong> </td>
+									</tr>	
+									<tr>
+										<td>Canal Venta</td>
+										<td >:<strong><h:outputLabel value="#{respuestaSolicitudAction.cliente.canalVenta}" /></strong> </td>
+										<td ></td>
+										<td ><strong></strong> </td>
+										<td >Ventas Total 12 Meses</td>
+										<td>:<strong><h:outputLabel value="#{respuestaSolicitudAction.cliente.ventasTotal12Meses}">
+														<f:convertNumber type="currency" currencySymbol="$ "/>
+													</h:outputLabel>	
+											</strong> </td>
+									</tr>	
+									<tr>
+										<td >Tipo Cliente</td>
+										<td >:<strong><h:outputLabel value="#{respuestaSolicitudAction.cliente.tipoCliente}" /></strong></td>
+										<td ></td>
+										<td></td>
+										<td>Creación en SAP</td>
+										<td>:<strong>
+											<h:outputLabel value="#{respuestaSolicitudAction.cliente.creacionSap}">
+												<s:convertDateTime pattern="dd-MM-yyyy" />
+											</h:outputLabel>
+										</strong> </td>
+									</tr>	
+									<tr>
+										<td >DM de Ventas </td>
+										<td >: <strong><h:outputLabel value="#{respuestaSolicitudAction.cliente.dmVentasUno}" /></strong></td>
+										<td colspan="2" align="left">
+											<a:outputPanel id="botonCtaCte">
+						    				 <a:commandButton value="Detalle Cta Cte" 
+						    				 	reRender="mpConsultarCtaCte"
+				                           	 	ajaxSingle="true" 
+				                           	 	oncomplete="#{rich:component('mpConsultarCtaCte')}.show()"
+				                            	action="#{respuestaSolicitudAction.informacionCtaCte()}" 
+				                			   />	
+						    				 <a:commandButton value="Enviar Cia de Seguro" 
+							    				 	reRender="mpEnvioSeguroSolicitud,escrituraEjecutivoSeguro,mpMensajeGlobalRespuesta,escritura3"
+					                           	 	ajaxSingle="true" 
+					                           	 	oncomplete="if (#{respuestaSolicitudAction.mensajeGlogal == null}) {#{rich:component('mpEnvioSeguroSolicitud')}.show()}else{#{rich:component('mpMensajeGlobalRespuesta')}.show()}"
+					                           	 	action="#{respuestaSolicitudAction.enviarAseguro()}"
+					                           	 	title="Enviar a Seguro la Solicitud #{respuestaSolicitudAction.solicitud.id.numSolicitud}"
+					                           	 	style="width:150px;"
+					                           	 	disabled="#{respuestaSolicitudAction.habilitaEnvioAseguro}"
+					                			  />					                			   
+				                			 </a:outputPanel> 
+									        <s:fragment rendered="#{respuestaSolicitudAction.botonera.imprimir}">		
+										    	<s:fragment rendered="#{respuestaSolicitudAction.solicitud.tipTiposol == '1N' or respuestaSolicitudAction.solicitud.tipTiposol == '1C'}">
+										    	  
+											        <s:link view="/SolicitudConVtaPuntualPDF.xhtml"
+											                    id="imprimirVP"
+											           propagation="join"
+											                 target="_blank" >
+											                 <img src="img/imprimir_actionButtons.png" width="77px;" height="20px;"/>
+											        </s:link>	
+										    	</s:fragment>
+										    	<s:fragment rendered="#{respuestaSolicitudAction.solicitud.tipTiposol == '2I' or respuestaSolicitudAction.solicitud.tipTiposol == '2N' or respuestaSolicitudAction.solicitud.tipTiposol == '2R' }">
+											        <s:link view="/SolicitudLineaCreditoPDF.xhtml"
+											                    id="imprimirLC"
+											           propagation="join"
+											                 target="_blank">
+											                 <img src="img/imprimir_actionButtons.png" width="77px;" height="20px;"/>
+											        </s:link>	
+										    	</s:fragment>
+										    	<s:fragment rendered="#{respuestaSolicitudAction.solicitud.tipTiposol == '4B' or respuestaSolicitudAction.solicitud.tipTiposol == '4D'}">
+										    		<span>
+												        <s:link view="/SolicitudDesbloqueoPDF.xhtml"
+												                    id="imprimirBD"
+												           propagation="join"
+												                 target="_blank">
+												                 <img src="img/imprimir_actionButtons.png" width="77px;" height="20px;"/>
+												        </s:link>
+											        </span>	
+										    	</s:fragment>										    	
+										    	<s:fragment rendered="#{respuestaSolicitudAction.solicitud.tipTiposol == '4DM' }">
+										    		<span>
+												        <s:link view="/SolicitudCreacionDMPDF.xhtml"
+												                    id="imprimirDM"
+												           propagation="join"
+												                 target="_blank">
+												                 <img src="img/imprimir_actionButtons.png" width="77px;" height="20px;"/>
+												        </s:link>
+											        </span>	
+										    	</s:fragment>	
+										    	<s:fragment rendered="#{respuestaSolicitudAction.solicitud.tipTiposol == '4PR' }">
+										    		<span>
+												        <s:link view="/SolicitudProrrogaPDF.xhtml"
+												                    id="imprimirPR"
+												           propagation="join"
+												                 target="_blank">
+												                 <img src="img/imprimir_actionButtons.png" width="77px;" height="20px;"/>
+												        </s:link>
+											        </span>	
+										    	</s:fragment>	
+										    	
+										    </s:fragment>					                			 
+				                			 	
+										</td>
+										<td ><span style="color:#000000; font-weight:bold;">Estado de Solictud:</span></td>
+										<td width="50px;">:
+												      <h:outputLabel value="#{respuestaSolicitudAction.cliente.estadoSolicitud}" 
+							                                                     style="color:#2B00FF; font-weight:bold; " rendered="#{respuestaSolicitudAction.solicitud.estado != 'A' and respuestaSolicitudAction.solicitud.estado != 'R'}"/>
+													  <h:outputLabel value="#{respuestaSolicitudAction.cliente.estadoSolicitud}" 
+							                                                     style="color:#008712; font-weight:bold; " rendered="#{respuestaSolicitudAction.solicitud.estado == 'A'}"/>    								                                                     
+													  <h:outputLabel value="#{respuestaSolicitudAction.cliente.estadoSolicitud}" 
+							                                                     style="color:#E00000; font-weight:bold; " rendered="#{respuestaSolicitudAction.solicitud.estado == 'R'}"/> 										
+										</td>
+									</tr>	
+									<tr>
+										<td >&nbsp;</td>
+										<td >&nbsp;</td>
+										<td >&nbsp;</td>
+										<td >&nbsp;</td>
+										<td >&nbsp;</td>
+										<td >&nbsp;</td>
+									</tr>
+								</table> 								
+							</rich:panel> 					
+						  </a:outputPanel> 
+    					</td>
+    				</tr>
+
+    				<!-- informacion del Montos de La solictud -->
+    				<tr>
+    					<td colspan="3" align="left"  width="1260px;">
+    						<table cellpadding="0" cellspacing="0" border="0" width="100%" align="center" >
+    							<tr valign="top">
+    								<td width="10%">
+    								   <a:outputPanel id="botonConsultas">
+			     						<rich:panel style="height:115px;">
+											<f:facet name="header" >Consultas.</f:facet>   
+												<table cellpadding="0" cellspacing="0" border="0" width="100%">
+					    							<tr>
+														<td height="30px;"> 
+															
+															<s:link  value="" 
+															       onclick="location.href='https://www.dicom.cl/dic/hom.01/pag/p.dic.hom.new-home.htm'" 
+															        target="_blank"
+															        style="width:80px; ">
+																<img src="./img/dicom_actionButton.png" width="80" height="20"/>
+															</s:link>
+														 </td>
+					    							</tr>												
+					    							<tr>
+														<td > 
+															<s:link  value="" 
+															       onclick="location.href='http://clientes.continental.cl/'" 
+															        target="_blank"
+															        style="width:80px; ">
+																<img src="./img/continental_actionButton.png" width="80" height="20"/>
+															</s:link>
+														 </td>
+					    							</tr>
+					    							
+					    							<tr>
+														<td> 
+										    				 <a:commandButton value="Scoring" 
+										    				 	reRender="mpConsultarCtaCte"
+								                           	 	ajaxSingle="true" 
+								                           	 	style="width:80px;"
+								                           	 	oncomplete="#{rich:component('mpConsultarCtaCte')}.show()"
+								                            	action="#{respuestaSolicitudAction.informacionCtaCte()}" 
+								                			  />															
+														 </td>
+					    							</tr>
+												</table>
+										</rich:panel>
+									  </a:outputPanel>		
+    								</td>    							
+    								<td width="35%">
+    								  <a:outputPanel id="opDatosComportamiento">
+			     						<rich:panel style="height:115px;">
+											<f:facet name="header" >Comportamiento Comercial con Küpfer Hermanos</f:facet>  
+												<table cellpadding="0" cellspacing="0" border="0" width="100%">
+					    							<tr>
+					    								<td>&nbsp;</td>
+					    								<td>Monto Total</td>
+					    								<td>&nbsp;</td>					    								
+					    								<td>Nro</td>	
+					    								<td>Días de Mora</td>	
+					    							</tr>
+					    							<tr>
+					    								<td>Morosidad</td>
+					    								<td><h:inputText value="#{respuestaSolicitudAction.comportamiento.montoTotalMoro}" disabled="true" style="text-align: right;">
+					    										<f:convertNumber type="currency" currencySymbol="$ "/>
+					    									</h:inputText>
+					    								
+					    								</td>
+					    								<td>&nbsp;</td>					    								
+					    								<td><h:inputText value="#{respuestaSolicitudAction.comportamiento.numeroMoro}" disabled="true" style="text-align: right;"/></td>	
+					    								<td><h:inputText value="#{respuestaSolicitudAction.comportamiento.diasMoras}" disabled="true" style="text-align: right;"/></td>	
+					    							</tr>
+
+					    							<tr>
+					    								<td colspan="5">&nbsp;</td>					    								
+					    							</tr>
+					    							<tr>
+					    								<td>&nbsp;</td>
+					    								<td>Monto Total</td>
+					    								<td>&nbsp;</td>					    								
+					    								<td>Nro</td>	
+					    								<td>Días de Mora</td>	
+					    							</tr>
+					    							<tr>
+					    								<td>Protesto</td>
+					    								<td><h:inputText value="#{respuestaSolicitudAction.comportamiento.montoTotalProt}" disabled="true" style="text-align: right;">
+					    										<f:convertNumber type="currency" currencySymbol="$ "/>
+					    									</h:inputText>
+					    								</td>
+					    								<td>&nbsp;</td>					    								
+					    								<td><h:inputText value="#{respuestaSolicitudAction.comportamiento.numeroProt}" disabled="true" style="text-align: right;"/></td>	
+					    								<td><h:inputText value="#{respuestaSolicitudAction.comportamiento.dmPort}" disabled="true" style="text-align: right;"/></td>	
+					    							</tr>
+					    						</table>												 
+
+										</rich:panel>	
+									  </a:outputPanel>
+    								</td>
+    								<td colspan="1" width="45%">
+    								   <a:outputPanel id="opDatosExposi">
+			     						<rich:panel style="height:115px;">
+											<f:facet name="header" >Exposición de Riesgo Küpfer Hermanos.</f:facet>   
+												<table cellpadding="0" cellspacing="0" border="0" width="100%">
+					    							<tr>
+					    								<td width="80px;">Peak Crédito</td>
+					    								<td ><strong>:
+					    								             <h:outputText value="#{respuestaSolicitudAction.expoRiesgoKh.peakCredito}">
+					    												<f:convertNumber type="currency" currencySymbol="$ "/>
+					    											  </h:outputText>	
+					    									</strong>
+					    								      </td>
+					    								<td width="200px;">Pedidos en Proceso</td>					    								
+					    								<td><strong> :
+					    								             <h:outputText value="#{respuestaSolicitudAction.expoRiesgoKh.montoPedidoProceso}">
+					    												<f:convertNumber type="currency" currencySymbol="$ "/>
+					    											  </h:outputText>						    								
+					    								 </strong></td>	
+					    							</tr>												
+					    							<tr>
+					    								<td width="80px;"></td>
+					    								<td >   </td>
+					    								<td width="200px;"></td>					    								
+					    								<td></td>	
+					    							</tr>	
+					    							<tr>
+					    								<td>Seguro</td>
+					    								<td><strong> :
+					    								             <h:outputText value="#{respuestaSolicitudAction.expoRiesgoKh.montoAsegurado}">
+					    												<f:convertNumber type="currency" currencySymbol="$ "/>
+					    											  </h:outputText>						    								
+					    								</strong></td>
+					    								<td>Peak Crédito + Pedido en Proceso</td>					    								
+					    								<td><strong> :
+					    								             <h:outputText value="#{respuestaSolicitudAction.expoRiesgoKh.montoPeakCreditoPedidoProceso}">
+					    												<f:convertNumber type="currency" currencySymbol="$ "/>
+					    											  </h:outputText>	
+					    									</strong></td>	
+					    							</tr>
+					    							<tr>
+					    								<td width="80px;"></td>
+					    								<td >   </td>
+					    								<td width="200px;"></td>					    								
+					    								<td></td>	
+					    							</tr>	
+					    								
+					    							<tr>
+					    								<td>Riesgo Küpfer</td>
+					    								<td><strong> :
+					    								             <h:outputText value="#{respuestaSolicitudAction.expoRiesgoKh.montoRiesgoKupfer}">
+					    												<f:convertNumber type="currency" currencySymbol="$ "/>
+					    											  </h:outputText>	
+					    									</strong></td>
+					    								<td>Riesgo Küpfer + Pedido en Proceso</td>					    								
+					    								<td><strong> :
+					    								             <h:outputText value="#{respuestaSolicitudAction.expoRiesgoKh.montoRiesgoKupferPedidoProceso}">
+					    												<f:convertNumber type="currency" currencySymbol="$ "/>
+					    											  </h:outputText>	
+					    								</strong></td>	
+					    							</tr>
+												</table>
+										</rich:panel>
+									  </a:outputPanel>		
+    								</td>
+    								<td width="10%">
+    								   <a:outputPanel id="boton">
+			     						<rich:panel style="height:115px;">
+											<f:facet name="header" >Resolución.</f:facet>   
+												<table cellpadding="0" cellspacing="0" border="0" width="100%" align="center">
+					    							<tr>
+														<td> 
+
+								                			  														
+														 </td>
+					    							</tr>												
+					    							<tr>
+														<td> 
+															<s:fragment rendered="#{respuestaSolicitudAction.habilitacionesBotonAprobadorAntiguas == false}">
+																<a:outputPanel id="idUsuarioInvolucrados1">
+												    				 <a:commandButton value="Aprobadores" 
+												    				 	action="#{respuestaSolicitudAction.sacarAprobadores()}"
+												    				 	reRender="mpConsultarAproRechaRespuesta"
+										                           	 	ajaxSingle="true" 
+										                           	 	oncomplete="#{rich:component('mpConsultarAproRechaRespuesta')}.show()"
+										                           	 	title="Resumen Usuarios Involucrados de solicitud #{respuestaSolicitudAction.solicitud.id.numSolicitud}"
+										                           	 	style="height:40px; text-align:justify;"
+										                           	 	disabled="#{respuestaSolicitudAction.habilitarBotonAprobadoresInvolucrados}"/>
+									                           	</a:outputPanel> 																
+															</s:fragment>
+															<s:fragment rendered="#{respuestaSolicitudAction.habilitacionesBotonAprobadorAntiguas == true}">
+																<a:outputPanel id="idUsuarioInvolucrados2">
+												    				 <a:commandButton value="Aprobadores" 
+												    				 	action="#{respuestaSolicitudAction.sacarAprobadoresSckAntiguas()}"
+												    				 	reRender="mpHistorialAproRecha"
+										                           	 	ajaxSingle="true" 
+										                           	 	oncomplete="#{rich:component('mpHistorialAproRecha')}.show()"
+										                           	 	title="Resumen Usuarios Involucrados de solicitud #{respuestaSolicitudAction.solicitud.id.numSolicitud}"
+										                           	 	style="height:40px; text-align:justify;"
+										                           	 	disabled="#{respuestaSolicitudAction.habilitarBotonAprobadoresInvolucrados}"/>
+									                           	</a:outputPanel> 																
+															</s:fragment>
+														 </td>
+					    							</tr>	
+					    							<tr>
+														<td> 
+														
+								                			  														
+														 </td>
+					    							</tr>						    							
+					    							
+												</table>
+										</rich:panel>
+									  </a:outputPanel>		
+    								</td>
+    							</tr>
+    						</table>
+    					</td>
+					</tr>
+				    <!-- informacion de La solictud -->
+   					<tr>
+    					<td colspan="3" align="left" width="100%;" >
+    					    <rich:panel>
+					    		<rich:tabPanel switchType="client" >
+					    			<rich:tab label="Venta Puntual" rendered="#{respuestaSolicitudAction.paginaIngreso == 11  || respuestaSolicitudAction.paginaIngreso == 12}">
+			    						<table cellpadding="0" cellspacing="0" border="0" width="100%">
+			    							<tr valign="top">
+			    								<td >
+											    	<rich:panel id="panelIngresoSolicitud1" style="width:100%;">
+											    			<f:facet name="header" ><strong>#{respuestaSolicitudAction.tituloIngreso}</strong></f:facet>
+													    	<s:fragment rendered="#{respuestaSolicitudAction.paginaIngreso == 11 || respuestaSolicitudAction.paginaIngreso == 12}">
+
+													    			<table  cellpadding="0" cellspacing="0" border="0" width="100%">
+																		<tr valign="top">
+																			<td width="250px;">
+																				<rich:panel>
+																					<f:facet name="header" ><strong>Monto y Pie </strong></f:facet>
+																					<a:outputPanel id="idValorMonto">
+																						<table cellpadding="0" cellspacing="0" border="0" style="height:152px;">
+																							<tr>
+																								<td><strong>Monto ($) </strong></td>
+																								<td ><h:inputText id="montoSol"
+																												  value="#{respuestaSolicitudAction.montoVtaPuntual}" 
+																								                  style="text-align: right;"
+																								                   onkeypress="return isNumberKey(event);"
+																								                   disabled="true">
+																								             		<f:convertNumber type="currency" currencySymbol="" locale="#{globalLocale}"/>																								                   
+																								     </h:inputText>              
+																								</td>
+																							</tr>
+																							<tr>	
+																								<td><strong>Pie ($)</strong></td>
+																								<td ><h:inputText id="pieSol"
+																												  value="#{respuestaSolicitudAction.pieVentaPuntual}" 
+																								                  style="text-align: right;"
+																								                   onkeypress="return isNumberKey(event);"
+																								                   disabled="true">
+																								            	   <f:convertNumber type="currency" currencySymbol="" locale="#{globalLocale}"/> 			      
+																								     </h:inputText>
+																								   </td>
+																							</tr>
+																						</table>
+																					</a:outputPanel>
+																				</rich:panel>																			
+																			</td>
+																			<td colspan="2"> 
+																				<rich:panel>
+																					<f:facet name="header" >Datos de Compras</f:facet>
+																						<table cellpadding="0" cellspacing="0" border="0" width="100%" >
+																						   <tr valign="top" >
+																								<td colspan="1" height="10px;" width="110px;"><strong>Productos</strong></td>	
+																								<td colspan="3" height="10px;" >
+																									<h:inputTextarea id="idProducto" value="#{respuestaSolicitudAction.productos}" 
+															         									rows="2" 
+															         									style="width:98%;"
+															         									disabled="true"/> 
+																								</td>	
+																								<td colspan="1" align="right" width="30px;">
+																									<a:commandButton value="Ver" id="verproductos"
+																									              reRender="mpAgregarCotizacionRespuesta" 
+																									            oncomplete="#{rich:component('mpAgregarCotizacionRespuesta')}.show()">
+																								    </a:commandButton>																												
+																								</td>
+																						   </tr>																						   
+																						   
+																						   <tr valign="top" >
+																								<td colspan="5" height="10px;" >&nbsp;</td>	
+																						   </tr>																							
+																						   <tr valign="top">
+																								<td width="110px;" align="left"><strong>Forma de Pago</strong></td>
+																								<td width="120px;" align="left" colspan="2"> 
+															         								<h:inputText id="idFormaPago" 
+															         								          value="#{respuestaSolicitudAction.formaPago}" 
+															         								          style="width:99%;"
+															         								          disabled="true"/> 																								
+																								
+																								</td>
+																								<td  align="center"><strong>Margen</strong></td>
+															         							<td  align="left">
+													         										<a:outputPanel id="margenGlobal">
+													         											<h:inputText value="#{respuestaSolicitudAction.margenGlogal}" 
+																					                  		style="text-align: right; width:97%;"
+																					                  		size="3"
+																					                  		disabled="true"
+																					                   		onkeypress="return isNumberKey(event);">
+																					                   		<f:convertNumber pattern="###0.00" />
+																					                   	</h:inputText>
+																					                </a:outputPanel>    		
+															         							</td>
+																							</tr>																								
+																						   <tr >
+																								<td width="126px;" align="left" height="15px;"><strong>Motivo de Compra</strong></td>
+															         							<td width="600px;" colspan="4"  height="15px;">
+															         								<h:inputTextarea id="idMotivoCompra" value="#{respuestaSolicitudAction.motivoCompra}" 
+															         									rows="2" 
+															         									style="width:99%;"
+															         									disabled="true"/> 
+															         							</td>
+																							</tr>																							
+																						
+																							<tr>
+																								<td width="126px;" align="left" height="15px;"><strong>Observaciones</strong></td>
+															         							<td width="600px;" colspan="4"  height="15px;">
+															         								<h:inputTextarea id="idObervaciones" value="#{respuestaSolicitudAction.observacionesCompra}" 
+															         									rows="2" 
+															         									style="width:99%;"
+															         									disabled="true"/> 
+															         							</td>
+																							</tr>
+																						</table>
+																				</rich:panel>																					
+																			</td>
+																			<td width="250px;">
+																				<rich:panel >
+																					<f:facet name="header" ><strong>Tipo de Venta</strong></f:facet>
+																					<a:outputPanel id="observaciones1">
+																						<table cellpadding="0" cellspacing="0" border="0" style="height:152px;" width="100%">
+																							<tr valign="top">
+																								<td width="300px;" colspan="2"  height="30px;" align="center">
+																								 <h:selectOneRadio id="logicOS1"  
+																									   value="#{respuestaSolicitudAction.normalCuota}"
+																									   dir="ltr" disabled="true" layout="lineDirection">
+																									 <f:selectItem itemLabel="Normal" itemValue="11"/>
+																									 <f:selectItem itemLabel="Cuotas" itemValue="12"/>
+																					       			   	<a:support event="onchange" 
+																				                         reRender="logicOS1"
+																				             			      ajaxSingle="true" 
+																				             			      action="#{respuestaSolicitudAction.obtenerOpcionNormalCuota()}" />	
+		
+																								 </h:selectOneRadio>                                                                                                                                                                                                                                                                                                                                                            
+																								 </td>
+																							 </tr>	
+																							<tr>
+																								<td><strong>Monto ($) </strong></td>
+																								<td ><h:inputText id="montoSolNew"
+																												  value="#{respuestaSolicitudAction.montoNuevo}" 
+																								                  style="text-align: right;"
+																								                   onkeypress="return isNumberKey(event);"
+																								                   disabled="false">
+																								       			   	<a:support event="onchange" 
+																								                         reRender="montoSolNew"
+																								             			      ajaxSingle="true" 
+																								             			      action="#{respuestaSolicitudAction.obtenerMontoNuevo()}" 
+																								             			      process="montoSolNew"/>
+																								             		<f:convertNumber type="currency" currencySymbol="" locale="#{globalLocale}"/>																								                   
+																								     </h:inputText>              
+																								</td>
+																							</tr>
+																							<tr>	
+																								<td><strong>Pie ($)</strong></td>
+																								<td ><h:inputText id="pieSolNew"
+																												  value="#{respuestaSolicitudAction.pieNuevo}" 
+																								                  style="text-align: right;"
+																								                   onkeypress="return isNumberKey(event);"
+																								                   disabled="false">
+																								       			   	<a:support event="onchange" 
+																								                         reRender="pieSolNew"
+																								             			      ajaxSingle="true" 
+																								             			      action="#{respuestaSolicitudAction.obtenerMontoNuevo()}"
+																								             			      process="pieSolNew" />	
+																								            		<f:convertNumber type="currency" currencySymbol="" locale="#{globalLocale}"/> 			      
+																								     </h:inputText>
+																								   </td>
+																							</tr>
+																						</table>
+																					</a:outputPanel>
+																				</rich:panel>																			
+																			 </td>
+																		</tr>
+																		<tr valign="top">
+																			<td  colspan="2" width="575px;"> 
+																				<rich:panel>
+																					<f:facet name="header" >Documentos Creación y Respuesta </f:facet>
+																					<table cellpadding="0" cellspacing="0" border="0" width="100%" align="center">
+																						<s:fragment rendered="#{respuestaSolicitudAction.ubicacion != null}">
+																						<tr>
+																							<td> <a href="#{respuestaSolicitudAction.ubicacion}" target="_blank">Carpeta</a></td> 
+																						</tr>
+																						</s:fragment>
+																						<tr>
+																							<td colspan="2" style="border:1px solid #000000;padding:3px;" align="center"> 
+																							  <a:outputPanel id="idArchivoAdjuntosAux">
+																						    	<div class="results" id="grillaAA" style="height:125px; overflow: auto;">
+																							   		<h:outputText value="No existen ningun archivo adjunto." 
+																							   		   rendered="#{empty respuestaSolicitudAction.listaArchivoGuardado}"/>
+																								    <rich:dataTable id="idArchivoAdjunto"
+																								                var="_aa"
+																								              value="#{respuestaSolicitudAction.listaArchivoGuardado}"
+																								           rendered="#{not empty respuestaSolicitudAction.listaArchivoGuardado}"
+																								           style="width:100%">
+																								        <rich:column >
+																								            <f:facet name="header">Archivo</f:facet>
+																								            <a href="#{_aa.rutaCompleta}" target="_blank" >
+																								            	<h:outputText value="#{_aa.nombreArchivo}"/>
+																								        	</a>
+																								        </rich:column>
+																								        <rich:column>
+																								            <f:facet name="header">Tipo</f:facet>
+																								            	<h:outputText value="#{_aa.tipoArchivoType}"/>
+																								        </rich:column>
+																								        <rich:column>
+																								            <f:facet name="header">Usuario</f:facet>
+																								            	<h:outputText value="#{_aa.usuario}"/>
+																								        </rich:column>
+																								        <rich:column>
+																								            <f:facet name="header">Fecha</f:facet>
+																								            	<h:outputText value="#{_aa.fechaCreacion}">
+																								            		<s:convertDateTime pattern="dd-MM-yy HH:mm" />
+																								            	</h:outputText>
+																								        </rich:column>																								        
+																								    </rich:dataTable>
+																							    </div>	
+																							  </a:outputPanel>  																							
+																							</td>
+																						</tr>
+																					</table>																					
+																				</rich:panel>
+																				<rich:panel >
+																					<f:facet name="header" >Adjuntar Archvios </f:facet>
+																						<table cellpadding="0" cellspacing="0" border="0" width="100%" >
+																							<ui:remove>
+																							<tr>
+																								<td colspan="3" align="center">
+																				    				 <a:commandButton value="Archivos Respuesta" 
+																				    				 	reRender="mpArchivosRespuestas"
+																		                           	 	oncomplete="#{rich:component('mpArchivosRespuestas')}.show()"
+																		                			  />																							
+																								</td>
+																							</tr>
+																							</ui:remove>																									   
+																						   <tr valign="top" >
+																								<td width="500px;" colspan="3" align="left" style="border:1px solid #000000;padding:3px;">
+																							    <a:outputPanel id="archivosList">
+																						    	<div class="results" style="height:125px; overflow: auto;">
+																							   		<h:outputText value="No ha Agregado ningun Archivo." 
+																							   		 rendered="#{empty respuestaSolicitudAction.listaFileUploadedDTOs}"/>
+																								    <rich:dataTable id="idArchivosAgregados"
+																								                var="_arch"
+																								              value="#{respuestaSolicitudAction.listaFileUploadedDTOs}"
+																								           rendered="#{not empty respuestaSolicitudAction.listaFileUploadedDTOs}">
+																								        <rich:column>
+																								            <f:facet name="header">Nombre</f:facet>
+																						                    <s:link value="#{_arch.nombreArchivo}" action="#{downloadAttachment.download}">
+																							                    <f:param name="attachmentId" value="${_arch.archivo.id}" />
+																							                </s:link>																												            
+																								        </rich:column>
+																								        <rich:column styleClass="action">
+																								            <f:facet name="header">Acción</f:facet>
+																											<a:commandButton value="Eliminar" 
+																											                action="#{respuestaSolicitudAction.eliminarArchivo(_arch)}"
+																											                ajaxSingle="true"
+																							         		              reRender="archivosList,idArchivosAgregados" />		
+																				
+																								        </rich:column>
+																							    	  </rich:dataTable>
+																						    	  </div>
+																						    	</a:outputPanel>  																											    
+
+																								</td>
+																							</tr>
+																					   </table>
+																				</rich:panel>																				
+																			</td>
+																			<td width="325px;"> 
+																				<rich:panel style="height:349px;">
+																					<f:facet name="header" >Correos</f:facet>
+																						<table cellpadding="0" cellspacing="0" border="0" width="100%"  >
+																							<tr>
+																								<td colspan="2" align="center">
+																				    				 <a:commandButton value="Agregar Correo" 
+																				    				 	reRender="mpAgregarUsuarioCorreos"
+																		                           	 	oncomplete="#{rich:component('mpAgregarUsuarioCorreos')}.show()"
+																		                           	 	action="#{respuestaSolicitudAction.ingresarModelCorreo()}"
+																		                			  />																							
+																								</td>
+																							</tr>																									   
+																							<tr>
+																								<td colspan="2" style="border:1px solid #000000;padding:3px;" > 
+																								  <a:outputPanel id="idUsuariosCorreosVentaPuntual">
+																							    	<div class="results" id="grillaUC" style="height:275px; overflow: auto;">
+																								   		<h:outputText value="No existen usuarios agregado para envio de correo." 
+																								   		   rendered="#{empty respuestaSolicitudAction.listaUsuarioCorreoagregados}"/>
+																									    <rich:dataTable id="idUsuariosCorreosVP"
+																									                var="_usuarioCorreo"
+																									              value="#{respuestaSolicitudAction.listaUsuarioCorreoagregados}"
+																									           rendered="#{not empty respuestaSolicitudAction.listaUsuarioCorreoagregados}"
+																									           style="width:100%">
+																									        <rich:column>
+																									            <f:facet name="header">Usuario</f:facet>
+																									            <h:outputText value="#{_usuarioCorreo.nombre}"/>
+																									        </rich:column>
+																									    </rich:dataTable>
+																								    </div>	
+																								  </a:outputPanel>  
+																								  																							
+																								</td>
+																							</tr>																						
+																						</table>
+																				</rich:panel>																				
+																			</td>
+																			<td width="250px;">
+																				<rich:panel style="height:349px;">
+																					<f:facet name="header" ><strong>Observaciones Finales</strong></f:facet>
+																					<a:outputPanel id="observacionesfinal">
+																						<table cellpadding="0" cellspacing="0" border="0" style="height:305px;" width="100%">
+																							<tr>
+																								<td width="100%">
+																								<h:inputTextarea id="idObservacionesfinales" value="#{respuestaSolicitudAction.observacionesFinales}" 
+														         									rows="2" 
+														         									style="width:99%; height:98%;"
+														         									disabled="false"/> 																									
+																								</td>
+																							</tr>
+																						</table>
+																					</a:outputPanel>
+																				</rich:panel>																			
+																			
+																			 </td>
+																		</tr>
+																	</table>		
+													    	</s:fragment>
+													</rich:panel>	
+			    								</td>
+			    							</tr>
+			    						</table>							    			
+					    			</rich:tab>
+					    			<rich:tab label="Línea Crédito" rendered="#{respuestaSolicitudAction.paginaIngreso == 21  || respuestaSolicitudAction.paginaIngreso == 22 || respuestaSolicitudAction.paginaIngreso == 23}">
+			    						
+			    						<table cellpadding="0" cellspacing="0" border="0">
+			    							<tr valign="top">
+			    								<td >
+											    	<rich:panel id="panelIngresoSolicitud2">
+											    			<f:facet name="header" ><strong>#{respuestaSolicitudAction.tituloIngreso}</strong></f:facet>
+											    			
+													    	<s:fragment rendered="#{respuestaSolicitudAction.paginaIngreso == 21  || respuestaSolicitudAction.paginaIngreso == 22 || respuestaSolicitudAction.paginaIngreso == 23}">
+													    			<table  cellpadding="0" cellspacing="0" border="0" width="100%">
+													    				
+													    				<tr valign="top">
+													    					<td width="250px;">
+																				<rich:panel>
+																					<f:facet name="header" ><strong>Información</strong></f:facet>
+																					<a:outputPanel id="identificador">
+																					
+																						<table cellpadding="0" cellspacing="0" border="0" style="height:269px;">
+																							<tr valign="top">
+																								<td width="100%;" colspan="2"  height="50px;" align="center">
+																								 <h:selectOneRadio id="opcion"  
+																									   value="#{respuestaSolicitudAction.innNomRiesgo}"
+																									   dir="ltr" disabled="true" layout="lineDirection">
+																									 <f:selectItem itemLabel="Innominada" itemValue="21"/>
+																									 <f:selectItem itemLabel="Nominada" itemValue="22"/>
+																									  <f:selectItem itemLabel="R.Kupfer" itemValue="23"/>
+																					       			   	<a:support event="onchange" 
+																				                         reRender="logicLC"
+																				             			      ajaxSingle="true" 
+																				             			      action="#{respuestaSolicitudAction.obtenerOpcionInnNomRiesgo()}" />	
+		
+																								 </h:selectOneRadio>                                                                                                                                                                                                                                                                                                                                                            
+																								 </td>
+																							 </tr>	
+																							<tr>
+																								<td><strong>Monto ($) </strong></td>
+																								<td ><h:inputText id="montoSolLC"
+																												  value="#{respuestaSolicitudAction.montoLineaCredito}" 
+																								                  style="text-align: right;"
+																								                   onkeypress="return isNumberKey(event);"
+																								                   disabled="true">
+																								             		<f:convertNumber type="currency" currencySymbol="" locale="#{globalLocale}"/>																								                   
+																								     </h:inputText>              
+																								</td>
+																							</tr>
+																							<tr>	
+																								<td colspan="2"><strong>Condición de Riesgo</strong></td>
+																							</tr>
+																							<tr valign="top">
+																								<td colspan="2">
+																									<a:outputPanel id="idcondicionRiesgo">		
+																         								<h:selectOneMenu value="#{respuestaSolicitudAction.clsRiesgo}" 
+																         								                 style="width:100%;"
+																         								                 disabled="true">
+																			                			<s:selectItems value="#{respuestaSolicitudAction.listaStringClsRiesgos}" 
+																			                			                 var="_cr"  
+																			                			               label="#{_cr}" 
+																			                			               noSelectionLabel="Seleccionar ..." 
+																			                			               hideNoSelectionLabel="true"/>
+																			                			              
+																					                		<a:support event="onchange" 
+																						                         reRender="idcondicionRiesgo"
+																						             			      ajaxSingle="true" 
+																						             			      action="#{respuestaSolicitudAction.obtenerCondicionRiesgo()}" />						                			               
+																			                		    </h:selectOneMenu>	
+																		                		    																						
+																									</a:outputPanel>
+																								   </td>
+																							</tr>
+																							<tr>	
+																								<td colspan="2" ><strong>Condición de Pago</strong></td>
+																							</tr>
+																							<tr valign="top">	
+																								<td colspan="2">
+																									   <a:outputPanel id="idCondicionPago">
+																	         								<h:selectOneMenu value="#{respuestaSolicitudAction.cPago}" 
+																	         								                 style="width:100%;"
+																	         								                 disabled="true">
+																				                			<s:selectItems value="#{respuestaSolicitudAction.listaStringCdnPagos}" 
+																				                			                 var="_cp"  
+																				                			               label="#{_cp}" 
+																				                			               noSelectionLabel="Seleccionar ..." 
+																				                			               hideNoSelectionLabel="true"/>
+																				                			              
+																						                		<a:support event="onchange" 
+																							                         reRender="idCondicionPago"
+																							             			      ajaxSingle="true" 
+																							             			      action="#{respuestaSolicitudAction.obtenerCondicionPago()}" />							                			               
+																				                		    </h:selectOneMenu>	
+																			                		   </a:outputPanel>
+																				                		   																					
+																				       			</td>
+																							</tr>
+																						</table>
+																					
+																					</a:outputPanel>
+																				</rich:panel>													    					
+													    					 </td>
+													    					<td colspan="2">
+																				<rich:panel>
+																					<f:facet name="header" >Descripción del Proyecto</f:facet>
+																						<table cellpadding="0" cellspacing="0" border="0" width="100%">
+																						   <tr valign="top" >
+																								<td width="800px;" align="left" colspan="6">
+																									<h:inputTextarea id="idDescripcionProyecto" value="#{respuestaSolicitudAction.descripcionProyecto}" 
+																													rows="2" 
+																													style="width:99%;"
+																													disabled="true"/> 																								
+																								</td>
+																						   </tr>
+																						   <tr valign="top">
+																								<td  align="left" width="50px;"><strong> Monto:</strong></td>
+																								<td  align="left" width="150px;">
+																											 <h:inputText id="montoCredito"
+																													  value="#{respuestaSolicitudAction.montoCredito}" 
+																									                  style="text-align: right; width:95%;"
+																									                   onkeypress="return isNumberKey(event);"
+																									                   disabled="true">
+																									             		<f:convertNumber type="currency" currencySymbol="" locale="#{globalLocale}"/>																								                   
+																									     	  </h:inputText> 
+																								</td>																								
+																								<td  align="left" width="120px;"><strong>Plazo de Ejecución:</strong></td>
+																								<td  align="left" colspan="3">
+																								  <h:inputText 	id="idPlazoEjecucion" value="#{respuestaSolicitudAction.plazoEjecucion}" 
+																											style="text-align: left; width:98%;"
+																											size="5"
+																											disabled="true"
+																											/>																									
+																								</td>																								
+																							</tr>	
+																						</table>
+																				</rich:panel>
+																				<rich:panel>
+																					<f:facet name="header" >Concepto de Negocios y Socios</f:facet>
+																						<table cellpadding="0" cellspacing="0" border="0" width="100%">
+																						   <tr valign="top">
+																								<td  align="left" colspan="5">
+																								     <strong> Conceptos de Negocios Involucrados:</strong>
+																								</td>
+																								<td  align="left" colspan="1" width="130px;">
+																								     <strong>Potencial Compra:</strong>
+																								</td>
+																								
+																							</tr>	
+																						   <tr valign="top">
+																								<td  align="left" colspan="5">
+																									<h:inputTextarea id="conceptoInv" value="#{respuestaSolicitudAction.conceptoNegocios}" 
+																													rows="2" 
+																													cols="20"
+																													disabled="true"
+																													style="width:97%;"/> 																							
+																								</td>																								
+																								<td  align="left">
+																											 <h:inputText id="montoPotencial"
+																													  value="#{respuestaSolicitudAction.potencialCompra}" 
+																									                  style="text-align: right; width:95%;"
+																									                   onkeypress="return isNumberKey(event);"
+																									                   disabled="true">
+																									             		<f:convertNumber type="currency" currencySymbol="" locale="#{globalLocale}"/>																								                   
+																									     	  </h:inputText> 																								
+																								
+																								</td>																								
+																						  </tr>
+																						   <tr valign="top">
+																								<td  align="left" colspan="5">
+																								     <strong> Rut y Nombre de Socios:</strong>
+																								</td>
+																								<td  align="left" colspan="1" width="130px;">
+																								     <strong></strong>
+																								</td>
+																						  </tr>																						  			
+																						  <tr>		
+																								<td  align="left" colspan="5">
+																									<h:inputTextarea id="rutNombresSocios" value="#{respuestaSolicitudAction.rutNombresSocios}"
+																													rows="2" 
+																													disabled="true"
+																													style="width:97%;"/> 																							
+																								</td>																									
+																								<td  align="center"  colspan="1"></td>
+																						    </tr>
+																							<tr valign="top">
+																									<td  align="left" colspan="6">
+																									     <strong> Observaciones:</strong>
+																									</td>
+																							</tr>																							
+																							<tr valign="top">
+																									<td  align="left" colspan="6">
+													         											<h:inputTextarea id="idobservacionesCredito" value="#{respuestaSolicitudAction.observacionesCredito}" 
+													         											                rows="2" 
+													         											                style="width:99%;"
+													         											                disabled="true"/> 																								     
+																									</td>
+																							</tr>																								
+																						</table>
+																				</rich:panel>													    					
+												    					
+													    					 </td>
+													    					<td width="250px;">
+																				<rich:panel >
+																					<f:facet name="header" ><strong>Resolución de Solicitud</strong></f:facet>
+																					<a:outputPanel id="identificacionNueva">
+																						<table cellpadding="0" cellspacing="0" border="0" style="height:269px;">
+																							<tr valign="top">
+																								<td width="100%;" colspan="2"  height="50px;" align="center">
+																								 <h:selectOneRadio id="opcionNueva"  
+																									   value="#{respuestaSolicitudAction.innNomRiesgoNueva}"
+																									   dir="ltr" disabled="false" layout="lineDirection">
+																									 <f:selectItem itemLabel="Innominada" itemValue="21"/>
+																									 <f:selectItem itemLabel="Nominada" itemValue="22"/>
+																									  <f:selectItem itemLabel="R.Kupfer" itemValue="23"/>
+																					       			   	<a:support event="onchange" 
+																				                         reRender="logicLC"
+																				             			      ajaxSingle="true" 
+																				             			      action="#{respuestaSolicitudAction.obtenerOpcionInnNomRiesgo()}" />	
+		
+																								 </h:selectOneRadio>                                                                                                                                                                                                                                                                                                                                                            
+																								 </td>
+																							 </tr>	
+																							<tr>
+																								<td><strong>Monto ($) </strong></td>
+																								<td ><h:inputText id="montoSolLCNuevo"
+																												  value="#{respuestaSolicitudAction.montoLineaCreditoNuevo}" 
+																								                  style="text-align: right;"
+																								                   onkeypress="return isNumberKey(event);"
+																								                   disabled="false">
+																								                   
+																								       			   	<a:support event="onchange" 
+																								                         reRender="montoSolLCNuevo"
+																								             			      ajaxSingle="true" 
+																								             			      action="#{respuestaSolicitudAction.obtenerMontoNuevo()}"
+																								             			      process="montoSolLCNuevo" />	
+																								            		<f:convertNumber type="currency" currencySymbol="" locale="#{globalLocale}"/> 																							                   
+																								     </h:inputText>              
+																								</td>
+																							</tr>
+																							<tr>	
+																								<td colspan="2"><strong>Condición de Riesgo</strong></td>
+																							</tr>
+																							<tr>
+																								<td colspan="2" valign="top">
+																									<a:outputPanel id="idcondicionRiesgoNew">		
+																         								<h:selectOneMenu value="#{respuestaSolicitudAction.clsRiesgoNuevo}" 
+																         								                 style="width:100%;"
+																         								                 disabled="false">
+																			                			<s:selectItems value="#{respuestaSolicitudAction.listaStringClsRiesgosNuevos}" 
+																			                			                 var="_cr"  
+																			                			               label="#{_cr}" 
+																			                			               noSelectionLabel="Seleccionar ..." 
+																			                			               hideNoSelectionLabel="true"/>
+																			                			              
+																					                		<a:support event="onchange" 
+																						                         reRender="idcondicionRiesgo"
+																						             			      ajaxSingle="true" 
+																						             			      action="#{respuestaSolicitudAction.obtenerCondicionRiesgo()}" />						                			               
+																			                		    </h:selectOneMenu>	
+																		                		    																						
+																									</a:outputPanel>
+																								   </td>
+																							</tr>
+																							<tr>	
+																								<td colspan="2"><strong>Condición de Pago</strong></td>
+																							</tr>
+																							<tr>	
+																								<td colspan="2" valign="top">
+																									   <a:outputPanel id="idCondicionPagoNew">
+																	         								<h:selectOneMenu value="#{respuestaSolicitudAction.cPagoNuevo}" 
+																	         								                 style="width:100%;"
+																	         								                 disabled="false">
+																				                			<s:selectItems value="#{respuestaSolicitudAction.listaStringCdnPagosNuevos}" 
+																				                			                 var="_cp"  
+																				                			               label="#{_cp}" 
+																				                			               noSelectionLabel="Seleccionar ..." 
+																				                			               hideNoSelectionLabel="true"/>
+																				                			              
+																						                		<a:support event="onchange" 
+																							                         reRender="idCondicionPago"
+																							             			      ajaxSingle="true" 
+																							             			      action="#{respuestaSolicitudAction.obtenerCondicionPago()}" />							                			               
+																				                		    </h:selectOneMenu>	
+																			                		   </a:outputPanel>
+																				                		   																					
+																				       			</td>
+																							</tr>
+																						</table>
+
+																					</a:outputPanel>
+																				</rich:panel>													    					
+													    					
+													    					</td>
+													    				</tr>
+													    				<tr valign="top">
+													    					<td  colspan="2" width="575px;">
+																				<rich:panel>
+																					<f:facet name="header" >Documentos Creación Solicitud</f:facet>
+																					<table cellpadding="0" cellspacing="0" border="0" width="100%" align="center">
+																						<tr>
+																							<td colspan="2" style="border:1px solid #000000;padding:3px;" align="center"> 
+																							  <a:outputPanel id="idArchivoAdjuntosAux1">
+																						    	<div class="results" id="grillaAA" style="height:125px; overflow: auto;">
+																							   		<h:outputText value="No existen ningun archivo adjunto." 
+																							   		   rendered="#{empty respuestaSolicitudAction.listaArchivoGuardado}"/>
+																								    <rich:dataTable id="idArchivoAdjunto1"
+																								                var="_aa"
+																								              value="#{respuestaSolicitudAction.listaArchivoGuardado}"
+																								           rendered="#{not empty respuestaSolicitudAction.listaArchivoGuardado}"
+																								           style="width:100%">
+																								        <rich:column >
+																								            <f:facet name="header">Archivo</f:facet>
+																								            <a href="#{_aa.rutaCompleta}" target="_blank">
+																								            	<h:outputText value="#{_aa.nombreArchivo}"/>
+																								        	</a>
+																								        </rich:column>
+																								        <rich:column>
+																								            <f:facet name="header">Tipo</f:facet>
+																								            	<h:outputText value="#{_aa.tipoArchivoType}"/>
+																								        </rich:column>
+																								        <rich:column>
+																								            <f:facet name="header">Usuario</f:facet>
+																								            	<h:outputText value="#{_aa.usuario}"/>
+																								        </rich:column>
+																								        <rich:column>
+																								            <f:facet name="header">Fecha</f:facet>
+																								            	<h:outputText value="#{_aa.fechaCreacion}">
+																								            		<s:convertDateTime pattern="dd-MM-yy HH:mm" />
+																								            	</h:outputText>
+																								        </rich:column>																								        
+																								    </rich:dataTable>
+																							    </div>	
+																							  </a:outputPanel>  																							
+																							</td>
+																						</tr>
+																					</table>																					
+																				</rich:panel>													    					
+																				<rich:panel>
+																					<f:facet name="header" >Adjuntar Archvios</f:facet>
+																						<table cellpadding="0" cellspacing="0" border="0" width="100%" >
+																						   <tr valign="top" >
+																								<td width="500px;" colspan="3" align="left" style="border:1px solid #000000;padding:3px;">
+																							    <a:outputPanel id="archivosList1">
+																						    	<div class="results" style="height:125px; overflow: auto;">
+																							   		<h:outputText value="No ha Agregado ningun Archivo." 
+																							   		 rendered="#{empty respuestaSolicitudAction.listaFileUploadedDTOs}"/>
+																								    <rich:dataTable id="idArchivosAgregados1"
+																								                var="_arch"
+																								              value="#{respuestaSolicitudAction.listaFileUploadedDTOs}"
+																								           rendered="#{not empty respuestaSolicitudAction.listaFileUploadedDTOs}">
+																								        <rich:column>
+																								            <f:facet name="header">Nombre</f:facet>
+																						                    <s:link value="#{_arch.nombreArchivo}" action="#{downloadAttachment.download}">
+																							                    <f:param name="attachmentId" value="${_arch.archivo.id}" />
+																							                </s:link>																												            
+																								        </rich:column>
+																								        <rich:column styleClass="action">
+																								            <f:facet name="header">Acción</f:facet>
+																											<a:commandButton value="Eliminar" 
+																											                action="#{respuestaSolicitudAction.eliminarArchivo(_arch)}"
+																											                ajaxSingle="true"
+																							         		              reRender="archivosList,idArchivosAgregados" />		
+																				
+																								        </rich:column>
+																							    	  </rich:dataTable>
+																						    	  </div>
+																						    	</a:outputPanel>  																											    
+
+																								</td>
+																							</tr>
+																					   </table>
+																				</rich:panel>														    					
+													    					 </td>
+													    					<td width="325px;">
+																				<rich:panel style="height:349px;">
+																					<f:facet name="header" >Correo</f:facet>
+																						<table cellpadding="0" cellspacing="0" border="0" width="100%" >
+																							<tr>
+																								<td colspan="2" align="center">
+																				    				 <a:commandButton value="Agregar Correo" 
+																				    				 	reRender="mpAgregarUsuarioCorreos"
+																		                           	 	oncomplete="#{rich:component('mpAgregarUsuarioCorreos')}.show()"
+																		                           	 	action="#{respuestaSolicitudAction.ingresarModelCorreo()}"
+																		                			  />																							
+																								</td>
+																							</tr>																									   
+																							<tr>
+																								<td colspan="2" > 
+																								  <a:outputPanel id="idUsuariosCorreosLinea">
+																							    	<div class="results" id="grillaUC" style="height:275px; overflow: auto; border:1px solid #000000;padding:3px;">
+																								   		<h:outputText value="No existen usuarios agregado para envio de correo." 
+																								   		   rendered="#{empty respuestaSolicitudAction.listaUsuarioCorreoagregados}"/>
+																									    <rich:dataTable id="idUsuariosCorreosLC"
+																									                var="_usuarioCorreo"
+																									              value="#{respuestaSolicitudAction.listaUsuarioCorreoagregados}"
+																									           rendered="#{not empty respuestaSolicitudAction.listaUsuarioCorreoagregados}"
+																									           style="width:100%">
+																									        <rich:column>
+																									            <f:facet name="header">Usuario</f:facet>
+																									            <h:outputText value="#{_usuarioCorreo.nombre}"/>
+																									        </rich:column>
+																									    </rich:dataTable>
+																								    </div>	
+																								  </a:outputPanel>  
+																								  																							
+																								</td>
+																							</tr>	
+																						</table>
+																				</rich:panel>														    					
+													    					
+													    					 </td>
+													    					<td width="250px;">
+																				<rich:panel style="height:349px;">
+																					<f:facet name="header" ><strong>Observaciones Finales</strong></f:facet>
+																					<a:outputPanel id="observacionesfinal11">
+																						<table cellpadding="0" cellspacing="0" border="0" style="height:315px;" width="100%">
+																							<tr>
+																								<td width="100%">
+																								<h:inputTextarea id="idObservacionesfinales11" value="#{respuestaSolicitudAction.observacionesFinales}" 
+														         									rows="2" 
+														         									style="width:99%; height:98%;"
+														         									disabled="false"/> 																									
+																								</td>
+																							</tr>
+																						</table>
+																					</a:outputPanel>
+																				</rich:panel>													    					
+													    					 </td>
+													    				</tr>	
+																	</table>		
+													    	</s:fragment>
+													</rich:panel>	
+			    								</td>
+			    							</tr>
+			    						</table>							    			
+					    			</rich:tab>
+					    			<rich:tab label="Riesgo y Pago" rendered="#{respuestaSolicitudAction.paginaIngreso == 31 || respuestaSolicitudAction.paginaIngreso == 32}" >
+			    						<table cellpadding="0" cellspacing="0" border="0">
+			    							<tr valign="top">
+			    								<td >
+											    	<rich:panel id="panelIngresoSolicitud3">
+											    			<f:facet name="header" ><strong>#{respuestaSolicitudAction.tituloIngreso}</strong></f:facet>
+													    	<s:fragment rendered="#{respuestaSolicitudAction.paginaIngreso == 31  || respuestaSolicitudAction.paginaIngreso == 32}">
+													    			<table  cellpadding="0" cellspacing="0" border="0" width="100%">
+													    				<tr valign="top">
+													    					<td width="250px;">
+																				<rich:panel>
+																					<f:facet name="header" ><strong>Información</strong></f:facet>
+																					<a:outputPanel id="idenCondicion">
+																						<table cellpadding="0" cellspacing="0" border="0" style="height:100px;">
+																							<tr valign="top">
+																								<td colspan="3" height="20px;">Condiciones Riesgos</td>
+																							</tr>
+																							<tr valign="top">
+																								<td width="15px;">
+																									 <h:selectBooleanCheckbox id="idchecbokCRiesgoOld" value="#{respuestaSolicitudAction.condicionRiesgo}" disabled="true"/>
+																								</td>
+																								<td colspan="2" width="100%">
+																											<a:outputPanel id="idCboCRiesgo">		
+																		         								<h:selectOneMenu value="#{respuestaSolicitudAction.clsRiesgo}" 
+																		         								                 style="width:100%;"
+																		         								                 disabled="true">
+																						                			<s:selectItems value="#{respuestaSolicitudAction.listaStringClsRiesgos}" 
+																						                			                 var="_criesgo"  
+																						                			               label="#{_criesgo}" 
+																						                			               noSelectionLabel="Seleccionar ..." 
+																						                			               hideNoSelectionLabel="true"/>
+																					                		    </h:selectOneMenu>	
+																										</a:outputPanel>																						
+																								</td>
+																							</tr>
+																							<tr valign="top">
+																								<td colspan="3" height="20px;">Condiciones Pagos</td>
+																							</tr>
+																																														
+																							<tr valign="top">
+																								<td width="15px;">
+																									 <h:selectBooleanCheckbox id="idchecbokCPago" value="#{respuestaSolicitudAction.condicionPago}" disabled="true" />
+																								</td>
+																								<td width="100%;" colspan="2">
+																									   <a:outputPanel id="idCboCPagoOLd">
+																	         								<h:selectOneMenu value="#{respuestaSolicitudAction.cPago}" 
+																	         								                 style="width:100%;"
+																	         								                 disabled="true">
+																					                			<s:selectItems value="#{respuestaSolicitudAction.listaStringCdnPagos}" 
+																					                			                 var="_cp"  
+																					                			               label="#{_cp}" 
+																					                			               noSelectionLabel="Seleccionar ..." 
+																					                			               hideNoSelectionLabel="true"/>
+																				                		    </h:selectOneMenu>	
+																			                		   </a:outputPanel>																						
+																								</td>
+																							</tr>																				
+																						</table>
+																					</a:outputPanel>
+																				</rich:panel>													    					
+													    					
+													    					</td>
+													    					<td colspan="2">
+																				<rich:panel>
+																					<f:facet name="header" >Motivo del Cambio</f:facet>
+																						<table cellpadding="0" cellspacing="0" border="0" width="100%" style="height:100px;">
+																						   <tr valign="top" >
+																								<td width="800px;" align="left" colspan="6">
+																									<h:inputTextarea id="idMotivoRiesgoPago" value="#{respuestaSolicitudAction.motivoRiesgoPago}" 
+																													rows="4" 
+																													style="width:99%;height:99%"
+																													disabled="true"/> 																								
+																								</td>
+																						   </tr>
+																						</table>
+																				</rich:panel>													    					
+													    					</td>
+													    					<td width="250px;">
+																				<rich:panel >
+																					<f:facet name="header" ><strong>Resolución de Solicitud</strong></f:facet>
+																					<a:outputPanel id="identNuevaPR">
+																						<table cellpadding="0" cellspacing="0" border="0" style="height:100px;">
+																							<tr valign="top">
+																								<td colspan="3">Condiciones Riesgos</td>
+																							</tr>
+																							<tr valign="top">
+																								<td width="15px;">
+																									 <h:selectBooleanCheckbox id="idchecbokCRiesgoCC" value="#{respuestaSolicitudAction.condicionRiesgoNew}">
+																				 						<a:support ajaxSingle="true" reRender="idCboCRiesgoCCNew,idCboCPagoCCNew" 
+																				 										event="onchange" 
+																				 									   action="#{respuestaSolicitudAction.habilitarComboCondicion('CondicionRiesgo')}" />
+																									 </h:selectBooleanCheckbox>
+																								</td>
+																								<td colspan="2" width="100%">
+																											<a:outputPanel id="idCboCRiesgoCCNew">		
+																		         								<h:selectOneMenu value="#{respuestaSolicitudAction.clsRiesgoNuevo}" 
+																		         								                 style="width:100%;"
+																		         								                 disabled="#{respuestaSolicitudAction.comboCRiesgo}">
+																					                			<s:selectItems value="#{respuestaSolicitudAction.listaStringClsRiesgos}" 
+																					                			                 var="_criesgo"  
+																					                			               label="#{_criesgo}" 
+																					                			               noSelectionLabel="Seleccionar ..." 
+																					                			               hideNoSelectionLabel="true"/>
+																							                		<a:support event="onchange" 
+																								                         reRender="idCboCRiesgoCCNew"
+																								             			      ajaxSingle="true" 
+																								             			      action="#{respuestaSolicitudAction.obtenerCondicionRiesgoNuevo()}" />						                			               
+																					                		    </h:selectOneMenu>	
+																										</a:outputPanel>																						
+																								</td>
+																							</tr>
+																							<tr valign="top">
+																								<td colspan="3">Condiciones Pagos</td>
+																							</tr>
+																																														
+																							<tr valign="top">
+																								<td width="15px;">
+																									 <h:selectBooleanCheckbox id="idchecbokCPagoCC" value="#{respuestaSolicitudAction.condicionPagoNew}">
+																				 						<a:support ajaxSingle="true" 
+																				 								     reRender="idCboCPagoCCNew" 
+																				 								        event="onchange" 
+																				 								        action="#{respuestaSolicitudAction.habilitarComboCondicion('CondicionPago')}" />
+																									 </h:selectBooleanCheckbox>
+																								</td>
+																								<td colspan="2" width="100%">
+																									   <a:outputPanel id="idCboCPagoCCNew">
+																	         								<h:selectOneMenu value="#{respuestaSolicitudAction.cPagoNuevo}" 
+																	         								                 style="width:100%;"
+																	         								                 disabled="#{respuestaSolicitudAction.comboCPago}">
+																				                			<s:selectItems value="#{respuestaSolicitudAction.listaStringCdnPagos}" 
+																				                			                 var="_cp"  
+																				                			               label="#{_cp}" 
+																				                			               noSelectionLabel="Seleccionar ..." 
+																				                			               hideNoSelectionLabel="true"/>
+																						                		<a:support event="onchange" 
+																							                         reRender="idCboCPagoCCNew"
+																							             			      ajaxSingle="true" 
+																							             			      action="#{respuestaSolicitudAction.obtenerCondicionPagoNuevo()}" />							                			               
+																				                		    </h:selectOneMenu>	
+																			                		   </a:outputPanel>																						
+																								</td>
+																							</tr>	
+																						</table>
+
+																					</a:outputPanel>
+																				</rich:panel>													    					
+													    					 </td>
+													    				</tr>
+													    				<tr valign="top">
+													    					<td  colspan="2" width="575px;">
+																				<rich:panel>
+																					<f:facet name="header" >Documentos Creación Solicitud</f:facet>
+																					<table cellpadding="0" cellspacing="0" border="0" width="100%" align="center">
+																						<tr>
+																							<td colspan="2" style="border:1px solid #000000;padding:3px;" align="center"> 
+																							  <a:outputPanel id="idArchivoAdjuntosAux2">
+																						    	<div class="results" id="grillaAA" style="height:120px; overflow: auto;">
+																							   		<h:outputText value="No existen ningun archivo adjunto." 
+																							   		   rendered="#{empty respuestaSolicitudAction.listaArchivoGuardado}"/>
+																								    <rich:dataTable id="idArchivoAdjunto2"
+																								                var="_aa"
+																								              value="#{respuestaSolicitudAction.listaArchivoGuardado}"
+																								           rendered="#{not empty respuestaSolicitudAction.listaArchivoGuardado}"
+																								           style="width:100%">
+																								        <rich:column >
+																								            <f:facet name="header">Archivo</f:facet>
+																								            <a href="#{_aa.rutaCompleta}" target="blank">
+																								            	<h:outputText value="#{_aa.nombreArchivo}"/>
+																								        	</a>
+																								        </rich:column>
+																								        <rich:column>
+																								            <f:facet name="header">Tipo</f:facet>
+																								            	<h:outputText value="#{_aa.tipoArchivoType}"/>
+																								        </rich:column>
+																								        <rich:column>
+																								            <f:facet name="header">Usuario</f:facet>
+																								            	<h:outputText value="#{_aa.usuario}"/>
+																								        </rich:column>
+																								        <rich:column>
+																								            <f:facet name="header">Fecha</f:facet>
+																								            	<h:outputText value="#{_aa.fechaCreacion}">
+																								            		<s:convertDateTime pattern="dd-MM-yy HH:mm" />
+																								            	</h:outputText>
+																								        </rich:column>																								        
+																								    </rich:dataTable>
+																							    </div>	
+																							  </a:outputPanel>  																							
+																							</td>
+																						</tr>
+																					</table>																					
+																				</rich:panel>														    					
+										    									<rich:panel>
+																					<f:facet name="header" >Adjuntar Archvios</f:facet>
+																						<table cellpadding="0" cellspacing="0" border="0" width="100%" >
+																						   <tr valign="top" >
+																								<td width="500px;" colspan="3" align="left" style="border:1px solid #000000;padding:3px;">
+																							    <a:outputPanel id="archivosList2">
+																						    	<div class="results" style="height:125px; overflow: auto;">
+																							   		<h:outputText value="No ha Agregado ningun Archivo." 
+																							   		 rendered="#{empty respuestaSolicitudAction.listaFileUploadedDTOs}"/>
+																								    <rich:dataTable id="idArchivosAgregados2"
+																								                var="_arch"
+																								              value="#{respuestaSolicitudAction.listaFileUploadedDTOs}"
+																								           rendered="#{not empty respuestaSolicitudAction.listaFileUploadedDTOs}">
+																								        <rich:column>
+																								            <f:facet name="header">Nombre</f:facet>
+																						                    <s:link value="#{_arch.nombreArchivo}" action="#{downloadAttachment.download}">
+																							                    <f:param name="attachmentId" value="${_arch.archivo.id}" />
+																							                </s:link>																												            
+																								        </rich:column>
+																								        <rich:column styleClass="action">
+																								            <f:facet name="header">Acción</f:facet>
+																											<a:commandButton value="Eliminar" 
+																											                action="#{respuestaSolicitudAction.eliminarArchivo(_arch)}"
+																											                ajaxSingle="true"
+																							         		              reRender="archivosList,idArchivosAgregados" />		
+																				
+																								        </rich:column>
+																							    	  </rich:dataTable>
+																						    	  </div>
+																						    	</a:outputPanel>  																											    
+
+																								</td>
+																							</tr>
+																					   </table>
+																				</rich:panel>	
+													    					 </td>
+													    					<td width="325px;"> 
+																				<rich:panel >
+																					<f:facet name="header" >Correo</f:facet>
+																						<table cellpadding="0" cellspacing="0" border="0" width="100%" >
+																							<tr>
+																								<td colspan="2" align="center">
+																				    				 <a:commandButton value="Agregar Correo" 
+																				    				 	reRender="mpAgregarUsuarioCorreos"
+																		                           	 	oncomplete="#{rich:component('mpAgregarUsuarioCorreos')}.show()"
+																		                           	 	action="#{respuestaSolicitudAction.ingresarModelCorreo()}"
+																		                			  />																							
+																								</td>
+																							</tr>																									   
+																							<tr>
+																								<td colspan="2" > 
+																								  <a:outputPanel id="idUsuariosCorreosCondicion">
+																							    	<div class="results" id="grillaUC" style="height:275px; overflow: auto; border:1px solid #000000;padding:3px;">
+																								   		<h:outputText value="No existen usuarios agregado para envio de correo." 
+																								   		   rendered="#{empty respuestaSolicitudAction.listaUsuarioCorreoagregados}"/>
+																									    <rich:dataTable id="idUsuariosCorreosCC"
+																									                var="_usuarioCorreo"
+																									              value="#{respuestaSolicitudAction.listaUsuarioCorreoagregados}"
+																									           rendered="#{not empty respuestaSolicitudAction.listaUsuarioCorreoagregados}"
+																									           style="width:100%">
+																									        <rich:column>
+																									            <f:facet name="header">Usuario</f:facet>
+																									            <h:outputText value="#{_usuarioCorreo.nombre}"/>
+																									        </rich:column>
+																									    </rich:dataTable>
+																								    </div>	
+																								  </a:outputPanel>  
+																								  																							
+																								</td>
+																							</tr>	
+																						</table>
+																				</rich:panel>														    					
+													    					
+													    					</td>
+													    					<td width="250px;"> 
+																				<rich:panel style="height:349px;">
+																					<f:facet name="header" ><strong>Observaciones Finales</strong></f:facet>
+																					<a:outputPanel id="observacionesfinal3">
+																						<table cellpadding="0" cellspacing="0" border="0" style="height:315px;" width="100%">
+																							<tr>
+																								<td width="100%">
+																								<h:inputTextarea id="idObservacionesfinales3" value="#{respuestaSolicitudAction.observacionesFinales}" 
+														         									rows="2" 
+														         									style="width:99%; height:98%;"
+														         									disabled="false"/> 																									
+																								</td>
+																							</tr>
+																						</table>
+																					</a:outputPanel>
+																				</rich:panel>													    					
+													    					</td>
+													    				</tr>
+																	</table>		
+													    	</s:fragment>
+													</rich:panel>	
+			    								</td>
+			    							</tr>
+			    						</table>							    			
+					    			</rich:tab>					    		
+					    			<rich:tab label="Bloqueo y Desbloqueo" rendered="#{respuestaSolicitudAction.paginaIngreso == 41}" >
+			    						<table cellpadding="0" cellspacing="0" border="0">
+			    							<tr valign="top">
+			    								<td >
+											    	<rich:panel id="panelIngresoSolicitud4">
+											    			<f:facet name="header" ><strong>#{respuestaSolicitudAction.tituloIngreso}</strong></f:facet>
+													    	<s:fragment rendered="#{respuestaSolicitudAction.paginaIngreso == 41}">
+													    			<table  cellpadding="0" cellspacing="0" border="0" width="100%">
+													    				<tr valign="top">
+													    					<td width="250px;">
+																				<rich:panel>
+																					<f:facet name="header" ><strong>Información</strong></f:facet>
+																					<a:outputPanel id="idenBloqueoDesbloqueo">
+																						<table cellpadding="0" cellspacing="0" border="0" style="height:100px;">
+																							<tr valign="top">
+																								<td width="300px;" height="30px;" colspan="3">
+																				
+																								
+																								</td>
+																							</tr>	
+																							<tr valign="top">
+																								<td width="300px;" colspan="3"  height="30px;" align="center">
+																								 <h:selectOneRadio id="logicBD"  
+																									   value="#{respuestaSolicitudAction.opcionBloqueoDesbloqueo}"
+																									   dir="ltr" disabled="true" layout="lineDirection">
+																									 <f:selectItem itemLabel="Bloqueo" itemValue="41"/>
+																									 <f:selectItem itemLabel="Desbloqueo" itemValue="42"/>
+																					       			   	<a:support event="onchange" 
+																				                         reRender="logicBD"
+																				             			      ajaxSingle="true" 
+																				             			      action="#{respuestaSolicitudAction.seleccionOpcionesBloqueoDesbloqueo()}" />	
+		
+																								 </h:selectOneRadio>                                                                                                                                                                                                                                                                                                                                                            
+																								 </td>
+																							 </tr>																					
+																							<tr valign="top">
+																								<td width="300px;" height="10px;" colspan="3"> </td>
+																							</tr>																						
+																							<tr valign="top">
+																								<td width="300px;" colspan="3">
+			 																							
+																								</td>
+																							</tr>	
+																						</table>
+																					</a:outputPanel>
+																				</rich:panel>													    					
+													    					 </td>
+													    					<td colspan="2">
+																				<rich:panel>
+																					<f:facet name="header" >Motivo del Bloqueoo Desbloqueo</f:facet>
+																						<table cellpadding="0" cellspacing="0" border="0" width="100%" style="height:100px;">
+																						   <tr valign="top" >
+																								<td width="800px;" align="left" colspan="6">
+																									<h:inputTextarea id="idTextoMotivoBloDes" value="#{respuestaSolicitudAction.motivoBloDesbloqueo}" 
+																													rows="4" 
+																													style="width:99%;height:99%"
+																													disabled="true"/> 																								
+																								</td>
+																						   </tr>
+																						</table>
+																				</rich:panel>
+																			</td>
+													    					<td width="250px;">
+																				<rich:panel >
+																					<f:facet name="header" ><strong>Resolución de Solicitud</strong></f:facet>
+																					<a:outputPanel id="identNuevaDB">
+																						<table cellpadding="0" cellspacing="0" border="0" style="height:100px;">
+																							<tr valign="top">
+																								<td width="300px;" height="30px;" colspan="3">
+																								
+																								</td>
+																							</tr>	
+																							<tr valign="top">
+																								<td width="300px;" colspan="3"  height="30px;" align="center">
+																								 <h:selectOneRadio id="logicBDNew"  
+																									   value="#{respuestaSolicitudAction.opcionBloqueoDesbloqueoNew}"
+																									   dir="ltr" disabled="false" layout="lineDirection">
+																									 <f:selectItem itemLabel="Bloqueo" itemValue="41"/>
+																									 <f:selectItem itemLabel="Desbloqueo" itemValue="42"/>
+																					       			   	<a:support event="onchange" 
+																				                         reRender="logicBDNew"
+																				             			      ajaxSingle="true" 
+																				             			      action="#{respuestaSolicitudAction.seleccionOpcionesBloqueoDesbloqueoNew()}" />	
+		
+																								 </h:selectOneRadio>                                                                                                                                                                                                                                                                                                                                                            
+																								 </td>
+																							 </tr>																					
+																							<tr valign="top">
+																								<td width="300px;" height="10px;" colspan="3"> </td>
+																							</tr>																						
+																							<tr valign="top">
+																								<td width="300px;" colspan="3">
+			 																							
+																								</td>
+																							</tr>	
+
+																						</table>
+
+																					</a:outputPanel>
+																				</rich:panel>													    					
+													    					
+													    					</td>
+													    				</tr>
+													    				
+													    				<tr valign="top">
+													    					<td  colspan="2" width="575px;">
+																				<rich:panel>
+																					<f:facet name="header" >Documentos Creación Solicitud</f:facet>
+																					<table cellpadding="0" cellspacing="0" border="0" width="100%" align="center">
+																						<tr>
+																							<td colspan="2" style="border:1px solid #000000;padding:3px;" align="center"> 
+																							  <a:outputPanel id="idArchivoAdjuntosAux3">
+																						    	<div class="results" id="grilla3" style="height:125px; overflow: auto;">
+																							   		<h:outputText value="No existen ningun archivo adjunto." 
+																							   		   rendered="#{empty respuestaSolicitudAction.listaArchivoGuardado}"/>
+																								    <rich:dataTable id="idArchivoAdjunto3"
+																								                var="_aa"
+																								              value="#{respuestaSolicitudAction.listaArchivoGuardado}"
+																								           rendered="#{not empty respuestaSolicitudAction.listaArchivoGuardado}"
+																								           style="width:100%">
+																								        <rich:column >
+																								            <f:facet name="header">Archivo</f:facet>
+																								            <a href="#{_aa.rutaCompleta}" target="blank">
+																								            	<h:outputText value="#{_aa.nombreArchivo}"/>
+																								        	</a>
+																								        </rich:column>
+																								        <rich:column>
+																								            <f:facet name="header">Tipo</f:facet>
+																								            	<h:outputText value="#{_aa.tipoArchivoType}"/>
+																								        </rich:column>
+																								        <rich:column>
+																								            <f:facet name="header">Usuario</f:facet>
+																								            	<h:outputText value="#{_aa.usuario}"/>
+																								        </rich:column>
+																								        <rich:column>
+																								            <f:facet name="header">Fecha</f:facet>
+																								            	<h:outputText value="#{_aa.fechaCreacion}">
+																								            		<s:convertDateTime pattern="dd-MM-yy HH:mm" />
+																								            	</h:outputText>
+																								        </rich:column>																								        
+																								    </rich:dataTable>
+																							    </div>	
+																							  </a:outputPanel>  																							
+																							</td>
+																						</tr>
+																					</table>																					
+																				</rich:panel>
+																				<rich:panel>
+																					<f:facet name="header" >Adjuntar Archvios</f:facet>
+																						<table cellpadding="0" cellspacing="0" border="0" width="100%" >
+																						   <tr valign="top" >
+																								<td width="500px;" colspan="3" align="left" style="border:1px solid #000000;padding:3px;">
+																							    <a:outputPanel id="archivosList3">
+																						    	<div class="results" style="height:125px; overflow: auto;">
+																							   		<h:outputText value="No ha Agregado ningun Archivo." 
+																							   		 rendered="#{empty respuestaSolicitudAction.listaFileUploadedDTOs}"/>
+																								    <rich:dataTable id="idArchivosAgregados3"
+																								                var="_arch"
+																								              value="#{respuestaSolicitudAction.listaFileUploadedDTOs}"
+																								           rendered="#{not empty respuestaSolicitudAction.listaFileUploadedDTOs}">
+																								        <rich:column>
+																								            <f:facet name="header">Nombre</f:facet>
+																						                    <s:link value="#{_arch.nombreArchivo}" action="#{downloadAttachment.download}">
+																							                    <f:param name="attachmentId" value="${_arch.archivo.id}" />
+																							                </s:link>																												            
+																								        </rich:column>
+																								        <rich:column styleClass="action">
+																								            <f:facet name="header">Acción</f:facet>
+																											<a:commandButton value="Eliminar" 
+																											                action="#{respuestaSolicitudAction.eliminarArchivo(_arch)}"
+																											                ajaxSingle="true"
+																							         		              reRender="archivosList,idArchivosAgregados" />		
+																				
+																								        </rich:column>
+																							    	  </rich:dataTable>
+																						    	  </div>
+																						    	</a:outputPanel>  																											    
+																								</td>
+																							</tr>
+																					   </table>
+																				</rich:panel>														    					
+													    					</td>
+													    					<td width="325px;"> 
+																				<rich:panel style="height:349px;">
+																					<f:facet name="header" >Correo</f:facet>
+																						<table cellpadding="0" cellspacing="0" border="0" width="100%" >
+																							<tr>
+																								<td colspan="2" align="center">
+																				    				 <a:commandButton value="Agregar Correo" 
+																				    				 	reRender="mpAgregarUsuarioCorreos"
+																		                           	 	oncomplete="#{rich:component('mpAgregarUsuarioCorreos')}.show()"
+																		                           	 	action="#{respuestaSolicitudAction.ingresarModelCorreo()}"
+																		                			  />																							
+																								</td>
+																							</tr>																									   
+																							<tr>
+																								<td colspan="2" > 
+																								  <a:outputPanel id="idUsuariosCorreosBloDes">
+																							    	<div class="results" id="grillaUC" style="height:275px; overflow: auto; border:1px solid #000000;padding:3px;">
+																								   		<h:outputText value="No existen usuarios agregado para envio de correo." 
+																								   		   rendered="#{empty respuestaSolicitudAction.listaUsuarioCorreoagregados}"/>
+																									    <rich:dataTable id="idUsuariosCorreosBD"
+																									                var="_usuarioCorreo"
+																									              value="#{respuestaSolicitudAction.listaUsuarioCorreoagregados}"
+																									           rendered="#{not empty respuestaSolicitudAction.listaUsuarioCorreoagregados}"
+																									           style="width:100%">
+																									        <rich:column>
+																									            <f:facet name="header">Usuario</f:facet>
+																									            <h:outputText value="#{_usuarioCorreo.nombre}"/>
+																									        </rich:column>
+																									    </rich:dataTable>
+																								    </div>	
+																								  </a:outputPanel>  
+																								  																							
+																								</td>
+																							</tr>	
+																						</table>
+																				</rich:panel>														    					
+													    					</td>
+													    					<td width="250px;">
+																				<rich:panel style="height:349px;">
+																					<f:facet name="header" ><strong>Observaciones Finales</strong></f:facet>
+																					<a:outputPanel id="observacionesfinal4">
+																						<table cellpadding="0" cellspacing="0" border="0" style="height:315px;" width="100%">
+																							<tr>
+																								<td width="100%">
+																								<h:inputTextarea id="idObservacionesfinales4" value="#{respuestaSolicitudAction.observacionesFinales}" 
+														         									rows="2" 
+														         									style="width:99%; height:98%;"
+														         									disabled="false"/> 																									
+																								</td>
+																							</tr>
+																						</table>
+																					</a:outputPanel>
+																				</rich:panel>													    					
+													    					</td>
+													    				</tr>
+																	</table>		
+													    	</s:fragment>
+													</rich:panel>	
+			    								</td>
+			    							</tr>
+			    						</table>							    			
+					    			</rich:tab>
+					    			<rich:tab label="Creación de DM" rendered="#{respuestaSolicitudAction.paginaIngreso == 43}" >
+			    						<table cellpadding="0" cellspacing="0" border="0" width="100%">
+			    							<tr valign="top">
+			    								<td >
+											    	<rich:panel id="panelIngresoSolicitud5">
+											    			<f:facet name="header" ><strong>#{respuestaSolicitudAction.tituloIngreso}</strong></f:facet>
+											    			<table  cellpadding="0" cellspacing="0" border="0" width="100%">
+																<tr valign="top">
+																	<td colspan="4" width="100%;">
+																		<rich:panel>
+																			<f:facet name="header" >Información de Lista Dms</f:facet>
+																				<table cellpadding="0" cellspacing="0" border="0" width="100%" style="height:100px;">
+																				   <tr valign="top" >
+																						<td width="100%;" align="left" colspan="6">
+																						    <a:outputPanel id="idCreacionDMList">
+																					    	<div class="results" style="height:140px; overflow: auto;" >
+																						   		<h:outputText value="No hay ningun cliente agregado a la lista DM." 
+																						   		 rendered="#{empty respuestaSolicitudAction.listaClienteDMs}"/>
+																					
+																							    <rich:dataTable id="idClienteCreacionDM"
+																							                var="_cdm"
+																							              value="#{respuestaSolicitudAction.listaClienteDMs}"
+																							           rendered="#{not empty respuestaSolicitudAction.listaClienteDMs}">
+																							        <rich:column>
+																							            <f:facet name="header">Rut</f:facet>
+																							            <h:outputText value="#{_cdm.id.rut}"/>
+																							        </rich:column>
+																							        <rich:column>
+																							            <f:facet name="header">Nombre</f:facet>
+																							            <h:outputText value="#{_cdm.id.nombre}"/>
+																							        </rich:column>
+																							        <rich:column>
+																							            <f:facet name="header">Oficina</f:facet>
+																							            <h:outputText value="#{_cdm.id.oficinaVentas}"/>
+																							        </rich:column>
+																							        <rich:column>
+																							            <f:facet name="header">Zona</f:facet>
+																							            <h:outputText value="#{_cdm.id.zona}"/>
+																							        </rich:column>																									        																									        																									        
+																							        <rich:column>
+																							            <f:facet name="header">Lista Precios</f:facet>
+																							            <h:outputText value="#{_cdm.id.listaPrecio}"/>
+																							        </rich:column>
+																							        <rich:column>
+																							            <f:facet name="header">Sector</f:facet>
+																							            <h:outputText value="#{_cdm.id.sector}"/>
+																							        </rich:column>
+																							        <rich:column>
+																							            <f:facet name="header">Rut V.Telefono</f:facet>
+																							            <h:outputText value="#{_cdm.id.vendTelefono}"/>
+																							        </rich:column>																									        
+																							        <rich:column>
+																							            <f:facet name="header">Rut V.Terreno</f:facet>
+																							            <h:outputText value="#{_cdm.id.vendTerreno}"/>
+																							        </rich:column>																									        
+																						    	  </rich:dataTable>
+																					    	  </div>
+																					    	</a:outputPanel>  																								
+																						</td>
+																				   </tr>
+																				</table>
+																		</rich:panel>																			
+																	</td>
+																</tr>
+																<tr valign="top">
+																	<td  colspan="2" width="575px;">
+																		<rich:panel>
+																			<f:facet name="header" >Documentos Creación Solicitud</f:facet>
+																			<table cellpadding="0" cellspacing="0" border="0" width="100%" align="center">
+																				<tr>
+																					<td colspan="2" style="border:1px solid #000000;padding:3px;" align="center"> 
+																					  <a:outputPanel id="idArchivoAdjuntosAux4">
+																				    	<div class="results" id="grilla3" style="height:125px; overflow: auto;">
+																					   		<h:outputText value="No existen ningun archivo adjunto." 
+																					   		   rendered="#{empty respuestaSolicitudAction.listaArchivoGuardado}"/>
+																						    <rich:dataTable id="idArchivoAdjunto4"
+																						                var="_aa"
+																						              value="#{respuestaSolicitudAction.listaArchivoGuardado}"
+																						           rendered="#{not empty respuestaSolicitudAction.listaArchivoGuardado}"
+																						           style="width:100%">
+																						        <rich:column >
+																						            <f:facet name="header">Archivo</f:facet>
+																						            <a href="#{_aa.rutaCompleta}">
+																						            	<h:outputText value="#{_aa.nombreArchivo}"/>
+																						        	</a>
+																						        </rich:column>
+																						        <rich:column>
+																						            <f:facet name="header">Tipo</f:facet>
+																						            	<h:outputText value="#{_aa.tipoArchivoType}"/>
+																						        </rich:column>
+																						        <rich:column>
+																						            <f:facet name="header">Usuario</f:facet>
+																						            	<h:outputText value="#{_aa.usuario}"/>
+																						        </rich:column>
+																						        <rich:column>
+																						            <f:facet name="header">Fecha</f:facet>
+																						            	<h:outputText value="#{_aa.fechaCreacion}">
+																						            		<s:convertDateTime pattern="dd-MM-yy HH:mm" />
+																						            	</h:outputText>
+																						        </rich:column>																								        
+																						    </rich:dataTable>
+																					    </div>	
+																					  </a:outputPanel>  																							
+																					</td>
+																				</tr>
+																			</table>																					
+																		</rich:panel>
+																		<rich:panel>
+																			<f:facet name="header" >Adjuntar Archvios</f:facet>
+																				<table cellpadding="0" cellspacing="0" border="0" width="100%" >
+																				   <tr valign="top" >
+																						<td width="500px;" colspan="3" align="left" style="border:1px solid #000000;padding:3px;">
+																					    <a:outputPanel id="archivosList4">
+																				    	<div class="results" style="height:125px; overflow: auto;">
+																					   		<h:outputText value="No ha Agregado ningun Archivo." 
+																					   		 rendered="#{empty respuestaSolicitudAction.listaFileUploadedDTOs}"/>
+																						    <rich:dataTable id="idArchivosAgregados4"
+																						                var="_arch"
+																						              value="#{respuestaSolicitudAction.listaFileUploadedDTOs}"
+																						           rendered="#{not empty respuestaSolicitudAction.listaFileUploadedDTOs}">
+																						        <rich:column>
+																						            <f:facet name="header">Nombre</f:facet>
+																				                    <s:link value="#{_arch.nombreArchivo}" action="#{downloadAttachment.download}">
+																					                    <f:param name="attachmentId" value="${_arch.archivo.id}" />
+																					                </s:link>																												            
+																						        </rich:column>
+																						        <rich:column styleClass="action">
+																						            <f:facet name="header">Acción</f:facet>
+																									<a:commandButton value="Eliminar" 
+																									                action="#{respuestaSolicitudAction.eliminarArchivo(_arch)}"
+																									                ajaxSingle="true"
+																					         		              reRender="archivosList,idArchivosAgregados" />		
+																		
+																						        </rich:column>
+																					    	  </rich:dataTable>
+																				    	  </div>
+																				    	</a:outputPanel>  																											    
+
+																						</td>
+																					</tr>
+																			   </table>
+																		</rich:panel>																				
+																																				
+																	</td>
+																	<td width="325px;"> 
+																		<rich:panel style="height:349px;">
+																			<f:facet name="header" >Correo</f:facet>
+																				<table cellpadding="0" cellspacing="0" border="0" width="100%" >
+																					<tr>
+																						<td colspan="2" align="center">
+																		    				 <a:commandButton value="Agregar Correo" 
+																		    				 	reRender="mpAgregarUsuarioCorreos"
+																                           	 	oncomplete="#{rich:component('mpAgregarUsuarioCorreos')}.show()"
+																                           	 	action="#{respuestaSolicitudAction.ingresarModelCorreo()}"
+																                			  />																							
+																						</td>
+																					</tr>																									   
+																					<tr>
+																						<td colspan="2" > 
+																						  <a:outputPanel id="idUsuariosCorreosDM">
+																					    	<div class="results" id="grillaDM" style="height:275px; overflow: auto; border:1px solid #000000;padding:3px;">
+																						   		<h:outputText value="No existen usuarios agregado para envio de correo." 
+																						   		   rendered="#{empty respuestaSolicitudAction.listaUsuarioCorreoagregados}"/>
+																							    <rich:dataTable id="idUsuariosCorreosCDM"
+																							                var="_usuarioCorreo"
+																							              value="#{respuestaSolicitudAction.listaUsuarioCorreoagregados}"
+																							           rendered="#{not empty respuestaSolicitudAction.listaUsuarioCorreoagregados}"
+																							           style="width:100%">
+																							        <rich:column>
+																							            <f:facet name="header">Usuario</f:facet>
+																							            <h:outputText value="#{_usuarioCorreo.nombre}"/>
+																							        </rich:column>
+																							    </rich:dataTable>
+																						    </div>	
+																						  </a:outputPanel>  
+																						  																							
+																						</td>
+																					</tr>	
+																				</table>
+																		</rich:panel>																		
+																	
+																	</td>
+																	<td width="250px;">
+																		<rich:panel style="height:349px;">
+																			<f:facet name="header" ><strong>Observaciones Finales</strong></f:facet>
+																			<a:outputPanel id="observacionesfinal5">
+																				<table cellpadding="0" cellspacing="0" border="0" style="height:315px;" width="100%">
+																					<tr>
+																						<td width="100%">
+																						<h:inputTextarea id="idObservacionesfinales5" value="#{respuestaSolicitudAction.observacionesFinales}" 
+												         									rows="2" 
+												         									style="width:99%; height:98%;"
+												         									disabled="false"/> 																									
+																						</td>
+																					</tr>
+																				</table>
+																			</a:outputPanel>
+																		</rich:panel>																			
+																	</td>
+																</tr>
+															</table>		
+													</rich:panel>	
+			    								</td>
+			    							</tr>
+			    						</table>							    			
+					    			</rich:tab>
+					    			
+					    			<rich:tab label="Prorroga de Cheques" rendered="#{respuestaSolicitudAction.paginaIngreso == 44}" >
+			    						<table cellpadding="0" cellspacing="0" border="0" width="100%">
+			    							<tr valign="top">
+			    								<td >
+											    	<rich:panel id="panelIngresoSolicitud6">
+											    			<f:facet name="header" ><strong>#{respuestaSolicitudAction.tituloIngreso}</strong></f:facet>
+											    			<table  cellpadding="0" cellspacing="0" border="0" width="100%">
+											    				<tr valign="top">
+											    					<td colspan="3" width="900px;">
+																		<rich:panel>
+																			<f:facet name="header" >Listado de Documento para Prorroga</f:facet>
+																				<table cellpadding="0" cellspacing="0" border="0" width="100%" style="height:140px;">
+																				   <tr valign="top" >
+																						<td width="100%;" align="center">
+																						    <a:outputPanel id="idDocumentoProrrogaList">
+																					    	<div class="results" style="height:70px; overflow: auto;" >
+																						   		<h:outputText value="No hay ningun documento para prorrogar en la lista." 
+																						   		 rendered="#{empty respuestaSolicitudAction.listaDoctoProrrogaAgregados}"/>
+																					
+																							    <rich:dataTable id="idDocumentoProrroga"
+																							                var="_dpa"
+																							              value="#{respuestaSolicitudAction.listaDoctoProrrogaAgregados}"
+																							           rendered="#{not empty respuestaSolicitudAction.listaDoctoProrrogaAgregados}">
+																							        <rich:column width="80px;" style="text-align: center;">
+																							            <f:facet name="header">Nro de Docto </f:facet>
+																							            <h:outputText value="#{_dpa.numeroDocto}"/>
+																							        </rich:column>				        
+																							        <rich:column width="80px;" style="text-align: center;">
+																							            <f:facet name="header">Monto</f:facet>
+																							            <h:outputText value="#{_dpa.monto}">
+																							            	<f:convertNumber currencySymbol="$" groupingUsed="#{true}"
+																						  									maxFractionDigits="0" type="currency"/> 																									            
+																							            </h:outputText>
+																							        </rich:column>
+																							        <rich:column width="80px;" style="text-align: center;">
+																							            <f:facet name="header">Venc.Actual</f:facet>
+																							            <h:outputText value="#{_dpa.fechaVencActual}">
+																							            	 <s:convertDateTime type="date" dateStyle="short" pattern="dd/MM/yyyy"/>
+																							            </h:outputText>
+																							        </rich:column>	
+																							        <rich:column width="170px;" style="text-align: center;">
+																							            <f:facet name="header">Venc.Nuevo</f:facet>
+																						                <rich:calendar id="fechaVencimientoNuevo"
+																						                       required="false"
+																						                       ajaxSingle="true"
+																						                       disabled="false"
+																						                       style="width:170px;"
+																						                          value="#{_dpa.fechaVencNuevo}" datePattern="dd/MM/yyyy">
+																						                          <a:support event="onchanged" 
+																						                                     ajaxSingle="true"
+																						                                     reRender="idDocumentoProrrogaList,idDocumentoProrroga,mpMensajeGlobalRespuesta,idUsuariosCorreosOSAux3"
+																						                                     action="#{respuestaSolicitudAction.verificarFechaVencimientoNuevoMayorFechaActual(_dpa)}"
+																						                                     oncomplete="if (#{respuestaSolicitudAction.mensajeGlogal != null}) {#{rich:component('mpMensajeGlobalRespuesta')}.show()}"
+																						                                     />
+																						                 </rich:calendar>         																									            
+																							        </rich:column>
+																						    	  </rich:dataTable>
+																					    	  </div>
+																					    	</a:outputPanel>  																								
+																						</td>
+																				   </tr>
+																				</table>
+																		</rich:panel>											    					
+											    					</td>
+											    					<td width="250px;">
+																		<rich:panel >
+																			<f:facet name="header" ><strong>Motivo de Prorroga</strong></f:facet>
+																			<a:outputPanel id="identNuevaProrroga">
+																				<table cellpadding="0" cellspacing="0" border="0" width="100%;" style="height:140px;">
+																					<tr valign="top">
+																						<td width="100%">
+																						<h:inputTextarea id="idMotivoProrroga" 
+																						    value="#{respuestaSolicitudAction.motivoProrroga}" 
+												         									rows="2" 
+												         									style="width:99%; height:98%;"
+												         									disabled="true"/> 																									
+																						</td>
+																					</tr>	
+																				</table>
+																			</a:outputPanel>
+																		</rich:panel>											    					
+											    					</td>
+											    				</tr>
+											    				
+											    				<tr valign="top"> 
+											    					<td  colspan="2" width="575px;">
+																		<rich:panel>
+																			<f:facet name="header" >Documentos Creación Solicitud</f:facet>
+																			<table cellpadding="0" cellspacing="0" border="0" width="100%" align="center">
+																				<tr>
+																					<td colspan="2" style="border:1px solid #000000;padding:3px;" align="center"> 
+																					  <a:outputPanel id="idArchivoAdjuntosAux5">
+																				    	<div class="results" id="grilla3" style="height:125px; overflow: auto;">
+																					   		<h:outputText value="No existen ningun archivo adjunto." 
+																					   		   rendered="#{empty respuestaSolicitudAction.listaArchivoGuardado}"/>
+																						    <rich:dataTable id="idArchivoAdjunto5"
+																						                var="_aa"
+																						              value="#{respuestaSolicitudAction.listaArchivoGuardado}"
+																						           rendered="#{not empty respuestaSolicitudAction.listaArchivoGuardado}"
+																						           style="width:100%">
+																						        <rich:column >
+																						            <f:facet name="header">Archivo</f:facet>
+																						            <a href="#{_aa.rutaCompleta}" target="blank">
+																						            	<h:outputText value="#{_aa.nombreArchivo}"/>
+																						        	</a>
+																						        </rich:column>
+																						        <rich:column>
+																						            <f:facet name="header">Tipo</f:facet>
+																						            	<h:outputText value="#{_aa.tipoArchivoType}"/>
+																						        </rich:column>
+																						        <rich:column>
+																						            <f:facet name="header">Usuario</f:facet>
+																						            	<h:outputText value="#{_aa.usuario}"/>
+																						        </rich:column>
+																						        <rich:column>
+																						            <f:facet name="header">Fecha</f:facet>
+																						            	<h:outputText value="#{_aa.fechaCreacion}">
+																						            		<s:convertDateTime pattern="dd-MM-yy HH:mm" />
+																						            	</h:outputText>
+																						        </rich:column>																							        
+																						    </rich:dataTable>
+																					    </div>	
+																					  </a:outputPanel>  																							
+																					</td>
+																				</tr>
+																			</table>																					
+																		</rich:panel>											    					
+																		<rich:panel>
+																			<f:facet name="header" >Adjuntar Archvios</f:facet>
+																				<table cellpadding="0" cellspacing="0" border="0" width="100%" >
+																					<tr>
+																						<td colspan="3" align="center">
+																		    				 <a:commandButton value="Archivos Respuesta" 
+																		    				 	reRender="mpArchivosRespuestas"
+																                           	 	oncomplete="#{rich:component('mpArchivosRespuestas')}.show()"
+																                			  />																							
+																						</td>
+																					</tr>																									   
+																				   <tr valign="top" >
+																						<td width="500px;" colspan="3" align="left" style="border:1px solid #000000;padding:3px;">
+																					    <a:outputPanel id="archivosList5">
+																				    	<div class="results" style="height:125px; overflow: auto;">
+																					   		<h:outputText value="No ha Agregado ningun Archivo." 
+																					   		 rendered="#{empty respuestaSolicitudAction.listaFileUploadedDTOs}"/>
+																						    <rich:dataTable id="idArchivosAgregados5"
+																						                var="_arch"
+																						              value="#{respuestaSolicitudAction.listaFileUploadedDTOs}"
+																						           rendered="#{not empty respuestaSolicitudAction.listaFileUploadedDTOs}">
+																						        <rich:column>
+																						            <f:facet name="header">Nombre</f:facet>
+																				                    <s:link value="#{_arch.nombreArchivo}" action="#{downloadAttachment.download}">
+																					                    <f:param name="attachmentId" value="${_arch.archivo.id}" />
+																					                </s:link>																												            
+																						        </rich:column>
+																						        <rich:column styleClass="action">
+																						            <f:facet name="header">Acción</f:facet>
+																									<a:commandButton value="Eliminar" 
+																									                action="#{respuestaSolicitudAction.eliminarArchivo(_arch)}"
+																									                ajaxSingle="true"
+																					         		              reRender="archivosList,idArchivosAgregados" />		
+																		
+																						        </rich:column>
+																					    	  </rich:dataTable>
+																				    	  </div>
+																				    	</a:outputPanel>  																											    
+
+																						</td>
+																					</tr>
+																			   </table>
+																		</rich:panel>												    					
+											    					</td>
+											    					<td width="325px;">
+																		<rich:panel style="height:373px;">
+																			<f:facet name="header" >Correo</f:facet>
+																				<table cellpadding="0" cellspacing="0" border="0" width="100%" >
+																					<tr>
+																						<td colspan="2" align="center">
+																		    				 <a:commandButton value="Agregar Correo" 
+																		    				 	reRender="mpAgregarUsuarioCorreos"
+																                           	 	oncomplete="#{rich:component('mpAgregarUsuarioCorreos')}.show()"
+																                           	 	action="#{respuestaSolicitudAction.ingresarModelCorreo()}"
+																                			  />																							
+																						</td>
+																					</tr>																									   
+																					<tr>
+																						<td colspan="2" > 
+																						  <a:outputPanel id="idUsuariosCorreosPR">
+																					    	<div class="results" id="grillaDM" style="height:290px; overflow: auto; border:1px solid #000000;padding:3px;">
+																						   		<h:outputText value="No existen usuarios agregado para envio de correo." 
+																						   		   rendered="#{empty respuestaSolicitudAction.listaUsuarioCorreoagregados}"/>
+																							    <rich:dataTable id="idUsuariosCorreosPRO"
+																							                var="_usuarioCorreo"
+																							              value="#{respuestaSolicitudAction.listaUsuarioCorreoagregados}"
+																							           rendered="#{not empty respuestaSolicitudAction.listaUsuarioCorreoagregados}"
+																							           style="width:100%">
+																							        <rich:column>
+																							            <f:facet name="header">Usuario</f:facet>
+																							            <h:outputText value="#{_usuarioCorreo.nombre}"/>
+																							        </rich:column>
+																							    </rich:dataTable>
+																						    </div>	
+																						  </a:outputPanel>  
+																						  																							
+																						</td>
+																					</tr>	
+																				</table>
+																		</rich:panel>												    					
+											    					</td>
+											    					<td width="250px;">
+																		<rich:panel style="height:373px;">
+																			<f:facet name="header" ><strong>Observaciones Finales</strong></f:facet>
+																			<a:outputPanel id="observacionesfinal6">
+																				<table cellpadding="0" cellspacing="0" border="0" style="height:315px;" width="100%">
+																					<tr>
+																						<td width="100%">
+																						<h:inputTextarea id="idObservacionesfinales6" value="#{respuestaSolicitudAction.observacionesFinales}" 
+												         									rows="2" 
+												         									style="width:99%; height:98%;"
+												         									disabled="false"/> 																									
+																						</td>
+																					</tr>
+																				</table>
+																			</a:outputPanel>
+																		</rich:panel>												    					
+											    					</td>
+											    				</tr>
+															</table>		
+													</rich:panel>	
+			    								</td>
+			    							</tr>
+			    						</table>							    			
+					    			</rich:tab>
+					    		</rich:tabPanel>
+				    		</rich:panel>	    						
+    					</td>
+    				</tr>					
+    			</table>
+	    	</h:form>
+    	</rich:panel>
+	  </a:outputPanel>	
+	    <a:status onstart="abrirModal();" onstop="cerrarModal();"></a:status>
+		<ui:include src="/layout/modalSck/modalConsultarCtaCteRespuesta.xhtml" />	
+		<ui:include src="/layout/modalSck/modalIngresoObservaciones.xhtml" />
+		<ui:include src="/layout/modalSck/modalDevolverSolicitud.xhtml" />
+		<ui:include src="/layout/modalSck/modalMensajeGlobalRespuesta.xhtml" />
+		<ui:include src="/layout/modalSck/modalAdjuntarArchivoRespuesta.xhtml" />
+		<ui:include src="/layout/modalSck/modalAdjuntarArchivoDespuesProceso.xhtml"/>
+		<ui:include src="/layout/modalSck/modalAgregarUsuariosCorreos.xhtml" />
+		<ui:include src="/layout/modalSck/modalDestinatarioDerivacion.xhtml" />
+	    <ui:include src="/layout/modalSck/modalRechazo.xhtml" />
+		<ui:include src="/layout/modalSck/modalMensajeRespuestaAnular.xhtml" />
+		<ui:include src="/layout/modalSck/modalMensajeRespuestaDevolver.xhtml" />
+		<ui:include src="/layout/modalSck/modalAnularSolicitud.xhtml" />
+		<ui:include src="/layout/modalSck/modalAprobarSolicitud.xhtml"/>
+		<ui:include src="/layout/modalSck/modalMensajeRespuestaAprobar.xhtml" />
+		<ui:include src="/layout/modalSck/modalAnalizarSolicitud.xhtml" />
+		<ui:include src="/layout/modalSck/modalConsultarAprobadorRechazar.xhtml"/>
+		<ui:include src="/layout/modalSck/modalMensajeRespuestaDerivada.xhtml"/>
+		<ui:include src="/layout/modalSck/modalMensajeRespuestaRechazar.xhtml" />
+		<ui:include src="/layout/modalSck/modalRechazarSolicitud.xhtml"/>
+		<ui:include src="/layout/modalSck/modalAgregarUsuarioEspecial.xhtml"/>
+		<ui:include src="/layout/modalSck/modalRevisarConceptoMontoRespuesta.xhtml" />
+		<ui:include src="/layout/modalSck/modalEnvioSeguroSolicitud.xhtml" />
+		<ui:include src="/layout/modalSck/modalAgregarCotizacionRespuesta.xhtml" />
+		<ui:include src="/layout/modalSck/modalConsultarTodasAprobadorRechazar.xhtml"/>
+		<ui:include src="/layout/modalSck/modalHistorialTodasAprobadorRechazar.xhtml"/>
+
+	
+		<ui:include src="/layout/modalSck/modalConsultarHitosRespuesta.xhtml"/>		
+		<ui:include src="/layout/modalSck/modalConsultarLogsRespuesta.xhtml" />		
+		<ui:include src="/layout/modalSck/modalSolicitudUsuariosGlobalRespuesta.xhtml"/>
+		<ui:include src="/layout/modalSck/modalAgregarUsuarioEspecialPrincipal.xhtml"/>			
+		<ui:include src="/layout/modalSck/modalAprobarSolicitudDerivada.xhtml"/>
+		<ui:include src="/layout/modalSck/modalRechazarSolicitudDerivada.xhtml"/>
+		<ui:include src="/layout/modalSck/modalMensajeRespuestaAprobarDerivada.xhtml" />
+		<ui:include src="/layout/modalSck/modalMensajeGlobalRespuestaDerivada.xhtml" />
+		<ui:include src="/layout/modalSck/modalAnalizarSolicitudDerivada.xhtml" />
+		<ui:include src="/layout/modalSck/modalCerrarAnalisis.xhtml" />
+		<ui:include src="/layout/modalSck/modalMensajeRespuestaHitosAdministrador.xhtml" />
+		
+    </ui:define>
+
+</ui:composition>

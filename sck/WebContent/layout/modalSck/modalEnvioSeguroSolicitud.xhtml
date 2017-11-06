@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	<rich:modalPanel id="mpEnvioSeguroSolicitud" autosized="true" width="500" height="100">
+    	 <f:facet name="header">
+            <h:outputText value="Analizar Solicitud" style="padding-right:15px;" />
+        </f:facet>
+    	<f:facet name="controls">
+            <h:panelGroup>
+               	<h:graphicImage value="img/close.png" styleClass="hidelink" id="mpEnvioSeguroSolicitudhidelink" />
+                <rich:componentControl for="mpEnvioSeguroSolicitud" attachTo="mpEnvioSeguroSolicitudhidelink"
+                   	operation="hide" event="onclick" />
+            </h:panelGroup>
+        </f:facet>
+        <h:form id="frm_enviar_seguro">
+           <a:outputPanel id="modalAnalista">
+		        <h:panelGrid id="escrituraEjecutivoSeguro" columns="1" cellpadding="0" cellspacing="5" width="100%" style="text-align:center;">
+		        	<h:outputLabel value="¿Está seguro de enviar a seguro la solicitud.?" style="font-size:14px; font-weight: bold;" />
+				</h:panelGrid>
+				<table cellpadding="0" cellspacing="0" width="100%">
+					<tr>
+						<td align="center">
+					        <h:panelGrid id="ingresarEjecutivoSeguro" columns="3" cellpadding="0" cellspacing="5" columnClasses="col_top">
+				        		<a:commandButton action="#{respuestaSolicitudAction.enviarASeguroSolicitud()}" 
+				        						 value="Si" 
+				        						 ajaxSingle="true"
+				        	                reRender="escrituraEjecutivoSeguro,mpEnvioSeguroSolicitud,mpMensajeRespuestaDevolver,panelGeneral,mensajeDerivada,mensajeDevolVolucion"
+				        	                oncomplete="if (#{respuestaSolicitudAction.mensajeGlogal != null}) {#{rich:component('mpMensajeRespuestaDevolver')}.show()}else{#{rich:component('mpEnvioSeguroSolicitud')}.hide()}"
+				        		            /> 
+				        		            
+				        		<a:commandButton action="#{respuestaSolicitudAction.salirAnalisisSolicitud()}" 
+				        						 value="No" 
+				        						 ajaxSingle="true"
+				        	                reRender="mpEnvioSeguroSolicitud"
+				        	                disabled="false"
+				        		            oncomplete="if (#{respuestaSolicitudAction.salirDelMensaje==true}) {#{rich:component('mpEnvioSeguroSolicitud')}.hide()}" 
+				        		            />
+							</h:panelGrid>					
+						
+						</td>				
+					</tr>
+				</table>
+		  </a:outputPanel>
+        </h:form>
+    </rich:modalPanel>
+    
+</ui:composition>

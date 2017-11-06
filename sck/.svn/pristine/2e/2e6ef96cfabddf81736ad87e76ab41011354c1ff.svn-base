@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"	
+	xmlns:s="http://jboss.com/products/seam/taglib">
+	
+	
+	<rich:modalPanel id="mpIngresoObservaciones" autosized="true" width="1200" height="500">
+		<f:facet name="header">
+			<h:outputText value="Ingreso de Observaciones"	style="padding-right:15px;" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:form>
+					<a:commandLink	ajaxSingle="true" action="#{generarSolicitudReparosAction.limpiarObservaciones()}">
+						<h:graphicImage value="img/close.png" styleClass="hidelink"	id="mpIngresoObservacioneslink" />
+					</a:commandLink>
+					<rich:componentControl for="mpIngresoObservaciones"
+						attachTo="mpIngresoObservacioneslink" operation="hide"
+						event="onclick" />
+				</h:form>
+			</h:panelGroup>
+		</f:facet>
+		<h:form id = "frm_consultaObservaciones">
+		<rich:panel>
+			<f:facet name="header"><h:outputText value="Información de Solicitud"	style="padding-right:15px;" /></f:facet>	
+				<table cellpadding="0" cellspacing="0" width="100%">
+					<tr>
+						<td> Solicitud </td>
+						<td> Código</td>
+						<td> Descripción</td>						
+					</tr>
+					<tr>
+						<td>
+							<h:inputText id="idSolicitud" 
+										value="#{generarSolicitudReparosAction.solicitud.id.numSolicitud}" 
+							          required="false"  
+								       maxlength="10"
+								       size="10" 
+								       disabled="true">
+							</h:inputText>	
+						</td>
+						<td>
+							<h:inputText id="idTipoCodSolicitud" 
+										value="#{generarSolicitudReparosAction.tipoSolicitud.codTipoSolicitud}" 
+							          required="false"  
+								       maxlength="120"
+								       size="10" 
+								       disabled="true" >
+							</h:inputText>							
+						</td>
+						<td>
+							<h:inputText id="idTipodesSolicitud" 
+										value="#{generarSolicitudReparosAction.tipoSolicitud.desTipoSolicitud}" 
+							          required="false"  
+								       maxlength="120"
+								       size="50" 
+								       disabled="true" >
+							</h:inputText>							
+						</td>							
+					</tr>	
+				</table>						
+		</rich:panel>
+
+
+		<rich:panel>
+				<f:facet name="header"><h:outputText value="Observaciones"	style="padding-right:15px;" /></f:facet>
+				<table cellpadding="0" cellspacing="0" width="100%">
+					<tr>
+						<td>
+							<h:inputTextarea id="idObservacion" 
+										value="#{generarSolicitudReparosAction.observacionesModel}" 
+							          required="false"  
+								       rows="3"
+								       cols="50"
+								       style="width:99%; height:98px;"
+								       disabled="false">
+							</h:inputTextarea>							
+						 </td>
+						 <td> 
+		    				 <a:commandButton value="Guardar" 
+		    				 	reRender="grillaObservacion,panelMensaje,idObservacion"
+                           	 	ajaxSingle="true" 
+                            	action="#{generarSolicitudReparosAction.gnuardarObservaciones()}" 
+                            	process="idObservacion"
+                			  />						 
+						 </td>	
+					</tr>
+					<tr>
+						<td>
+				     		<a:outputPanel id="panelMensaje" >
+					    		<h:messages  globalOnly="true" styleClass="message"
+						            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
+					        </a:outputPanel>   
+						 </td>	
+					</tr>					
+					
+					
+				</table>
+		</rich:panel>
+
+		<rich:panel>
+				<f:facet name="header"><h:outputText value="Lista de Observaciones"	style="padding-right:15px;" /></f:facet>
+		    	<a:outputPanel id="grillaObservacion">
+		    	<div class="results" id="grillaObservaciones" style="height:250px; overflow: auto;border:1px solid #000000;padding:3px;">
+			   		<h:outputText value="No existe ninguna observacion en esta solicitud." 
+			   		           rendered="#{empty generarSolicitudReparosAction.listaObservaciones}"/>
+			   		           			   		          
+			   		 <s:fragment  rendered="#{not empty generarSolicitudReparosAction.listaObservaciones}">
+				   		 <table cellpadding="0" cellspacing="0" width="100%" >
+				   		 	<tr>
+				   		 		<td width="30px;" align="center" style="border:1px solid #000000;padding:3px;"><strong>ITEM</strong> </td>
+				   		 		<td width="30px;" align="center" style="border:1px solid #000000;padding:3px;"><strong>TIPO</strong></td>
+				   		 		<td width="100px;" align="center" style="border:1px solid #000000;padding:3px;"><strong>FECHA</strong></td>
+				   		 		<td width="100px;" align="center" style="border:1px solid #000000;padding:3px;"><strong>HORA</strong></td>
+				   		 		<td width="120px;" align="center" style="border:1px solid #000000;padding:3px;"><strong>USUARIO</strong></td>
+				   		 		<td align="center" style="border:1px solid #000000;padding:3px;"><strong>OBSERVACIONES</strong></td>
+				   		 	</tr>
+				   		 	<a:repeat id="idListaObservacioes"
+				   		 	         var="_sh"
+				   		 	          value="#{generarSolicitudReparosAction.listaObservaciones}" >
+	
+					   		 	<tr>
+					   		 		<td align="center" style="border:1px solid #000000;padding:3px;">#{_sh.id.correlativo}</td>
+					   		 		<td align="center" style="border:1px solid #000000;padding:3px;">#{_sh.id.tipoSol}</td>
+					   		 		<td align="center" style="border:1px solid #000000;padding:3px;">
+							            <h:outputText value="#{_sh.id.fecha}">
+							            	<s:convertDateTime pattern="dd-MM-yyyy" />
+							            </h:outputText>					   		 		
+					   		 		</td>
+					   		 		<td align="center" style="border:1px solid #000000;padding:3px;">
+							        	<h:outputText value="#{_sh.id.hora}">
+							            	<s:convertDateTime pattern="HH:mm" />
+							            </h:outputText>					   		 		
+					   		 		</td>
+					   		 		<td align="center" style="border:1px solid #000000;padding:3px;">#{_sh.id.usuario}</td>
+					   		 		<td style="border:1px solid #000000;padding:3px;">
+					   		 			<h:outputText value="#{fn:replace(_sh.id.observacion,'\\n','&lt;br/&gt;')}" escape="false"/>
+					   		 		</td>
+					   		 	</tr>			   		 	
+				   		 	</a:repeat>
+				   		 </table>
+			   		 </s:fragment>  			   	
+			   	
+			   	
+					<ui:remove>
+				    <rich:dataTable id="idListaObservacioes"
+				                var="_sh"
+				              value="#{generarSolicitudReparosAction.listaObservaciones}"
+				           rendered="#{not empty generarSolicitudReparosAction.listaObservaciones}">
+				        <rich:column style="width:50px;">
+				            <f:facet name="header">Item</f:facet>
+				            <h:outputText value="#{_sh.id.correlativo}"/>
+				        </rich:column>
+				        
+				        <rich:column style="width:50px;">
+				            <f:facet name="header">Tipo</f:facet>
+				            <h:outputText value="#{_sh.id.tipoSol}"/>
+				        </rich:column>
+				        <rich:column style="width:80px;">
+				            <f:facet name="header">Fecha</f:facet>
+				            <h:outputText value="#{_sh.id.fecha}">
+				            	<s:convertDateTime pattern="dd-MM-yyyy" />
+				            </h:outputText>
+				        </rich:column>
+				        <rich:column style="width:50px;">
+				            <f:facet name="header">Hora</f:facet>
+				        	<h:outputText value="#{_sh.id.hora}">
+				            	<s:convertDateTime pattern="HH:mm" />
+				            </h:outputText>
+				        </rich:column>
+				        <rich:column style="width:120px;">
+				            <f:facet name="header">Usuario</f:facet>
+				        	<h:outputText value="#{_sh.id.usuario}" />
+				        </rich:column>				        
+				        <h:column style="width:200px;">
+				            <f:facet name="header">Observaciones</f:facet>
+				            	<span style="word-wrap: break-word; max-width:200px; width:200px;">
+				               		 #{_sh.id.observacion}
+				               </span>
+				        </h:column>
+
+
+				    </rich:dataTable>
+			    	</ui:remove>
+			    </div>
+			   </a:outputPanel> 
+		</rich:panel>
+
+
+   	</h:form>
+
+	</rich:modalPanel>
+	
+</ui:composition>
